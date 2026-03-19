@@ -1,9 +1,0 @@
-using UnityEngine;
-
-namespace ClimbGames.Core
-{
-    public class #SCRIPTNAME# : MonoBehaviour
-    {
-        
-    }
-}

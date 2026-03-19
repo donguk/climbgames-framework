@@ -1,0 +1,14 @@
+{
+    "name": "com.climbgames.framework",
+    "version": "1.0.0",
+    "displayName": "ClimbGames Framework",
+    "description": "Game framework for Unity",
+    "unity": "2022.3",
+    "author": {
+        "name": "ClimbGames"
+    },
+    "dependencies": {
+        "com.cysharp.unitask": "2.5.10",
+        "com.cysharp.r3": "1.3.0"
+    }
+}
