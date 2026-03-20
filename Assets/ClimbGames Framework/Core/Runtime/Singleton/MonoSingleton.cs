@@ -1,5 +1,8 @@
 using UnityEngine;
 using R3;
+using System;
+using System.Reflection;
+using System.IO;
 
 namespace ClimbGames.Core
 {
@@ -24,12 +27,32 @@ namespace ClimbGames.Core
                         _instance = (T)FindFirstObjectByType(typeof(T));
                         if (_instance == null)
                         {
-                            var singletonObject = new GameObject();
-                            _instance = singletonObject.AddComponent<T>();
-                            singletonObject.name = typeof(T).ToString() + " (Singleton)";
-                            DontDestroyOnLoad(singletonObject);
+                            GameObject singletonObject = null;
+
+                            var assetPath = typeof(T).GetCustomAttribute<AssetPathAttribute>();
+                            if (assetPath != null)
+                            {
+                                string path = assetPath.Value;
+                                int index = path.IndexOf("Resources/");
+                                if (index > -1)
+                                    path = path.Substring(index + "Resources/".Length);
+
+                                index = path.LastIndexOf(".");
+                                if (index > -1)
+                                    path = path.Substring(0, index);
+
+                                GameObject prefab = Resources.Load<GameObject>(path);
+                                singletonObject = Instantiate(prefab);
+                            }
+
+                            if (singletonObject == null)
+                                singletonObject = new GameObject();
+
+                            _instance = singletonObject.GetOrAddComponent<T>();
+                            singletonObject.name = typeof(T).Name + " (Singleton)";
                         }
                     }
+
                     return _instance;
                 }
             }
@@ -40,7 +63,10 @@ namespace ClimbGames.Core
             if (_instance == null)
             {
                 _instance = this as T;
-                DontDestroyOnLoad(gameObject);
+
+                var config = typeof(T).GetCustomAttribute<SingletonConfigAttribute>();
+                if (config != null && config.DontDestroy)
+                    DontDestroyOnLoad(gameObject);
             }
             else if (_instance != this)
             {
@@ -51,6 +77,14 @@ namespace ClimbGames.Core
         protected virtual void OnDestroy()
         {
             disposables.Dispose();
+
+            // 인스턴스가 파괴될 때 참조를 해제 (앱 종료가 아닐 때를 대비)
+            if (_instance == this)
+                _instance = null;
+        }
+
+        protected virtual void OnApplicationQuit()
+        {
             _applicationIsQuitting = true;
         }
     }

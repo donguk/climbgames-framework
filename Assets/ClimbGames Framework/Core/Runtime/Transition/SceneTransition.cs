@@ -5,19 +5,6 @@ using Cysharp.Threading.Tasks;
 
 namespace ClimbGames.Core
 {
-    public interface ISceneParameter
-    {
-
-    }
-
-    public interface ITransitionHandler : IDisposable
-    {
-        UniTask BeginAsync(ISceneParameter sceneParameter);
-        void Transition(AsyncOperation asyncOperation);
-        void Complete();
-        void Finally();
-    }
-
     public enum TransitionState
     {
         None,
@@ -37,7 +24,8 @@ namespace ClimbGames.Core
         public static bool IsPlaying => transitionState != TransitionState.None;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        public static void Initialize()
+        /*public*/
+        static void Initialize()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
             Scene activeScene = SceneManager.GetActiveScene();
@@ -45,6 +33,9 @@ namespace ClimbGames.Core
 
             MainCamera = Camera.main;
             Initialize(activeScene);
+
+            if (FrameworkSettings.Instance.UseDefaultTransition)
+                Initialize(DefaultTransition.Instance);
         }
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)

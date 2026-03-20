@@ -105,5 +105,16 @@ namespace ClimbGames.Core
 
             return null;
         }
+
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        {
+            if (gameObject == null)
+                return default;
+
+            if (gameObject.TryGetComponent<T>(out var component) == false)
+                return gameObject.AddComponent<T>();
+
+            return component;
+        }
     }
 }

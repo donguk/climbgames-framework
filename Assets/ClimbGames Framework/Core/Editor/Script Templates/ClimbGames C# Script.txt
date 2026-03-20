@@ -1,0 +1,7 @@
+namespace ClimbGames
+{
+    public class #SCRIPTNAME#
+    {
+        
+    }
+}
