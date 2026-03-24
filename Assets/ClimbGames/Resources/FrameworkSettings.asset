@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: FrameworkSettings
   m_EditorClassIdentifier: ClimbGames.Framework::ClimbGames.Core.FrameworkSettings
   showSceneName: 1
+  useDefaultTransition: 1
+  defaultTransitionTime: 0.2
+  useEmptyScene: 1

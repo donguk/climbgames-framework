@@ -11,9 +11,16 @@ namespace ClimbGames.Core
         [Header("Transition Settings")]
         [SerializeField] private bool useDefaultTransition = true;
         [SerializeField] private float defaultTransitionTime = 0.2f;
+        [SerializeField] private bool useEmptyScene = true;
 
         public bool ShowSceneName => showSceneName;
+
         public bool UseDefaultTransition => useDefaultTransition;
         public float DefaultTransitionTime => defaultTransitionTime;
+        public bool UseEmptyScene => useEmptyScene;
+
+
+
+
     }
 }
