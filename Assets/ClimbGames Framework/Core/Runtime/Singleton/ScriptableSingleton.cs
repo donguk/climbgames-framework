@@ -1,4 +1,6 @@
+using System.IO;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 namespace ClimbGames
@@ -16,21 +18,50 @@ namespace ClimbGames
                     var assetPath = typeof(T).GetCustomAttribute<AssetPathAttribute>();
                     if (assetPath != null)
                     {
-                        string path = assetPath.Value;
-                        int index = path.IndexOf("Resources/");
+                        int index = assetPath.Value.IndexOf("Resources/");
                         if (index > -1)
-                            path = path.Substring(index + "Resources/".Length);
+                        {
+                            string resourcesPath = assetPath.Value.Substring(index + "Resources/".Length);
+                            index = resourcesPath.LastIndexOf(".");
+                            if (index > -1)
+                                resourcesPath = resourcesPath.Substring(0, index);
 
-                        index = path.LastIndexOf(".");
-                        if (index > -1)
-                            path = path.Substring(0, index);
-
-                        _instance = Resources.Load<T>(path);
+                            _instance = Resources.Load<T>(resourcesPath);
+                        }
+                        else
+                        {
+                            // addressable 확인
+                        }
+#if UNITY_EDITOR
+                        if (_instance == null)
+                            _instance = AssetDatabase.LoadAssetAtPath<T>(assetPath.Value) ?? CreateAsset(assetPath.Value);
+#endif
                     }
                 }
 
                 return _instance;
             }
+        }
+
+        private static T CreateAsset(string assetPath)
+        {
+            if (assetPath.StartsWith("Assets/"))
+            {
+                string folderPath = Path.GetDirectoryName(assetPath);
+                if (AssetDatabase.IsValidFolder(folderPath) == false)
+                {
+                    Directory.CreateDirectory(Path.Combine(Application.dataPath, "..", folderPath));
+                    AssetDatabase.Refresh();
+                }
+
+                T instance = CreateInstance<T>();
+                AssetDatabase.CreateAsset(instance, assetPath);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+                return instance;
+            }
+
+            return default;
         }
     }
 }

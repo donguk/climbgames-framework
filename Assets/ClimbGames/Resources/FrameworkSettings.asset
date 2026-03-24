@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba0b67441af76c1419d317a0ba11c6cd, type: 3}
   m_Name: FrameworkSettings
-  m_EditorClassIdentifier: ClimbGames.Framework::ClimbGames.Core.FrameworkSettings
+  m_EditorClassIdentifier: ClimbGames.Framework::ClimbGames.FrameworkSettings
   showSceneName: 1
   useDefaultTransition: 1
   defaultTransitionTime: 0.2
