@@ -1,6 +1,6 @@
 using System;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public interface ISceneParameter
     {

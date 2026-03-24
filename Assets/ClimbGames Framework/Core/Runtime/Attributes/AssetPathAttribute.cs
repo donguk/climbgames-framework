@@ -1,6 +1,6 @@
 using System;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true)]
     public class AssetPathAttribute : Attribute

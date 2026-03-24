@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public interface ITransitionHandler : IDisposable
     {

@@ -1,5 +1,5 @@
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public class Singletone
     {

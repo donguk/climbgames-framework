@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public static class GameObjectExtensions
     {

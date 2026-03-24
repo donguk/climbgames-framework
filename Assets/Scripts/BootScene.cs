@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace ClimbGames.Core.Tset
+namespace ClimbGames.Tset
 {
     public class BootScene : MonoScene
     {

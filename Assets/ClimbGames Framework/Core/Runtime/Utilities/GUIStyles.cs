@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public static class GUIStyles
     {

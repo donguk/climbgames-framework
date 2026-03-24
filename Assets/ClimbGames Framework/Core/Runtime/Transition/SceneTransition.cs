@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public enum TransitionState
     {
@@ -11,9 +10,9 @@ namespace ClimbGames.Core
         LoadScene,
     }
 
-    public class SceneTransition : MonoBehaviour
+    public static class SceneTransition
     {
-        private const string EmptySceneName = "Empty";
+        private const string EmptySceneName = "EmptyScene";
         private static ITransitionHandler transitionHandler;
         private static TransitionState transitionState;
 
@@ -72,7 +71,7 @@ namespace ClimbGames.Core
                     await transitionHandler.BeginAsync(param);
 
                 DeactivateScene();
-                await LoadSceneAsync(EmptySceneName);
+                await LoadEmptySceneIfUsed();
 
                 var monoScene = MonoScene = await LoadSceneAsync(sceneName);
                 await InitializeScene(monoScene, param);
@@ -90,6 +89,15 @@ namespace ClimbGames.Core
                 transitionState = TransitionState.None;
             }
             return true;
+        }
+
+        private static async UniTask LoadEmptySceneIfUsed()
+        {
+            if (FrameworkSettings.Instance.UseEmptyScene)
+            {
+                await SceneManager.LoadSceneAsync(EmptySceneName, LoadSceneMode.Single);
+                await UniTask.NextFrame();
+            }
         }
 
         private static async UniTask<MonoScene> LoadSceneAsync(string key)

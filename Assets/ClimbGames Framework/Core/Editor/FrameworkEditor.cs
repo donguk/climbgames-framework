@@ -2,17 +2,16 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace ClimbGames.Core.Editor
+namespace ClimbGames.Editor
 {
     [InitializeOnLoad]
-    public static class FrameworkInitializer
+    public static class FrameworkEditor
     {
         private const string AssetPath = "Assets/ClimbGames/Resources/FrameworkSettings.asset";
         private const string EmptySceneGUID = "1d61250f766252d459de01ed701a82ed";
 
-        static FrameworkInitializer()
+        static FrameworkEditor()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode == false)
                 CheckAndCreateSettings();
@@ -33,13 +32,13 @@ namespace ClimbGames.Core.Editor
             FrameworkSettings newSettings = ScriptableObject.CreateInstance<FrameworkSettings>();
             AssetDatabase.CreateAsset(newSettings, AssetPath);
 
-            SetupEmptySceneToBuildSettings(newSettings.UseEmptyScene);
+            UseEmptyScene(newSettings.UseEmptyScene);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
-        public static void SetupEmptySceneToBuildSettings(bool value)
+        public static void UseEmptyScene(bool value)
         {
             var scenes = EditorBuildSettings.scenes.ToList();
 

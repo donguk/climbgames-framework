@@ -1,7 +1,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public class ScriptableSingleton<T> : ScriptableObject where T : ScriptableSingleton<T>
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Pool;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public struct ListPoolScope<T> : IDisposable
     {

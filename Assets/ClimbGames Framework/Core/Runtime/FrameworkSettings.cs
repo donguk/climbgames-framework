@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     [AssetPath("Assets/ClimbGames/Resources/FrameworkSettings.asset")]
     public class FrameworkSettings : ScriptableSingleton<FrameworkSettings>
@@ -18,9 +18,5 @@ namespace ClimbGames.Core
         public bool UseDefaultTransition => useDefaultTransition;
         public float DefaultTransitionTime => defaultTransitionTime;
         public bool UseEmptyScene => useEmptyScene;
-
-
-
-
     }
 }

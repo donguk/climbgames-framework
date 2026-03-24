@@ -1,4 +1,4 @@
-using ClimbGames.Core;
+using ClimbGames;
 using UnityEngine;
 
 namespace ClimbGames

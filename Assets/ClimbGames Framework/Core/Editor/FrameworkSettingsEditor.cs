@@ -1,12 +1,9 @@
-using System.Linq;
-using ClimbGames.Core;
-using ClimbGames.Core.Editor;
 using UnityEditor;
 
-namespace ClimbGames
+namespace ClimbGames.Editor
 {
     [CustomEditor(typeof(FrameworkSettings))]
-    public class FrameworkSettingsEditor : Editor
+    public class FrameworkSettingsEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
@@ -20,7 +17,7 @@ namespace ClimbGames
             if (EditorGUI.EndChangeCheck())
             {
                 if (useEmptyScene != settings.UseEmptyScene)
-                    FrameworkInitializer.SetupEmptySceneToBuildSettings(settings.UseEmptyScene);
+                    FrameworkEditor.UseEmptyScene(settings.UseEmptyScene);
 
                 EditorUtility.SetDirty(settings);
                 AssetDatabase.SaveAssets();

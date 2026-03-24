@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     [SingletonConfig("Resources/DefaultTransition")]
     public class DefaultTransition : MonoSingleton<DefaultTransition>, ITransitionHandler

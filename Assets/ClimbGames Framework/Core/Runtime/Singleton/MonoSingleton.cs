@@ -4,7 +4,7 @@ using System;
 using System.Reflection;
 using System.IO;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {

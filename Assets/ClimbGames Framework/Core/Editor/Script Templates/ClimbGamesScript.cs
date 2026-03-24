@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEditor;
 
-namespace ClimbGames.Core.Editor
+namespace ClimbGames.Editor
 {
     public class ClimbGamesScript
     {

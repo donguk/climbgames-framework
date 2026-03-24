@@ -1,7 +1,7 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-namespace ClimbGames.Core
+namespace ClimbGames
 {
     public class MonoScene : MonoBehaviour
     {
