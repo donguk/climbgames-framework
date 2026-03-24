@@ -1,11 +1,61 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace ClimbGames.Tset
 {
+    public class InitStep : TaskStep
+    {
+        public override async UniTask<bool> Run(CancellationToken cancellationToken = default)
+        {
+            Progress = 0f;
+            await UniTask.WaitForSeconds(0.1f);
+            Progress = 1f;
+            TaskLauncher.Default.Run(nameof(PatchStep));
+            return true;
+        }
+    }
+
+    public class VersionStep : TaskStep
+    {
+        public override async UniTask<bool> Run(CancellationToken cancellationToken = default)
+        {
+            Progress = 0f;
+            await UniTask.WaitForSeconds(0.1f);
+            Progress = 1f;
+            return true;
+        }
+    }
+
+    public class PatchStep : TaskStep
+    {
+        public override float Weight => 60f;
+
+        public override async UniTask<bool> Run(CancellationToken cancellationToken = default)
+        {
+            Progress = 0f;
+            for (int i = 0; i < 10; ++i)
+            {
+                await UniTask.NextFrame();
+                Progress = i / 10f;
+            }
+            Progress = 1f;
+            return true;
+        }
+    }
+
     public class BootScene : MonoScene
     {
+
+        void Start()
+        {
+            TaskLauncher.Default.AddStep(new InitStep())
+                                .AddStep(new VersionStep())
+                                .AddStep(new PatchStep())
+                                .Start();
+        }
 
 
 
@@ -18,7 +68,9 @@ namespace ClimbGames.Tset
             {
                 SceneTransition.TransitionAsync("01_Title").Forget();
             }
-        }
 
+            if (TaskLauncher.Default.IsRunning)
+                Debug.Log($"[BootScene] task launcher progress: {TaskLauncher.Default.TotalProgress}");
+        }
     }
 }

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace ClimbGames.Editor
 {
-    public class ClimbGamesScript
+    public class ScriptTemplateMenu
     {
         private static string GetTemplatePath(string fileName)
         {
