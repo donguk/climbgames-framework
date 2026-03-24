@@ -17,7 +17,12 @@ namespace ClimbGames.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 if (useEmptyScene != settings.UseEmptyScene)
-                    FrameworkEditor.UseEmptyScene(settings.UseEmptyScene);
+                {
+                    if (settings.UseEmptyScene)
+                        FrameworkEditor.AddEmptySceneToBuildSettings();
+                    else
+                        FrameworkEditor.RemoveEmptySceneFromBuildSettings();
+                }
 
                 EditorUtility.SetDirty(settings);
                 AssetDatabase.SaveAssets();

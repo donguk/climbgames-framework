@@ -14,10 +14,17 @@ namespace ClimbGames.Editor
         static FrameworkEditor()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode == false)
-                CheckAndCreateSettings();
+            {
+                CreateSettingsIfNotExist();
+
+                if (FrameworkSettings.Instance.UseEmptyScene)
+                    AddEmptySceneToBuildSettings();
+                else
+                    RemoveEmptySceneFromBuildSettings();
+            }
         }
 
-        private static void CheckAndCreateSettings()
+        private static void CreateSettingsIfNotExist()
         {
             if (File.Exists(Path.Combine(Application.dataPath, "..", AssetPath)))
                 return;
@@ -31,26 +38,30 @@ namespace ClimbGames.Editor
 
             FrameworkSettings newSettings = ScriptableObject.CreateInstance<FrameworkSettings>();
             AssetDatabase.CreateAsset(newSettings, AssetPath);
-
-            UseEmptyScene(newSettings.UseEmptyScene);
-
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
-        public static void UseEmptyScene(bool value)
+        public static void AddEmptySceneToBuildSettings()
         {
             var scenes = EditorBuildSettings.scenes.ToList();
 
             GUID guid = new GUID(EmptySceneGUID);
             var index = scenes.FindIndex(scene => scene.guid == guid);
-
-            if (value && index <= -1)
+            if (index <= -1)
             {
                 scenes.Insert(0, new EditorBuildSettingsScene(guid, true));
                 EditorBuildSettings.scenes = scenes.ToArray();
             }
-            else if (value == false && index > -1)
+        }
+
+        public static void RemoveEmptySceneFromBuildSettings()
+        {
+            var scenes = EditorBuildSettings.scenes.ToList();
+
+            GUID guid = new GUID(EmptySceneGUID);
+            var index = scenes.FindIndex(scene => scene.guid == guid);
+            if (index > -1)
             {
                 scenes.RemoveAt(index);
                 EditorBuildSettings.scenes = scenes.ToArray();
