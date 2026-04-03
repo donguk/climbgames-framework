@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using ClimbGames.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -42,13 +43,15 @@ namespace ClimbGames.Tset
                 Progress = i / 10f;
             }
             Progress = 1f;
+
+            if (UIManager.Instance != null)
+                Debug.Log("UIManager Init");
             return true;
         }
     }
 
     public class BootScene : MonoScene
     {
-
         void Start()
         {
             TaskLauncher.Default.AddStep(new InitStep())
@@ -56,8 +59,6 @@ namespace ClimbGames.Tset
                                 .AddStep(new PatchStep())
                                 .Start();
         }
-
-
 
         void Update()
         {
@@ -68,9 +69,6 @@ namespace ClimbGames.Tset
             {
                 SceneTransition.TransitionAsync("01_Title").Forget();
             }
-
-            if (TaskLauncher.Default.IsRunning)
-                Debug.Log($"[BootScene] task launcher progress: {TaskLauncher.Default.TotalProgress}");
         }
     }
 }

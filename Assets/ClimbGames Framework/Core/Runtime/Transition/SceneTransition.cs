@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
+using ClimbGames.UI;
 
 namespace ClimbGames
 {
@@ -16,44 +17,12 @@ namespace ClimbGames
         private static ITransitionHandler transitionHandler;
         private static TransitionState transitionState;
 
-        public static Scene ActiveScene { get; private set; }
         public static MonoScene MonoScene { get; private set; }
-        public static Camera MainCamera { get; private set; }
-
         public static bool IsPlaying => transitionState != TransitionState.None;
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        /*public*/
-        static void Initialize()
-        {
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            Scene activeScene = SceneManager.GetActiveScene();
-            Debug.Log($"[SceneTransition] RuntimeInitializeLoadType.AfterSceneLoad: activeScene({activeScene.name})");
-
-            MainCamera = Camera.main;
-            Initialize(activeScene);
-
-            if (FrameworkSettings.Instance.UseDefaultTransition)
-                Initialize(DefaultTransition.Instance);
-        }
-
-        static void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-        {
-            Debug.Log($"[SceneTransition] OnSceneLoaded: activeScene({scene.name})");
-
-            MainCamera = Camera.main;
-            Initialize(scene);
-        }
 
         public static void Initialize(ITransitionHandler handler)
         {
             transitionHandler = handler;
-        }
-
-        static void Initialize(Scene activeScene)
-        {
-            MainCamera = Camera.main;
-            ActiveScene = activeScene;
         }
 
         public static async UniTask<bool> TransitionAsync(string sceneName, ISceneParameter param = null)
@@ -73,13 +42,13 @@ namespace ClimbGames
                 DeactivateScene();
                 await LoadEmptySceneIfUsed();
 
-                var monoScene = MonoScene = await LoadSceneAsync(sceneName);
-                await InitializeScene(monoScene, param);
+                MonoScene = await LoadSceneAsync(sceneName);
+                await InitializeScene(MonoScene, param);
 
                 if (transitionHandler != null)
                     transitionHandler.Complete();
 
-                ActivateScene(monoScene).Forget();
+                ActivateScene(MonoScene).Forget();
             }
             finally
             {
@@ -125,9 +94,11 @@ namespace ClimbGames
 
         private static void DeactivateScene()
         {
-            var monoScene = ActiveScene.FindComponentInRootObjects<MonoScene>();
-            if (monoScene != null)
-                monoScene.Deactivate();
+            if (MonoScene == null)
+                MonoScene = SceneManager.GetActiveScene().FindComponentInRootObjects<MonoScene>();
+
+            if (MonoScene != null)
+                MonoScene.Deactivate();
         }
     }
 }
