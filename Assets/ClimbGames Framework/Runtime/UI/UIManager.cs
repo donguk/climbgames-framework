@@ -70,7 +70,11 @@ namespace ClimbGames.UI
             else
             {
                 if (uiCamera.TryGetComponent(out data))
+                {
                     data.renderType = CameraRenderType.Base;
+                    uiCamera.clearFlags = CameraClearFlags.SolidColor;
+                    uiCamera.backgroundColor = Color.black;
+                }
             }
         }
 
