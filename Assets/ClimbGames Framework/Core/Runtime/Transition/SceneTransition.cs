@@ -1,62 +1,70 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
-using ClimbGames.UI;
-using System.Threading.Tasks;
 
 namespace ClimbGames
 {
-    public enum TransitionState
-    {
-        None,
-        LoadScene,
-    }
-
     public static class SceneTransition
     {
+        public enum State
+        {
+            None,
+            LoadScene,
+        }
+
         private const string EmptySceneName = "EmptyScene";
         private static ITransitionHandler transitionHandler;
-        private static TransitionState transitionState;
+        private static State transitionState;
 
         public static MonoScene MonoScene { get; private set; }
-        public static bool IsPlaying => transitionState != TransitionState.None;
+        public static bool IsPlaying => transitionState != State.None;
 
         public static void Initialize(ITransitionHandler handler)
         {
             transitionHandler = handler;
         }
 
-        public static async UniTask<bool> TransitionAsync(string sceneName, ISceneParameter param = null)
+        public static async UniTask<bool> LoadAsync(string sceneName, ISceneParameter parameter = null)
+        {
+            return await TransitionAsync(sceneName, parameter, null);
+        }
+
+        public static async UniTask<bool> TransitionAsync(string sceneName, ISceneParameter parameter = null)
+        {
+            return await TransitionAsync(sceneName, parameter, transitionHandler);
+        }
+
+        private static async UniTask<bool> TransitionAsync(string sceneName, ISceneParameter parameter, ITransitionHandler handler)
         {
             if (Application.exitCancellationToken.IsCancellationRequested)
                 return false;
 
-            if (transitionState != TransitionState.None)
+            if (transitionState != State.None)
                 return false;
 
-            transitionState = TransitionState.LoadScene;
+            transitionState = State.LoadScene;
             try
             {
-                if (transitionHandler != null)
-                    await transitionHandler.BeginAsync(param);
+                if (handler != null)
+                    await handler.BeginAsync(parameter);
 
                 DeactivateScene();
                 await LoadEmptySceneIfUsed();
 
                 MonoScene = await LoadSceneAsync(sceneName);
-                await InitializeScene(MonoScene, param);
+                await InitializeScene(MonoScene, parameter);
 
-                if (transitionHandler != null)
-                    transitionHandler.Complete();
+                if (handler != null)
+                    handler.Complete();
 
                 ActivateScene(MonoScene).Forget();
             }
             finally
             {
-                if (transitionHandler != null)
-                    transitionHandler.Finally();
+                if (handler != null)
+                    handler.Finally();
 
-                transitionState = TransitionState.None;
+                transitionState = State.None;
             }
             return true;
         }
@@ -70,11 +78,11 @@ namespace ClimbGames
             }
         }
 
-        public static async UniTask<MonoScene> LoadSceneAsync(string key)
+        private static async UniTask<MonoScene> LoadSceneAsync(string key, ITransitionHandler handler = null)
         {
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(key, LoadSceneMode.Single);
-            if (transitionHandler != null)
-                transitionHandler.Transition(asyncOperation);
+            if (handler != null)
+                handler.Transition(asyncOperation);
 
             await asyncOperation;
             await UniTask.NextFrame();

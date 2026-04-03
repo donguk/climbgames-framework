@@ -15,12 +15,14 @@ namespace ClimbGames.Editor
 #if UNITY_6000_0_OR_NEWER
         public static bool OnOpenAsset(EntityId entityId, int line)
         {
+            Debug.Log($"[Framework] OnOpenAsset: {entityId}/ {line}");
             string assetPath = AssetDatabase.GetAssetPath(entityId);
             return OpenAsset(assetPath);
         }
 #else
         public static bool OnOpenAsset(int instanceID, int line)
         {
+            Debug.Log($"[Framework] OnOpenAsset: {instanceID}/ {line}");
             string assetPath = AssetDatabase.GetAssetPath(instanceID);
             return OpenAsset(assetPath);
         }
@@ -28,6 +30,7 @@ namespace ClimbGames.Editor
 
         static bool OpenAsset(string assetPath)
         {
+            Debug.Log($"[Framework] OnOpenAsset - 1: {assetPath}");
             if (string.IsNullOrEmpty(assetPath) || !assetPath.EndsWith(".cs"))
                 return false;
 
@@ -35,7 +38,7 @@ namespace ClimbGames.Editor
             if (assetPath.EndsWith(DebugClassName))
             {
                 string stackTrace = GetStackTrace();
-
+                Debug.Log($"[Framework] OnOpenAsset - 2: {stackTrace}");
                 if (!string.IsNullOrEmpty(stackTrace))
                 {
                     // 정규식: (at 경로:라인번호) 형태 추출
@@ -45,7 +48,7 @@ namespace ClimbGames.Editor
                     {
                         string path = match.Groups[1].Value;
                         int lineNum = int.Parse(match.Groups[2].Value);
-
+                        Debug.Log($"[Framework] OnOpenAsset - 3: {path}");
                         // Debug.cs가 아닌 실제 호출부를 찾을 때까지 탐색
                         if (!path.EndsWith(DebugClassName))
                         {
