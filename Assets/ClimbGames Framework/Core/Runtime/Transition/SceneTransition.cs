@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using ClimbGames.UI;
+using System.Threading.Tasks;
 
 namespace ClimbGames
 {
@@ -69,7 +70,7 @@ namespace ClimbGames
             }
         }
 
-        private static async UniTask<MonoScene> LoadSceneAsync(string key)
+        public static async UniTask<MonoScene> LoadSceneAsync(string key)
         {
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(key, LoadSceneMode.Single);
             if (transitionHandler != null)

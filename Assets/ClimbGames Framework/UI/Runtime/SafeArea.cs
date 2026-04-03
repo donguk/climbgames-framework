@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ClimbGames
+namespace ClimbGames.UI
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]

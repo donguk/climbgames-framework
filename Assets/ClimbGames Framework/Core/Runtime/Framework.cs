@@ -1,4 +1,3 @@
-using ClimbGames.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
