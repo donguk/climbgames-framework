@@ -65,13 +65,13 @@ namespace ClimbGames
                 for (; CurrentIndex < steps.Count; CurrentIndex = NextIndex)
                 {
                     StapBase step = steps[CurrentIndex];
-                    Debug.Log($"[TaskLauncher] <color=green>Run</color> {step.Name}");
+                    Debug.Log($"[TaskSequencer] <color=green>Run</color> {step.Name}");
 
                     NextIndex = CurrentIndex + 1;
                     bool result = await step.Run(cancellationTokenSource.Token);
                     if (result == false)
                     {
-                        Debug.LogError($"[TaskLauncher] Fail {step.Name}");
+                        Debug.LogError($"[TaskSequencer] Fail {step.Name}");
                         onComplete?.Invoke(false);
                         return false;
                     }
@@ -79,12 +79,12 @@ namespace ClimbGames
 
                 await UniTask.NextFrame();
                 onComplete?.Invoke(true);
-                Debug.Log("[TaskLauncher] Complete");
+                Debug.Log("[TaskSequencer] Complete");
                 return true;
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning("[TaskLauncher] Sequence Canceled");
+                Debug.LogWarning("[TaskSequencer] Sequence Canceled");
                 onComplete?.Invoke(true);
                 return false;
             }

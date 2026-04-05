@@ -14,6 +14,14 @@ namespace ClimbGames
 
         protected CompositeDisposable disposables = new();
 
+        public static bool IsValid
+        {
+            get
+            {
+                return _applicationIsQuitting == false && _instance != null;
+            }
+        }
+
         public static T Instance
         {
             get

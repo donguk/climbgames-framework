@@ -6,6 +6,7 @@ namespace ClimbGames
     public static class Framework
     {
         private static Camera _mainCamera;
+        private static Scene _activeScene;
 
         public static Camera MainCamera
         {
@@ -17,6 +18,7 @@ namespace ClimbGames
                 return _mainCamera;
             }
         }
+        public static Scene ActiveScene => _activeScene;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         static void RuntimeInitialize_AfterSceneLoad()
@@ -34,6 +36,8 @@ namespace ClimbGames
         {
             Debug.Log($"[ClimbGames] OnSceneLoaded: {scene.name}/ {loadSceneMode}");
             _mainCamera = Camera.main;
+            if (loadSceneMode == LoadSceneMode.Single)
+                _activeScene = scene;
         }
     }
 }

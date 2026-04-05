@@ -40,16 +40,17 @@ namespace ClimbGames.UI
             SetupUICamera();
             CreateEventSystemIfNotExist();
 
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneTransition.sceneLoaded += OnSceneLoaded;
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            SceneManager.sceneLoaded -= OnSceneLoaded;
+
+            SceneTransition.sceneLoaded -= OnSceneLoaded;
         }
 
-        void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        void OnSceneLoaded(MonoScene monoScene)
         {
             SetupUICamera();
             CreateEventSystemIfNotExist();
@@ -127,10 +128,17 @@ namespace ClimbGames.UI
 
         public void Hide<T>() where T : UIBase
         {
-            foreach (var ui in uiList)
+            for (int i = 0; i < uiList.Count;)
             {
+                UIBase ui = uiList[i];
                 if (ui.GetType() == typeof(T))
+                {
                     Hide(ui);
+                }
+                else
+                {
+                    ++i;
+                }
             }
         }
     }
