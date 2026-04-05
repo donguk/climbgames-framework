@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ClimbGames
+namespace #NAMESPACE#
 {
     public class #SCRIPTNAME# : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-namespace ClimbGames
+namespace #NAMESPACE#
 {
     public class #SCRIPTNAME#
     {

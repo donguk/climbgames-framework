@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/ClimbGames Framework/Core/Runtime/Transition/EmptyScene.unity
+    path: Assets/ClimbGames Framework/Runtime/Core/Transition/EmptyScene.unity
     guid: 1d61250f766252d459de01ed701a82ed
   - enabled: 1
     path: Assets/Scenes/00_Boot.unity

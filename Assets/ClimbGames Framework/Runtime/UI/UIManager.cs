@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Rendering.Universal;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 namespace ClimbGames.UI
 {
@@ -35,8 +37,10 @@ namespace ClimbGames.UI
         {
             base.Awake();
 
+            SetupUICamera();
+            CreateEventSystemIfNotExist();
+
             SceneManager.sceneLoaded += OnSceneLoaded;
-            SetupCameraSettings();
         }
 
         protected override void OnDestroy()
@@ -47,10 +51,11 @@ namespace ClimbGames.UI
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            SetupCameraSettings();
+            SetupUICamera();
+            CreateEventSystemIfNotExist();
         }
 
-        void SetupCameraSettings()
+        void SetupUICamera()
         {
             var mainCamera = Framework.MainCamera;
 
@@ -78,7 +83,20 @@ namespace ClimbGames.UI
             }
         }
 
-        public async UniTask<T> Show<T>(string key, UILayer layer = UILayer.View, IUIData data = default) where T : UIBase
+        void CreateEventSystemIfNotExist()
+        {
+            EventSystem eventSystem = GameObject.FindFirstObjectByType<EventSystem>();
+            if (eventSystem == null)
+            {
+                GameObject go = new GameObject("EventSystem");
+                go.AddComponent<EventSystem>();
+                go.AddComponent<InputSystemUIInputModule>();
+
+                Debug.Log("[ClimbGames] AutoCreate EventSytem");
+            }
+        }
+
+        async UniTask<T> Get<T>(string key, UILayer layer) where T : UIBase
         {
             if (layers.TryGetValue(layer, out var parent) == false)
                 parent = transform as RectTransform;
@@ -86,6 +104,12 @@ namespace ClimbGames.UI
             T ui = await AssetManager.InstantiateAsync<T>(key, parent);
             uiList.Add(ui);
 
+            return ui;
+        }
+
+        public async UniTask<T> Show<T>(string key, IUIData data, UILayer layer) where T : UIBase
+        {
+            T ui = await Get<T>(key, layer);
             ui.Initialize(layer, data);
             return ui;
         }
@@ -99,6 +123,15 @@ namespace ClimbGames.UI
 
             uiList.Remove(ui);
             GameObject.Destroy(ui.gameObject);
+        }
+
+        public void Hide<T>() where T : UIBase
+        {
+            foreach (var ui in uiList)
+            {
+                if (ui.GetType() == typeof(T))
+                    Hide(ui);
+            }
         }
     }
 }

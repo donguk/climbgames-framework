@@ -32,7 +32,7 @@ namespace ClimbGames
         }
         static void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            Debug.Log($"[Framework] OnSceneLoaded: {scene.name}/ {loadSceneMode}");
+            Debug.Log($"[ClimbGames] OnSceneLoaded: {scene.name}/ {loadSceneMode}");
             _mainCamera = Camera.main;
         }
     }

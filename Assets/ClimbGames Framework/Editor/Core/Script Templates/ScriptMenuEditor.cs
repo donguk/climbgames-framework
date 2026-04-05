@@ -1,11 +1,12 @@
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace ClimbGames.Editor
 {
-    public class ScriptTemplateMenu
+    public class ScriptMenuEditor
     {
-        private static string GetTemplatePath(string fileName)
+        public static string GetTemplatePath(string fileName)
         {
             string[] guids = AssetDatabase.FindAssets($"{fileName} t:TextAsset");
             foreach (var guid in guids)
@@ -22,16 +23,16 @@ namespace ClimbGames.Editor
         public static void CreateMonoBehaviourScript()
         {
             string path = GetTemplatePath("ClimbGames C# MonoBehaviour Script");
-            if (path != null)
-                ProjectWindowUtil.CreateScriptAssetFromTemplateFile(path, "New MonoBehaviour Script.cs");
+            Texture2D icon = EditorGUIUtility.IconContent("cs Script Icon").image as Texture2D;
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<ScriptKeywordProcessor>(), "NewMonoBehaviourScript.cs", icon, path);
         }
 
         [MenuItem("Assets/Create/Scripting/ClimbGames/Empty C# Script")]
         public static void CreateCSharpScript()
         {
             string path = GetTemplatePath("ClimbGames C# Script");
-            if (path != null)
-                ProjectWindowUtil.CreateScriptAssetFromTemplateFile(path, "New Empty Script.cs");
+            Texture2D icon = EditorGUIUtility.IconContent("cs Script Icon").image as Texture2D;
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<ScriptKeywordProcessor>(), "NewEmptyScript.cs", icon, path);
         }
     }
 }

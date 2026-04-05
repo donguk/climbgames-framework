@@ -6,13 +6,12 @@ using UnityEngine;
 
 namespace ClimbGames
 {
-    public class TaskLauncher : IDisposable
+    public partial class TaskSequencer : IDisposable
     {
-        public static TaskLauncher Default = new TaskLauncher();
+        public static TaskSequencer Default = new TaskSequencer();
 
-        private List<TaskStep> steps = new List<TaskStep>();
+        private List<StapBase> steps = new List<StapBase>();
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private Action<bool> onComplete;
 
         public int CurrentIndex { get; private set; }
         public int NextIndex { get; private set; }
@@ -30,7 +29,7 @@ namespace ClimbGames
 
                 for (int i = 0; i < steps.Count; ++i)
                 {
-                    TaskStep step = steps[i];
+                    StapBase step = steps[i];
                     totalWeight += step.Weight;
 
                     float progress = i < CurrentIndex ? 1f : step.Progress;
@@ -41,7 +40,7 @@ namespace ClimbGames
             }
         }
 
-        public TaskLauncher AddStep(TaskStep step)
+        public TaskSequencer AddStep(StapBase step)
         {
             steps.Add(step);
             return this;
@@ -65,7 +64,7 @@ namespace ClimbGames
 
                 for (; CurrentIndex < steps.Count; CurrentIndex = NextIndex)
                 {
-                    TaskStep step = steps[CurrentIndex];
+                    StapBase step = steps[CurrentIndex];
                     Debug.Log($"[TaskLauncher] <color=green>Run</color> {step.Name}");
 
                     NextIndex = CurrentIndex + 1;

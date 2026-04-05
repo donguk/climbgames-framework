@@ -66,6 +66,7 @@ namespace ClimbGames
 
                 transitionState = State.None;
             }
+
             return true;
         }
 
