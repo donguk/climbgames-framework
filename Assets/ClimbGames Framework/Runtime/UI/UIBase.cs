@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace ClimbGames.UI
@@ -6,7 +7,7 @@ namespace ClimbGames.UI
     public abstract class UIBase : MonoBehaviour
     {
         private UILayer _layer;
-        protected IUIData _data;
+        internal IUIData _data;
 
         public UILayer Layer => _layer;
 
@@ -15,12 +16,12 @@ namespace ClimbGames.UI
             _layer = layer;
             _data = data;
 
-            OnInitialize(data);
+            OnInitialize();
         }
 
-        protected virtual void OnInitialize(IUIData data)
+        protected virtual UniTask OnInitialize()
         {
-
+            return UniTask.CompletedTask;
         }
 
         public void Hide()
@@ -31,14 +32,18 @@ namespace ClimbGames.UI
 
     public abstract class UIBase<T> : UIBase where T : IUIData
     {
-        protected override void OnInitialize(IUIData data)
+        protected sealed override UniTask OnInitialize()
         {
-            OnInitialize((T)data);
+            if (_data is T data)
+                return OnInitialize(data);
+
+            Debug.LogError($"[{GetType().Name}] Type Dismatched: Expected {typeof(T).Name}, but data is {_data?.GetType().Name ?? "null"}");
+            return OnInitialize(default);
         }
 
-        protected virtual void OnInitialize(T data)
+        protected virtual UniTask OnInitialize(T data)
         {
-
+            return UniTask.CompletedTask;
         }
     }
 }

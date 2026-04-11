@@ -32,9 +32,9 @@ namespace ClimbGames
             if (FrameworkSettings.Instance.UseDefaultTransition)
                 SceneTransition.Initialize(DefaultTransition.Instance);
         }
+
         static void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            Debug.Log($"[ClimbGames] OnSceneLoaded: {scene.name}/ {loadSceneMode}");
             _mainCamera = Camera.main;
             if (loadSceneMode == LoadSceneMode.Single)
                 _activeScene = scene;

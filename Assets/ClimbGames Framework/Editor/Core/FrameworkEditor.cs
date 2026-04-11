@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ClimbGames.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace ClimbGames.Editor
 
             CreateSettingsIfNotExist();
             UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
+            AddLayerToTagManager(UIManager.WORLD_UI_LAYER);
         }
 
         private static void CreateSettingsIfNotExist()
@@ -62,6 +64,31 @@ namespace ClimbGames.Editor
             {
                 scenes.RemoveAt(index);
                 EditorBuildSettings.scenes = scenes.ToArray();
+            }
+        }
+
+        public static void AddLayerToTagManager(string layerName)
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
+            SerializedObject tagManager = new SerializedObject(assets[0]);
+            SerializedProperty layers = tagManager.FindProperty("layers");
+
+            // 이미 레이어가 존재하는지 확인
+            for (int i = 6; i < layers.arraySize; i++)
+            {
+                SerializedProperty layerProp = layers.GetArrayElementAtIndex(i);
+
+                // 동일한 이름이 있으면 중단
+                if (layerProp.stringValue == layerName)
+                    return;
+
+                // 비어있는 슬롯을 찾으면 레이어 이름 할당
+                if (string.IsNullOrEmpty(layerProp.stringValue))
+                {
+                    layerProp.stringValue = layerName;
+                    tagManager.ApplyModifiedProperties();
+                    return;
+                }
             }
         }
     }

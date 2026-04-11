@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Rendering.Universal;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
@@ -27,19 +26,26 @@ namespace ClimbGames.UI
     [SingletonConfig("Resources/UIManager")]
     public partial class UIManager : MonoSingleton<UIManager>
     {
-        [SerializeField] private Canvas rootCanvas;
+        public const string UI_LAYER = "UI";
+        public const string WORLD_UI_LAYER = "World UI";
+
         [SerializeField] private Camera uiCamera;
+        [SerializeField] private Camera worldUICamera;
         [SerializeField] private SerializableDictionary<UILayer, RectTransform> layers = new SerializableDictionary<UILayer, RectTransform>();
 
         private List<UIBase> uiList = new List<UIBase>();
+
+        public Camera UICamera => uiCamera;
+        public Camera WorldUICamera => worldUICamera;
 
         protected override void Awake()
         {
             base.Awake();
 
-            SetupUICamera();
+            SetupUICamera(Framework.MainCamera);
             CreateEventSystemIfNotExist();
 
+            SceneTransition.transitionStarted += OnTransitionStarted;
             SceneTransition.sceneLoaded += OnSceneLoaded;
         }
 
@@ -47,39 +53,74 @@ namespace ClimbGames.UI
         {
             base.OnDestroy();
 
+            SceneTransition.transitionStarted -= OnTransitionStarted;
             SceneTransition.sceneLoaded -= OnSceneLoaded;
+        }
+
+        void LateUpdate()
+        {
+            var mainCamra = Framework.MainCamera;
+            if (mainCamra == null)
+                return;
+
+            // sync worldCamera;
+            worldUICamera.transform.SetPositionAndRotation(mainCamra.transform.position, mainCamra.transform.rotation);
+            worldUICamera.fieldOfView = mainCamra.fieldOfView;
+        }
+
+        void OnTransitionStarted()
+        {
+            Camera mainCamera = Framework.MainCamera;
+            if (mainCamera != null && mainCamera.gameObject.IsInDontDestroyOnLoad())
+                return;
+
+            // for transition layer
+            SetupUICamera();
         }
 
         void OnSceneLoaded(MonoScene monoScene)
         {
-            SetupUICamera();
+            SetupUICamera(Framework.MainCamera);
             CreateEventSystemIfNotExist();
         }
 
-        void SetupUICamera()
+        void SetupUICamera(Camera mainCamera = default)
         {
-            var mainCamera = Framework.MainCamera;
+            if (uiCamera.TryGetComponent<UniversalAdditionalCameraData>(out var data))
+                data.renderType = CameraRenderType.Overlay;
 
-            UniversalAdditionalCameraData data;
+            uiCamera.cullingMask = LayerMask.GetMask(UI_LAYER);
+            worldUICamera.cullingMask = LayerMask.GetMask(WORLD_UI_LAYER);
+
             if (mainCamera != null)
             {
-                if (uiCamera.TryGetComponent(out data))
+                if (worldUICamera.TryGetComponent(out data))
                     data.renderType = CameraRenderType.Overlay;
 
                 if (mainCamera.TryGetComponent(out data))
                 {
                     var cameraStack = data.cameraStack;
+                    if (cameraStack.Contains(worldUICamera) == false)
+                        cameraStack.Add(worldUICamera);
+
                     if (cameraStack.Contains(uiCamera) == false)
                         cameraStack.Add(uiCamera);
+
                 }
+
+                mainCamera.cullingMask &= ~LayerMask.GetMask(UI_LAYER, WORLD_UI_LAYER);
             }
             else
             {
-                if (uiCamera.TryGetComponent(out data))
+                if (worldUICamera.TryGetComponent(out data))
                 {
                     data.renderType = CameraRenderType.Base;
-                    uiCamera.clearFlags = CameraClearFlags.SolidColor;
-                    uiCamera.backgroundColor = Color.black;
+                    worldUICamera.clearFlags = CameraClearFlags.SolidColor;
+                    worldUICamera.backgroundColor = Color.black;
+
+                    var cameraStack = data.cameraStack;
+                    if (cameraStack.Contains(uiCamera) == false)
+                        cameraStack.Add(uiCamera);
                 }
             }
         }
@@ -89,34 +130,45 @@ namespace ClimbGames.UI
             EventSystem eventSystem = GameObject.FindFirstObjectByType<EventSystem>();
             if (eventSystem == null)
             {
-                GameObject go = new GameObject("EventSystem");
+                GameObject go = new GameObject("EventSystem (Created)");
                 go.AddComponent<EventSystem>();
                 go.AddComponent<InputSystemUIInputModule>();
-
-                Debug.Log("[ClimbGames] AutoCreate EventSytem");
             }
         }
 
-        async UniTask<T> Get<T>(string key, UILayer layer) where T : UIBase
+        public RectTransform GetLayer(UILayer layer)
         {
-            if (layers.TryGetValue(layer, out var parent) == false)
-                parent = transform as RectTransform;
+            return layers.TryGetValue(layer, out var parent) ? parent : transform as RectTransform;
+        }
 
-            T ui = await AssetManager.InstantiateAsync<T>(key, parent);
+        public T CreateUI<T>(string key, UILayer layer, IUIData data = default) where T : UIBase
+        {
+            T ui = AssetManager.Instantiate<T>(key, GetLayer(layer));
+            ui.Initialize(layer, data);
             uiList.Add(ui);
-
             return ui;
         }
 
-        public async UniTask<T> Show<T>(string key, IUIData data, UILayer layer) where T : UIBase
+        public async UniTask<T> ShowUI<T>(string key, UILayer layer, IUIData data = default) where T : UIBase
         {
-            T ui = await Get<T>(key, layer);
+            T ui = await AssetManager.InstantiateAsync<T>(key, GetLayer(layer));
             ui.Initialize(layer, data);
+            uiList.Add(ui);
             return ui;
+        }
+
+        public UniTask<T> OpenPopup<T>(string key) where T : UIBase
+        {
+
+
+            return default;
         }
 
         public void Hide(UIBase ui)
         {
+            if (ui == null)
+                return;
+
             if (ui.Layer == UILayer.Popup)
             {
                 // dimm 처리
@@ -131,6 +183,9 @@ namespace ClimbGames.UI
             for (int i = 0; i < uiList.Count;)
             {
                 UIBase ui = uiList[i];
+                if (ui == null)
+                    continue;
+
                 if (ui.GetType() == typeof(T))
                 {
                     Hide(ui);
@@ -140,6 +195,14 @@ namespace ClimbGames.UI
                     ++i;
                 }
             }
+        }
+
+        public static void HideSafely(UIBase ui)
+        {
+            if (IsValid == false)
+                return;
+
+            Instance.Hide(ui);
         }
     }
 }

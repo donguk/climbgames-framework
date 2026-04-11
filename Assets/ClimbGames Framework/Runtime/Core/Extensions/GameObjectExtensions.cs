@@ -7,6 +7,11 @@ namespace ClimbGames
 {
     public static class GameObjectExtensions
     {
+        public static bool IsInDontDestroyOnLoad(this GameObject go)
+        {
+            return go.scene.name == "DontDestroyOnLoad";
+        }
+
         public static T FindComponentInRootObjects<T>(this Scene scene, bool findInDeactiveObject = true)
             where T : Component
         {

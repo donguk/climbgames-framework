@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
-using ClimbGames.UI;
 using System;
 
 namespace ClimbGames
@@ -14,10 +13,11 @@ namespace ClimbGames
             LoadScene,
         }
 
-        private const string EmptySceneName = "EmptyScene";
+        private const string EMPTY_SCENE = "EmptyScene";
         private static ITransitionHandler transitionHandler;
         private static State transitionState;
 
+        public static event Action transitionStarted;
         public static event Action<MonoScene> sceneLoaded;
 
         public static MonoScene MonoScene { get; private set; }
@@ -52,6 +52,7 @@ namespace ClimbGames
                 if (handler != null)
                     await handler.BeginAsync(parameter);
 
+                transitionStarted?.Invoke();
                 DeactivateScene();
                 await LoadEmptySceneIfUsed();
 
@@ -79,7 +80,7 @@ namespace ClimbGames
         {
             if (FrameworkSettings.Instance.UseEmptyScene)
             {
-                await SceneManager.LoadSceneAsync(EmptySceneName, LoadSceneMode.Single);
+                await SceneManager.LoadSceneAsync(EMPTY_SCENE, LoadSceneMode.Single);
                 await UniTask.NextFrame();
             }
         }
@@ -93,6 +94,7 @@ namespace ClimbGames
             await asyncOperation;
             await UniTask.NextFrame();
 
+            Debug.Log($"[ClimbGames] SceneLoaded: <color=green>{key}</color>");
             var monoScene = SceneManager.GetActiveScene().FindComponentInRootObjects<MonoScene>();
             return monoScene;
         }

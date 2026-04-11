@@ -9,7 +9,7 @@ namespace ClimbGames
         private AsyncOperationHandle<GameObject> _handle;
         private bool _isInitialized = false;
 
-        public void Initialize(AsyncOperationHandle<GameObject> handle)
+        public void Initialize(AsyncOperationHandle<GameObject> handle = default)
         {
             _handle = handle;
             _isInitialized = true;

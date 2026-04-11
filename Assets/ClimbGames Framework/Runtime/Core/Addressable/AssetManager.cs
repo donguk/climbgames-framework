@@ -20,5 +20,14 @@ namespace ClimbGames
             go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
             return go.GetComponent<T>();
         }
+
+        public static T Instantiate<T>(string key, Transform parent = null)
+        {
+            var asyncOperation = Addressables.InstantiateAsync(key, parent);
+            GameObject go = asyncOperation.WaitForCompletion();
+
+            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            return go.GetComponent<T>();
+        }
     }
 }
