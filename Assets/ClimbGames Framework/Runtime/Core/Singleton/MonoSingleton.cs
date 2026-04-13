@@ -38,7 +38,7 @@ namespace ClimbGames
                             GameObject singletonObject = null;
 
                             var assetPath = typeof(T).GetCustomAttribute<AssetPathAttribute>();
-                            if (assetPath != null)
+                            if (assetPath != null && string.IsNullOrEmpty(assetPath.Value) == false)
                             {
                                 string path = assetPath.Value;
                                 int index = path.IndexOf("Resources/");

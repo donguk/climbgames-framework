@@ -1,13 +1,10 @@
 
 namespace ClimbGames
 {
-    public class Singletone
+    public abstract class Singleton<T> where T : class, new()
     {
-        public abstract class Singleton<T> where T : class, new()
-        {
-            private static readonly System.Lazy<T> _instance = new System.Lazy<T>(() => new T());
+        private static readonly System.Lazy<T> _instance = new System.Lazy<T>(() => new T());
 
-            public static T Instance => _instance.Value;
-        }
+        public static T Instance => _instance.Value;
     }
 }
