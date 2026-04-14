@@ -1,8 +1,9 @@
 using UnityEngine;
 using R3;
-using System;
 using System.Reflection;
-using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace ClimbGames
 {
@@ -40,17 +41,25 @@ namespace ClimbGames
                             var assetPath = typeof(T).GetCustomAttribute<AssetPathAttribute>();
                             if (assetPath != null && string.IsNullOrEmpty(assetPath.Value) == false)
                             {
-                                string path = assetPath.Value;
-                                int index = path.IndexOf("Resources/");
+                                int index = assetPath.Value.IndexOf("Resources/");
                                 if (index > -1)
-                                    path = path.Substring(index + "Resources/".Length);
+                                {
+                                    string path = assetPath.Value.Substring(index + "Resources/".Length);
+                                    index = path.LastIndexOf(".");
+                                    if (index > -1)
+                                        path = path.Substring(0, index);
 
-                                index = path.LastIndexOf(".");
-                                if (index > -1)
-                                    path = path.Substring(0, index);
-
-                                GameObject prefab = Resources.Load<GameObject>(path);
-                                singletonObject = Instantiate(prefab);
+                                    GameObject prefab = Resources.Load<GameObject>(path);
+                                    singletonObject = Instantiate(prefab);
+                                }
+                                else
+                                {
+                                    singletonObject = AssetManager.Instantiate(assetPath.Value);
+#if UNITY_EDITOR
+                                    if (singletonObject == null)
+                                        singletonObject = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath.Value);
+#endif
+                                }
                             }
 
                             if (singletonObject == null)

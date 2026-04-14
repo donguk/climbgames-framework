@@ -21,6 +21,16 @@ namespace ClimbGames
             return go.GetComponent<T>();
         }
 
+        public static async UniTask<GameObject> InstantiateAsync(string key, Transform parent = null)
+        {
+            var asyncOperation = Addressables.InstantiateAsync(key, parent);
+            await asyncOperation;
+
+            GameObject go = asyncOperation.Result;
+            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            return go;
+        }
+
         public static T Instantiate<T>(string key, Transform parent = null)
         {
             var asyncOperation = Addressables.InstantiateAsync(key, parent);
@@ -28,6 +38,15 @@ namespace ClimbGames
 
             go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
             return go.GetComponent<T>();
+        }
+
+        public static GameObject Instantiate(string key, Transform parent = null)
+        {
+            var asyncOperation = Addressables.InstantiateAsync(key, parent);
+            GameObject go = asyncOperation.WaitForCompletion();
+
+            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            return go;
         }
     }
 }
