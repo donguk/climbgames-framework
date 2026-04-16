@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 namespace ClimbGames.Tset
 {
-    public class InitStep : TaskSequencer.StapBase
+    public class InitStep : TaskSequencer.StepBase
     {
         public override async UniTask<bool> Run(CancellationToken cancellationToken = default)
         {
@@ -19,7 +19,7 @@ namespace ClimbGames.Tset
         }
     }
 
-    public class VersionStep : TaskSequencer.StapBase
+    public class VersionStep : TaskSequencer.StepBase
     {
         public override async UniTask<bool> Run(CancellationToken cancellationToken = default)
         {
@@ -30,7 +30,7 @@ namespace ClimbGames.Tset
         }
     }
 
-    public class PatchStep : TaskSequencer.StapBase
+    public class PatchStep : TaskSequencer.StepBase
     {
         public override float Weight => 60f;
 

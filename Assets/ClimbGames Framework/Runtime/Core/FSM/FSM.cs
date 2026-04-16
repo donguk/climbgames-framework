@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using R3;
+
+namespace ClimbGames
+{
+    public partial class FSM<T> : IDisposable
+    {
+        private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
+        private StateBase currentState = null, beforeState = null;
+        private IDisposable stateUpdater;
+        private bool isDisposed = false;
+        private bool isChanging = false;
+        private bool showDebug = false;
+
+        public string Name { get; private set; }
+        public StateBase CurrentState => currentState;
+        public StateBase BeforeState => beforeState;
+
+        public FSM(string name = default, bool showDebug = false)
+        {
+            Name = string.IsNullOrEmpty(name) ? $"FSM<{typeof(T).Name}>" : name;
+            this.showDebug = showDebug;
+        }
+
+        public void Initialize(params (T, StateBase)[] states)
+        {
+            Clear();
+
+            foreach (var (type, state) in states)
+                AddState(type, state);
+        }
+
+        public FSM<T> AddState(T type, StateBase state)
+        {
+            if (isDisposed)
+                return this;
+
+            if (states.ContainsKey(type) == false)
+                states[type] = state;
+
+            return this;
+        }
+
+        public void Start(T type, CancellationToken cancellationToken = default)
+        {
+            ChangeState(type);
+            Resume(cancellationToken);
+        }
+
+        public void Resume(CancellationToken cancellationToken = default)
+        {
+            if (stateUpdater == null)
+                stateUpdater = Observable.EveryUpdate(cancellationToken).Subscribe(_ => currentState?.Update());
+        }
+
+        public void Pause()
+        {
+            stateUpdater?.Dispose();
+            stateUpdater = null;
+        }
+
+        public void ChangeState(T type)
+        {
+            if (isDisposed)
+                return;
+
+            if (isChanging)
+            {
+                Debug.LogWarning($"[{Name}] State{type.ToString()} change ignored: Currently transitioning to {currentState.Name}");
+                return;
+            }
+
+            if (states.TryGetValue(type, out var state))
+            {
+                if (currentState == state)
+                    return;
+
+                isChanging = true;
+                try
+                {
+                    StateBase previous = currentState;
+                    currentState = state;
+
+                    if (showDebug)
+                        Debug.Log($"[{Name}] ChangeState: {previous?.Name ?? "None"} > {currentState.Name}");
+
+                    previous?.Exit();
+                    beforeState = previous;
+                    currentState.Enter();
+                }
+                finally
+                {
+                    isChanging = false;
+                }
+            }
+        }
+
+        void Clear()
+        {
+            Pause();
+
+            currentState?.Exit();
+            currentState = null;
+            beforeState = null;
+            states.Clear();
+        }
+
+        public void Dispose()
+        {
+            if (isDisposed)
+                return;
+
+            Clear();
+            states = null;
+            isDisposed = true;
+        }
+    }
+}

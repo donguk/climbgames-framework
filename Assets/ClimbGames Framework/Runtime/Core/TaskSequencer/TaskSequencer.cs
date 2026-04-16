@@ -10,7 +10,7 @@ namespace ClimbGames
     {
         public static TaskSequencer Default = new TaskSequencer();
 
-        private List<StapBase> steps = new List<StapBase>();
+        private List<StepBase> steps = new List<StepBase>();
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         public int CurrentIndex { get; private set; }
@@ -29,7 +29,7 @@ namespace ClimbGames
 
                 for (int i = 0; i < steps.Count; ++i)
                 {
-                    StapBase step = steps[i];
+                    StepBase step = steps[i];
                     totalWeight += step.Weight;
 
                     float progress = i < CurrentIndex ? 1f : step.Progress;
@@ -40,15 +40,20 @@ namespace ClimbGames
             }
         }
 
-        public TaskSequencer AddStep(StapBase step)
+        public TaskSequencer AddStep(StepBase step)
         {
             steps.Add(step);
             return this;
         }
 
-        public void Remove(string name)
+        public void RemoveSteps(string name)
         {
             steps.RemoveAll(step => step.Name == name);
+        }
+
+        public void RemoveStep(StepBase step)
+        {
+            steps.Remove(step);
         }
 
         async UniTask<bool> RunAsync(int index, Action<bool> onComplete = default)
@@ -64,7 +69,7 @@ namespace ClimbGames
 
                 for (; CurrentIndex < steps.Count; CurrentIndex = NextIndex)
                 {
-                    StapBase step = steps[CurrentIndex];
+                    StepBase step = steps[CurrentIndex];
                     Debug.Log($"[TaskSequencer] <color=green>Run</color> {step.Name}");
 
                     NextIndex = CurrentIndex + 1;
@@ -136,7 +141,7 @@ namespace ClimbGames
             return false;
         }
 
-        public void Clear()
+        public void Dispose()
         {
             cancellationTokenSource?.Cancel();
             cancellationTokenSource?.Dispose();
@@ -144,11 +149,7 @@ namespace ClimbGames
 
             IsRunning = false;
             steps.Clear();
-        }
-
-        void IDisposable.Dispose()
-        {
-            Clear();
+            steps = null;
         }
     }
 }

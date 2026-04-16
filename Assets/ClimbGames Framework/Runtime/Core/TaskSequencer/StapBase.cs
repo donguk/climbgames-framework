@@ -5,7 +5,7 @@ namespace ClimbGames
 {
     public partial class TaskSequencer
     {
-        public abstract class StapBase
+        public abstract class StepBase
         {
             public string Name => GetType().Name;
             public float Progress { get; protected set; }

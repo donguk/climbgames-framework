@@ -17,7 +17,7 @@ namespace ClimbGames
             await asyncOperation;
 
             GameObject go = asyncOperation.Result;
-            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            go.AddComponent<AssetInstanceHandler>().Initialize(asyncOperation);
             return go.GetComponent<T>();
         }
 
@@ -27,7 +27,7 @@ namespace ClimbGames
             await asyncOperation;
 
             GameObject go = asyncOperation.Result;
-            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            go.AddComponent<AssetInstanceHandler>().Initialize(asyncOperation);
             return go;
         }
 
@@ -36,7 +36,7 @@ namespace ClimbGames
             var asyncOperation = Addressables.InstantiateAsync(key, parent);
             GameObject go = asyncOperation.WaitForCompletion();
 
-            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            go.AddComponent<AssetInstanceHandler>().Initialize(asyncOperation);
             return go.GetComponent<T>();
         }
 
@@ -45,7 +45,7 @@ namespace ClimbGames
             var asyncOperation = Addressables.InstantiateAsync(key, parent);
             GameObject go = asyncOperation.WaitForCompletion();
 
-            go.AddComponent<AssetInstanceHandle>().Initialize(asyncOperation);
+            go.AddComponent<AssetInstanceHandler>().Initialize(asyncOperation);
             return go;
         }
     }
