@@ -7,6 +7,12 @@ namespace ClimbGames
 {
     public partial class FSM<T> : IDisposable
     {
+        public interface IStateParam
+        {
+
+        }
+
+
         private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
         private StateBase currentState = null, beforeState = null;
         private IDisposable stateUpdater;
@@ -61,7 +67,7 @@ namespace ClimbGames
             stateUpdater = null;
         }
 
-        public void ChangeState(T type)
+        public void ChangeState(T type, IStateParam param = default)
         {
             if (isDisposed)
                 return;
@@ -88,7 +94,7 @@ namespace ClimbGames
 
                     previous?.Exit();
                     beforeState = previous;
-                    currentState.Enter();
+                    currentState.Enter(param);
                 }
                 finally
                 {
