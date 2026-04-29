@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using R3;
+using UnityEngine.Experimental.AI;
 
 namespace ClimbGames
 {
@@ -15,7 +16,7 @@ namespace ClimbGames
 
         private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
         private StateBase currentState = null, beforeState = null;
-        private IDisposable stateUpdater;
+        private CompositeDisposable disposables;
         private bool isDisposed = false;
         private bool isChanging = false;
         private bool showDebug = false;
@@ -57,14 +58,18 @@ namespace ClimbGames
 
         public void Resume(CancellationToken cancellationToken = default)
         {
-            if (stateUpdater == null)
-                stateUpdater = Observable.EveryUpdate(cancellationToken).Subscribe(_ => currentState?.Update());
+            if (disposables == null || disposables.IsDisposed)
+                disposables = new CompositeDisposable();
+
+            Observable.EveryUpdate(UnityFrameProvider.Update, cancellationToken).Subscribe(_ => currentState?.Update()).AddTo(disposables);
+            Observable.EveryUpdate(UnityFrameProvider.FixedUpdate, cancellationToken).Subscribe(_ => currentState?.FixedUpdate()).AddTo(disposables);
         }
 
         public void Pause()
         {
-            stateUpdater?.Dispose();
-            stateUpdater = null;
+            disposables?.Clear();
+            disposables?.Dispose();
+            disposables = null;
         }
 
         public void ChangeState(T type, IStateParam param = default)

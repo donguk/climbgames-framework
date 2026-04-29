@@ -22,10 +22,12 @@
                 OnEnter();
             }
             internal void Update() => OnUpdate();
+            internal void FixedUpdate() => OnFixedUpdate();
             internal void Exit() => OnExit();
 
             protected virtual void OnEnter() { }
             protected virtual void OnUpdate() { }
+            protected virtual void OnFixedUpdate() { }
             protected virtual void OnExit() { }
         }
 
