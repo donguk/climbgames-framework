@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using R3;
-using UnityEngine.Experimental.AI;
 
 namespace ClimbGames
 {
@@ -10,12 +9,11 @@ namespace ClimbGames
     {
         public interface IStateParam
         {
-
         }
-
 
         private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
         private StateBase currentState = null, beforeState = null;
+        private T currentType, beforeType;
         private CompositeDisposable disposables;
         private bool isDisposed = false;
         private bool isChanging = false;
@@ -24,6 +22,8 @@ namespace ClimbGames
         public string Name { get; private set; }
         public StateBase CurrentState => currentState;
         public StateBase BeforeState => beforeState;
+        public T CurrentType => currentType;
+        public T BeforeType => beforeType;
 
         public FSM(string name = default, bool showDebug = false)
         {
@@ -91,14 +91,18 @@ namespace ClimbGames
                 isChanging = true;
                 try
                 {
-                    StateBase previous = currentState;
+                    StateBase stateBase = currentState;
+                    T stateType = currentType;
+
                     currentState = state;
+                    currentType = type;
 
                     if (showDebug)
-                        Debug.Log($"[{Name}] ChangeState: {previous?.Name ?? "None"} > {currentState.Name}");
+                        Debug.Log($"[{Name}] ChangeState: {stateBase?.Name ?? "None"} > {currentState.Name}");
 
-                    previous?.Exit();
-                    beforeState = previous;
+                    stateBase?.Exit();
+                    beforeState = stateBase;
+                    beforeType = stateType;
                     currentState.Enter(param);
                 }
                 finally
