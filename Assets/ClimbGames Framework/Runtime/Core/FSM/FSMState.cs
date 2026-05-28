@@ -1,17 +1,20 @@
-﻿namespace ClimbGames
+﻿using System;
+using System.Collections.Generic;
+
+namespace ClimbGames
 {
-    public partial class FSM<T>
+    public abstract partial class FSM
     {
         public abstract class StateBase
         {
-            private FSM<T> _fsm;
+            protected FSM _fsm;
             internal IStateParam _param;
+            protected List<IDisposable> disposables;
 
-            protected FSM<T> fsm => _fsm;
-            protected IStateParam param => _param;
             public virtual string Name => GetType().Name;
+            protected IStateParam param => _param;
 
-            public StateBase(FSM<T> fsm)
+            public StateBase(FSM fsm)
             {
                 _fsm = fsm;
             }
@@ -19,16 +22,56 @@
             internal void Enter(IStateParam param)
             {
                 _param = param;
+
+                Dispose();
                 OnEnter();
             }
-            internal void Update() => OnUpdate();
-            internal void FixedUpdate() => OnFixedUpdate();
-            internal void Exit() => OnExit();
+
+            internal void Exit()
+            {
+                OnExit();
+                Dispose();
+            }
 
             protected virtual void OnEnter() { }
+            protected virtual void OnExit() { }
+
+            internal void Update() => OnUpdate();
+            internal void FixedUpdate() => OnFixedUpdate();
             protected virtual void OnUpdate() { }
             protected virtual void OnFixedUpdate() { }
-            protected virtual void OnExit() { }
+
+            internal void RegisterTo(IDisposable disposable)
+            {
+                if (disposables == null)
+                    disposables = new List<IDisposable>();
+
+                disposables.Add(disposable);
+            }
+
+            void Dispose()
+            {
+                if (disposables == null)
+                    return;
+
+                for (int i = disposables.Count - 1; i >= 0; i--)
+                    disposables[i]?.Dispose();
+
+                disposables.Clear();
+            }
+        }
+    }
+
+    public partial class FSM<T>
+    {
+        public abstract new class StateBase : FSM.StateBase
+        {
+            protected FSM<T> fsm => _fsm as FSM<T>;
+
+            public StateBase(FSM<T> fsm) : base(fsm)
+            {
+                _fsm = fsm;
+            }
         }
 
         public abstract class StateBase<TParam> : StateBase where TParam : IStateParam
@@ -53,6 +96,21 @@
             {
 
             }
+        }
+    }
+
+    public static class FSMExtensions
+    {
+        public static IDisposable AddTo(this IDisposable disposable, FSM.StateBase stateBase)
+        {
+            if (stateBase == null)
+            {
+                disposable.Dispose();
+                return disposable;
+            }
+
+            stateBase.RegisterTo(disposable);
+            return disposable;
         }
     }
 }

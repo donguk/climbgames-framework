@@ -14,6 +14,11 @@ namespace ClimbGames
         public IdleState(FSM<PlayerState> fsm) : base(fsm)
         {
         }
+
+        protected override void OnEnter()
+        {
+
+        }
     }
 
     public class MoveState : FSM<PlayerState>.StateBase

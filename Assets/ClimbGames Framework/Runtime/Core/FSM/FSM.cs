@@ -1,29 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using R3;
 
 namespace ClimbGames
 {
-    public partial class FSM<T> : IDisposable
+    public abstract partial class FSM : IDisposable
     {
         public interface IStateParam
         {
         }
 
+        protected bool isDisposed = false;
+
+        public string Name { get; protected set; }
+        public StateBase CurrentState { get; protected set; }
+        public StateBase BeforeState { get; protected set; }
+
+        public void Resume()
+        {
+            FSMUpdater.Instance.Add(this);
+        }
+
+        public void Pause()
+        {
+            FSMUpdater.Instance.Remove(this);
+        }
+
+        protected virtual void Clear()
+        {
+            Pause();
+
+            CurrentState?.Exit();
+            CurrentState = null;
+            BeforeState = null;
+        }
+
+        public virtual void Dispose()
+        {
+            if (isDisposed)
+                return;
+
+            Clear();
+            isDisposed = true;
+        }
+    }
+
+    public partial class FSM<T> : FSM
+    {
         private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
-        private StateBase currentState = null, beforeState = null;
-        private T currentType, beforeType;
-        private CompositeDisposable disposables;
-        private bool isDisposed = false;
         private bool isChanging = false;
         private bool showDebug = false;
 
-        public string Name { get; private set; }
-        public StateBase CurrentState => currentState;
-        public StateBase BeforeState => beforeState;
-        public T CurrentType => currentType;
-        public T BeforeType => beforeType;
+        public new StateBase CurrentState => base.CurrentState as StateBase;
+        public new StateBase BeforeState => base.BeforeState as StateBase;
+        public T CurrentType { get; private set; }
+        public T BeforeType { get; private set; }
 
         public FSM(string name = default, bool showDebug = false)
         {
@@ -50,26 +81,10 @@ namespace ClimbGames
             return this;
         }
 
-        public void Start(T type, CancellationToken cancellationToken = default)
+        public void Start(T type)
         {
             ChangeState(type);
-            Resume(cancellationToken);
-        }
-
-        public void Resume(CancellationToken cancellationToken = default)
-        {
-            if (disposables == null || disposables.IsDisposed)
-                disposables = new CompositeDisposable();
-
-            Observable.EveryUpdate(UnityFrameProvider.Update, cancellationToken).Subscribe(_ => currentState?.Update()).AddTo(disposables);
-            Observable.EveryUpdate(UnityFrameProvider.FixedUpdate, cancellationToken).Subscribe(_ => currentState?.FixedUpdate()).AddTo(disposables);
-        }
-
-        public void Pause()
-        {
-            disposables?.Clear();
-            disposables?.Dispose();
-            disposables = null;
+            Resume();
         }
 
         public void ChangeState(T type, IStateParam param = default)
@@ -79,31 +94,31 @@ namespace ClimbGames
 
             if (isChanging)
             {
-                Debug.LogWarning($"[{Name}] State{type.ToString()} change ignored: Currently transitioning to {currentState.Name}");
+                Debug.LogWarning($"[{Name}] State{type.ToString()} change ignored: Currently transitioning to {CurrentState.Name}");
                 return;
             }
 
             if (states.TryGetValue(type, out var state))
             {
-                if (currentState == state)
+                if (base.CurrentState == state)
                     return;
 
                 isChanging = true;
                 try
                 {
-                    StateBase stateBase = currentState;
-                    T stateType = currentType;
+                    StateBase stateBase = CurrentState;
+                    T stateType = CurrentType;
 
-                    currentState = state;
-                    currentType = type;
+                    base.CurrentState = state;
+                    CurrentType = type;
 
                     if (showDebug)
-                        Debug.Log($"[{Name}] ChangeState: {stateBase?.Name ?? "None"} > {currentState.Name}");
+                        Debug.Log($"[{Name}] ChangeState: {stateBase?.Name ?? "None"} > {CurrentState.Name}");
 
                     stateBase?.Exit();
-                    beforeState = stateBase;
-                    beforeType = stateType;
-                    currentState.Enter(param);
+                    base.BeforeState = stateBase;
+                    BeforeType = stateType;
+                    CurrentState.Enter(param);
                 }
                 finally
                 {
@@ -112,24 +127,16 @@ namespace ClimbGames
             }
         }
 
-        void Clear()
+        protected override void Clear()
         {
-            Pause();
-
-            currentState?.Exit();
-            currentState = null;
-            beforeState = null;
+            base.Clear();
             states.Clear();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            if (isDisposed)
-                return;
-
-            Clear();
+            base.Dispose();
             states = null;
-            isDisposed = true;
         }
     }
 }

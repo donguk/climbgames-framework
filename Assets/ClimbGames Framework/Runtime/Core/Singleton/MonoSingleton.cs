@@ -1,5 +1,4 @@
 using UnityEngine;
-using R3;
 using System.Reflection;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,8 +11,6 @@ namespace ClimbGames
         private static T _instance;
         private static readonly object _lock = new object();
         private static bool _applicationIsQuitting = false;
-
-        protected CompositeDisposable disposables = new();
 
         public static bool IsValid
         {
@@ -93,8 +90,6 @@ namespace ClimbGames
 
         protected virtual void OnDestroy()
         {
-            disposables.Dispose();
-
             // 인스턴스가 파괴될 때 참조를 해제 (앱 종료가 아닐 때를 대비)
             if (_instance == this)
                 _instance = null;
