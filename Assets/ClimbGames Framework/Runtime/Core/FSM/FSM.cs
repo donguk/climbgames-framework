@@ -18,12 +18,14 @@ namespace ClimbGames
 
         public void Resume()
         {
-            FSMUpdater.Instance.Add(this);
+            if (FSMUpdater.IsValid)
+                FSMUpdater.Instance.Add(this);
         }
 
         public void Pause()
         {
-            FSMUpdater.Instance.Remove(this);
+            if (FSMUpdater.IsValid)
+                FSMUpdater.Instance.Remove(this);
         }
 
         protected virtual void Clear()
