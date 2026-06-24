@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace ClimbGames
 {
@@ -52,6 +51,8 @@ namespace ClimbGames
         private Dictionary<T, StateBase> states = new Dictionary<T, StateBase>(EqualityComparer<T>.Default);
         private bool isChanging = false;
         private bool showDebug = false;
+
+        public event Action<T> onChange;
 
         public new StateBase CurrentState => base.CurrentState as StateBase;
         public new StateBase BeforeState => base.BeforeState as StateBase;
@@ -121,6 +122,8 @@ namespace ClimbGames
                     base.BeforeState = stateBase;
                     BeforeType = stateType;
                     CurrentState.Enter(param);
+
+                    onChange?.Invoke(CurrentType);
                 }
                 finally
                 {

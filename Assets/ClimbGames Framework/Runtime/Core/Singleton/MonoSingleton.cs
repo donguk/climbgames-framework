@@ -16,7 +16,7 @@ namespace ClimbGames
         {
             get
             {
-                return _applicationIsQuitting == false && _instance != null;
+                return _applicationIsQuitting == false /*&& _instance != null*/;
             }
         }
 
