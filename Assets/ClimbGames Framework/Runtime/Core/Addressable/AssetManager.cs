@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -9,6 +10,27 @@ namespace ClimbGames
         public static void Initialize()
         {
 
+        }
+
+        public static void Release<T>(T asset)
+        {
+            Addressables.Release(asset);
+        }
+
+        public static T LoadAsset<T>(string key)
+        {
+            var asyncOperation = Addressables.LoadAssetAsync<T>(key);
+            T asset = asyncOperation.WaitForCompletion();
+
+            return asset;
+        }
+
+        public static async UniTask<T> LoadAssetAsync<T>(string key)
+        {
+            var asyncOperation = Addressables.LoadAssetAsync<T>(key);
+            await asyncOperation;
+
+            return asyncOperation.Result;
         }
 
         public static async UniTask<T> InstantiateAsync<T>(string key, Transform parent = null)

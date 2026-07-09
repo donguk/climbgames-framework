@@ -15,13 +15,13 @@ namespace ClimbGames
         public StateBase CurrentState { get; protected set; }
         public StateBase BeforeState { get; protected set; }
 
-        public void Resume()
+        public virtual void Resume()
         {
             if (FSMUpdater.IsValid)
                 FSMUpdater.Instance.Add(this);
         }
 
-        public void Pause()
+        public virtual void Pause()
         {
             if (FSMUpdater.IsValid)
                 FSMUpdater.Instance.Remove(this);
@@ -129,6 +129,10 @@ namespace ClimbGames
                 {
                     isChanging = false;
                 }
+            }
+            else
+            {
+                Debug.LogWarning($"[{Name}] State{type.ToString()} is not exist.");
             }
         }
 
