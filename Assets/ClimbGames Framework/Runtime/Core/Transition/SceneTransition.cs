@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using System;
+using UnityEngine.AddressableAssets;
 
 namespace ClimbGames
 {

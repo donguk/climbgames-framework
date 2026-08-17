@@ -23,6 +23,7 @@ namespace ClimbGames.UI
 
     }
 
+    [DefaultExecutionOrder(9999)]
     [SingletonConfig("Resources/UIManager")]
     public partial class UIManager : MonoSingleton<UIManager>
     {
@@ -71,8 +72,18 @@ namespace ClimbGames.UI
         void OnTransitionStarted()
         {
             Camera mainCamera = Framework.MainCamera;
-            if (mainCamera != null && mainCamera.gameObject.IsInDontDestroyOnLoad())
-                return;
+            if (mainCamera != null)
+            {
+                if (mainCamera.gameObject.IsInDontDestroyOnLoad())
+                    return;
+
+                // remove statcking cameras
+                if (mainCamera.TryGetComponent<UniversalAdditionalCameraData>(out var data))
+                {
+                    var cameraStack = data.cameraStack;
+                    cameraStack.Clear();
+                }
+            }
 
             // for transition layer
             SetupUICamera();
