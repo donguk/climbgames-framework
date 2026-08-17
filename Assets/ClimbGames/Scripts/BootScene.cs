@@ -59,7 +59,7 @@ namespace ClimbGames.Tset
                                 .AddStep(new PatchStep())
                                 .Start();
 
-            InputBlocker.Block();
+            using var blocker = InputBlocker.Block();
         }
 
         void Update()
