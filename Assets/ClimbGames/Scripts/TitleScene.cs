@@ -7,6 +7,8 @@ namespace ClimbGames
     {
         public override async UniTask InitializeAsync()
         {
+            await AssetManager.Initialize();
+
             await UIManager.Instance.ShowUI<UIPanelTitle>("UIPanelTitle", UILayer.View);
         }
     }

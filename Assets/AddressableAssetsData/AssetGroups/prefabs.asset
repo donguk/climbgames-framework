@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: prefabs
   m_GUID: ea23f894f5eff2b44977380d5aeacf49
   m_SerializeEntries:
-  - m_GUID: 84f2e560bdb8c6f40a19667c9bbb4184
-    m_Address: UIPanelTitle
+  - m_GUID: 9037e830d37497941ac9bee22bd6a769
+    m_Address: UIPatchView
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

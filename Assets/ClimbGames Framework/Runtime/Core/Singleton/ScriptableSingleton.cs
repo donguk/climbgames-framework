@@ -1,7 +1,9 @@
 using System.IO;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace ClimbGames
 {
@@ -43,6 +45,7 @@ namespace ClimbGames
             }
         }
 
+#if UNITY_EDITOR
         private static T CreateAsset(string assetPath)
         {
             if (assetPath.StartsWith("Assets/"))
@@ -63,5 +66,6 @@ namespace ClimbGames
 
             return default;
         }
+#endif
     }
 }

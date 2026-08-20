@@ -2,7 +2,8 @@
     "name": "ClimbGames.Framework.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:b75fb1e361c621440b32195c5c13c3c6"
+        "GUID:b75fb1e361c621440b32195c5c13c3c6",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
     ],
     "includePlatforms": [
         "Editor"
