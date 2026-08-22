@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -7,87 +8,90 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace ClimbGames
 {
-    public struct AssetPatchInfo
-    {
-        public List<string> locators;
-        public float size;
-
-        public override string ToString()
-        {
-            string text = string.Empty;
-            if (locators != null)
-            {
-                for (int i = 0; i < locators.Count; ++i)
-                {
-                    if (i > 0)
-                        text += ", \n";
-                    text += locators[i];
-                }
-            }
-
-            return $"locators({text})/ size({size} MB)";
-        }
-    }
-
     public static class AssetManager
     {
+        public static string UpdateCatalogPath { get; private set; }
+
         public static async UniTask Initialize()
         {
-            Addressables.InternalIdTransformFunc += TransformInternalId;
+            // settings.json 로드 및 cache catalog 확인
             await Addressables.InitializeAsync();
         }
 
         private static string TransformInternalId(IResourceLocation location)
         {
-            Debug.Log($"[TransformInternalId] location.InternalId({location.InternalId})");
-            return location.InternalId;
+            string internalId = location.InternalId;
+            if (internalId.StartsWith("http://") || internalId.StartsWith("https://"))
+            {
+                if (internalId.EndsWith(".hash")) // hash 파일 url 로 부터 bin, json 파일 url 생성
+                {
+                    string catalogPath = UpdateCatalogPath;
+                    if (catalogPath.EndsWith(".json") || catalogPath.EndsWith(".bin"))
+                    {
+                        var uri = new System.Uri(catalogPath);
+                        string newAbsolutePath = Path.ChangeExtension(uri.AbsolutePath, ".hash");
+
+                        var uriBuilder = new System.UriBuilder(uri)
+                        {
+                            Path = newAbsolutePath
+                        };
+                        catalogPath = uriBuilder.Uri.AbsoluteUri;
+                    }
+
+                    Debug.Log($"[AssetManager] TransformInternalId: {catalogPath}");
+                    return catalogPath;
+                }
+            }
+            return internalId;
         }
 
-        public static async UniTask<AssetPatchInfo> CheckForCatalogUpdates(string catalogKey)
+        public static async UniTask<CatalogUpdateInfo> CheckForCatalogUpdates(string catalogPath)
         {
-            AssetPatchInfo patchInfo = new AssetPatchInfo();
+            UpdateCatalogPath = catalogPath;
 
-            var checkHandle = Addressables.CheckForCatalogUpdates(false);
-            await checkHandle;
+            Addressables.InternalIdTransformFunc += TransformInternalId;
+            CatalogUpdateInfo updateInfo = new CatalogUpdateInfo();
 
-            if (checkHandle.Status == AsyncOperationStatus.Succeeded)
+            var asyncHandle = Addressables.CheckForCatalogUpdates(false);
+            await asyncHandle;
+
+            if (asyncHandle.Status == AsyncOperationStatus.Succeeded)
             {
-                var locators = checkHandle.Result;
+                var locators = asyncHandle.Result;
                 if (locators != null && locators.Count > 0)
                 {
                     // 카탈로그 업데이트
                     await Addressables.UpdateCatalogs(locators);
 
-
-
-
-                    // 3. 현재 등록된 모든 카탈로그(ResourceLocator)에서 전체 에셋 Key 추출
-                    HashSet<object> allKeys = new HashSet<object>();
-
-                    foreach (var locator in Addressables.ResourceLocators)
-                    {
-                        foreach (var key in locator.Keys)
-                        {
-                            // 내부적으로 자동 생성된 GUID나 부가 정보 형식이 아닌 기본 Key들만 수집
-                            allKeys.Add(key);
-                        }
-                    }
-
-
-                    var sizeHandle = Addressables.GetDownloadSizeAsync(allKeys);
-                    await sizeHandle;
-
-                    long sizeBytes = sizeHandle.Result;
+                    long sizeBytes = await GetDownloadSizeAsync();
                     float sizeMB = sizeBytes / (1024f * 1024f);
 
-                    patchInfo.size = sizeMB;
-                    Addressables.Release(sizeHandle);
+                    updateInfo.downloadSize = sizeMB;
                 }
-                patchInfo.locators = locators;
+                updateInfo.locators = locators;
             }
 
-            Addressables.Release(checkHandle);
-            return patchInfo;
+            Addressables.Release(asyncHandle);
+            Addressables.InternalIdTransformFunc -= TransformInternalId;
+            return updateInfo;
+        }
+
+        public static async UniTask<long> GetDownloadSizeAsync()
+        {
+            HashSet<object> keys = new HashSet<object>();
+            foreach (var locator in Addressables.ResourceLocators)
+            {
+                foreach (var key in locator.Keys)
+                    keys.Add(key);
+            }
+
+            var asyncHandle = Addressables.GetDownloadSizeAsync(keys);
+            await asyncHandle;
+
+            long downloadBytes = asyncHandle.Result;
+            Addressables.Release(asyncHandle);
+
+            return downloadBytes;
         }
 
         public static void Release<T>(T asset)
