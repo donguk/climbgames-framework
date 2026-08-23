@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ namespace ClimbGames.Editor
         private List<string> _envFilePaths = new List<string>();
         private List<string> _envDropdownOptions = new List<string>();
         private int _selectedEnvIndex = 0;
+
+        private bool _uploadToHfs = true;
 
         [MenuItem("Tools/ClimbGames/Build Window")]
         public static void ShowWindow()
@@ -93,8 +96,9 @@ namespace ClimbGames.Editor
             refreshIcon.tooltip = "Refresh Bin List"; // 툴팁 표시
             if (GUILayout.Button(refreshIcon, GUILayout.Width(26), GUILayout.Height(19)))
                 RefreshBinFileList();
-
             EditorGUILayout.EndHorizontal();
+
+            _uploadToHfs = EditorGUILayout.Toggle("Upload To HFS", _uploadToHfs);
             EditorGUILayout.Space(5);
 
             bool isEmptyBin = _binDropdownOptions.Count == 0 || _binDropdownOptions[_selectedBinIndex] == "empty";
@@ -106,8 +110,8 @@ namespace ClimbGames.Editor
             EditorGUI.BeginDisabledGroup(isEmptyBin);
             if (GUILayout.Button("Update Content", GUILayout.Height(35)))
                 ExecuteUpdateContent();
-            EditorGUI.EndDisabledGroup();
 
+            EditorGUI.EndDisabledGroup();
         }
 
         void DrawEditorEnvironment()
@@ -132,6 +136,7 @@ namespace ClimbGames.Editor
             EditorGUI.BeginDisabledGroup(isEmptyEnv);
             if (GUILayout.Button("Apply Editor Environment", GUILayout.Height(35)))
                 ApplyEditorEnvironment();
+
             EditorGUI.EndDisabledGroup();
         }
 
@@ -234,6 +239,9 @@ namespace ClimbGames.Editor
             BuildSettings.ApplySettings();
             AssetBuilder.BuildPlayerContent();
 
+            if (_uploadToHfs)
+                UploadToHfs().Forget();
+
             RefreshBinFileList();
             RefreshEnvFileList();
         }
@@ -258,6 +266,9 @@ namespace ClimbGames.Editor
 
             BuildSettings.ApplySettings();
             AssetBuilder.BuildContentUpdate(selectedBinPath);
+
+            if (_uploadToHfs)
+                UploadToHfs().Forget();
 
             RefreshEnvFileList();
         }
@@ -294,6 +305,18 @@ namespace ClimbGames.Editor
                 Debug.LogError($"[AssetBuildWindow] Failed to extract zip: {e.Message}");
                 EditorUtility.DisplayDialog("Error", $"Failed to extract zip file.\n{e.Message}", "OK");
             }
+        }
+
+        async UniTask UploadToHfs()
+        {
+            var progress = Cysharp.Threading.Tasks.Progress.Create<FileUploadInfo>(info =>
+            {
+                string text = $"Uploading({info.currentIndex + 1}/{info.totalCount}) {info.fileName}... ({info.progress * 100:F0}%)";
+                EditorUtility.DisplayProgressBar("HFS Upload", text, info.progress);
+            });
+
+            await AssetBuilder.UploadToHfs(progress);
+            EditorUtility.ClearProgressBar();
         }
     }
 }
