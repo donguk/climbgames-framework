@@ -11,9 +11,8 @@ using UnityEngine.Networking;
 
 namespace ClimbGames.Editor
 {
-    public static class AssetBuilder
+    public static partial class ProjectBuilder
     {
-        public static string BuildRootPath => $"{BuildSettings.BuildRootPath}/{BuildSettings.TargetPlatform}/Addressables";
         public static string RemoteBuildPath
         {
             get
@@ -30,11 +29,6 @@ namespace ClimbGames.Editor
             }
         }
 
-        public static void BuildAssetBundle()
-        {
-            //var settings = AddressableAssetSettingsDefaultObject.Settings;
-        }
-
         public static void BuildPlayerContent()
         {
             var remoteBuildPath = RemoteBuildPath;
@@ -44,7 +38,7 @@ namespace ClimbGames.Editor
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             string rawPath = settings.profileSettings.GetValueByName(settings.activeProfileId, "Remote.LoadPath");
 
-            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.bundleVersion}";
+            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}";
             settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", newPath);
 
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
@@ -54,11 +48,11 @@ namespace ClimbGames.Editor
                 SaveEditorEnv();
                 CopyServerData();
 
-                Debug.Log($"[AssetBuilder] Success BuildPlayerContent");
+                Debug.Log($"[ProjectBuilder] Success BuildPlayerContent");
             }
             else
             {
-                Debug.LogError($"[AssetBuilder] Fail BuildPlayerContent: {result?.Error}");
+                Debug.LogError($"[ProjectBuilder] Fail BuildPlayerContent: {result?.Error}");
             }
 
             settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", rawPath);
@@ -73,7 +67,7 @@ namespace ClimbGames.Editor
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             string rawPath = settings.profileSettings.GetValueByName(settings.activeProfileId, "Remote.LoadPath");
 
-            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.bundleVersion}";
+            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}";
             settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", newPath);
 
             AddressablesPlayerBuildResult result = ContentUpdateScript.BuildContentUpdate(settings, contentStateFilePath);
@@ -82,11 +76,11 @@ namespace ClimbGames.Editor
                 SaveEditorEnv();
                 CopyServerData();
 
-                Debug.Log("[AssetBuilder] Success BuildContentUpdate");
+                Debug.Log("[ProjectBuilder] Success BuildContentUpdate");
             }
             else
             {
-                Debug.LogError($"[AssetBuilder] Fail BuildContentUpdate: {result?.Error}");
+                Debug.LogError($"[ProjectBuilder] Fail BuildContentUpdate: {result?.Error}");
             }
 
             settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", rawPath);
@@ -94,7 +88,7 @@ namespace ClimbGames.Editor
 
         static void CopyContentState(string contentStateFilePath)
         {
-            string destinationPath = Path.Combine(BuildRootPath, $"ContentState/{BuildSettings.bundleVersion}");
+            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ContentState/{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
             File.Copy(contentStateFilePath, Path.Combine(destinationPath, "addressables_content_state.bin"), true);
@@ -108,10 +102,10 @@ namespace ClimbGames.Editor
                 return;
 
             // 백업 폴더 및 Zip 파일 경로 설정: AddressablesState/EditorEnv_0.1.0_1.zip
-            string destinationPath = Path.Combine(BuildRootPath, $"ContentState/{BuildSettings.bundleVersion}");
+            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ContentState/{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
-            string zipFileName = $"EditorEnv_{BuildSettings.bundleVersion}_{BuildSettings.buildNumber}.zip";
+            string zipFileName = $"EditorEnv_{BuildSettings.BundleVersion}_{BuildSettings.BuildNumber}.zip";
             string destinationZipPath = Path.Combine(destinationPath, zipFileName);
 
             try
@@ -122,11 +116,11 @@ namespace ClimbGames.Editor
 
                 // 폴더 통째로 Zip 압축 (CompressionLevel.Optimal: 기본 최적 압축)
                 ZipFile.CreateFromDirectory(libraryPath, destinationZipPath, CompressionLevel.Optimal, includeBaseDirectory: false);
-                Debug.Log($"[AssetBuilder] Zip Library: {destinationZipPath}");
+                Debug.Log($"[ProjectBuilder] Zip Library: {destinationZipPath}");
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[AssetBuilder] Fail Zip Library: {ex.Message}");
+                Debug.LogError($"[ProjectBuilder] Fail Zip Library: {ex.Message}");
             }
         }
 
@@ -136,7 +130,7 @@ namespace ClimbGames.Editor
             if (Directory.Exists(remoteBuildPath) == false)
                 return;
 
-            var destinationPath = Path.Combine(BuildRootPath, $"ServerData/{BuildSettings.bundleVersion}");
+            var destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ServerData/{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
             string[] targetExtensions = { ".json", ".bin", ".hash" };
@@ -147,18 +141,18 @@ namespace ClimbGames.Editor
             {
                 string fileName = file.Name;
                 if (file.Name.StartsWith("catalog") && targetExtensions.Contains(file.Extension))
-                    fileName = $"catalog_{BuildSettings.bundleVersion}_{BuildSettings.buildNumber}{file.Extension}";
+                    fileName = $"catalog_{BuildSettings.BundleVersion}_{BuildSettings.BuildNumber}{file.Extension}";
 
                 string filePath = Path.Combine(destinationPath, fileName);
                 file.CopyTo(filePath, overwrite: true);
             }
         }
 
-        public static async UniTask UploadToHfs(IProgress<FileUploadInfo> progress)
+        public static async UniTask UploadToHfs(IProgress<FileUploadInfo> progress = null)
         {
             string uploadUrl = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}";
 
-            string serverDataPath = Path.Combine(BuildRootPath, $"ServerData/{BuildSettings.bundleVersion}");
+            string serverDataPath = Path.Combine(BuildSettings.AddressablesPath, $"ServerData/{BuildSettings.BundleVersion}");
             if (Directory.Exists(serverDataPath) == false)
                 return;
 
@@ -170,7 +164,7 @@ namespace ClimbGames.Editor
             HashSet<string> folderHash = new HashSet<string>();
             foreach (var path in directories)
             {
-                int index = path.LastIndexOf($"{BuildSettings.bundleVersion}");
+                int index = path.LastIndexOf($"{BuildSettings.BundleVersion}");
                 if (index > -1)
                     folderHash.Add(path.Substring(index));
             }
@@ -208,7 +202,7 @@ namespace ClimbGames.Editor
                 uploadInfo.fileName = file.Name;
 
                 string folderPath = file.DirectoryName.Replace("\\", "/");
-                int index = folderPath.LastIndexOf($"{BuildSettings.bundleVersion}");
+                int index = folderPath.LastIndexOf($"{BuildSettings.BundleVersion}");
                 string destinationUrl = $"{uploadUrl}/{folderPath.Substring(index)}";
 
                 var fileData = await File.ReadAllBytesAsync(file.FullName);

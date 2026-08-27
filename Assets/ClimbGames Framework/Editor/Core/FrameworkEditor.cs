@@ -57,9 +57,17 @@ namespace ClimbGames.Editor
 
             GUID guid = new GUID(EmptySceneGUID);
             var index = scenes.FindIndex(scene => scene.guid == guid);
-            if (useEmptyScene && index <= -1)
+            if (useEmptyScene)
             {
-                scenes.Insert(0, new EditorBuildSettingsScene(guid, true));
+                if (index <= -1)
+                {
+                    scenes.Add(new EditorBuildSettingsScene(guid, true));
+                }
+                else if (index == 0)
+                {
+                    scenes.RemoveAt(index);
+                    scenes.Add(new EditorBuildSettingsScene(guid, true));
+                }
                 EditorBuildSettings.scenes = scenes.ToArray();
             }
             else if (useEmptyScene == false && index > -1)

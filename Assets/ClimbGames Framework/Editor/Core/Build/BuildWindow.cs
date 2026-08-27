@@ -6,10 +6,12 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 
 namespace ClimbGames.Editor
 {
-    public class AssetBuildWindow : EditorWindow
+    public class BuildWindow : EditorWindow
     {
         // bin 파일 드롭다운 관련
         private List<string> _binFilePaths = new List<string>();
@@ -22,11 +24,12 @@ namespace ClimbGames.Editor
         private int _selectedEnvIndex = 0;
 
         private bool _uploadToHfs = true;
+        private Vector2 _scrollPosition;
 
         [MenuItem("Tools/ClimbGames/Build Window")]
         public static void ShowWindow()
         {
-            var window = GetWindow<AssetBuildWindow>("ClimbGames Build");
+            var window = GetWindow<BuildWindow>("ClimbGames Build");
             window.minSize = new Vector2(400, 300);
             window.Show();
         }
@@ -39,6 +42,7 @@ namespace ClimbGames.Editor
 
         private void OnGUI()
         {
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
             GUILayout.Space(10);
 
             DrawSettings();
@@ -48,6 +52,9 @@ namespace ClimbGames.Editor
             EditorGUILayout.Space(20);
 
             DrawEditorEnvironment();
+            EditorGUILayout.Space(20);
+
+            EditorGUILayout.EndScrollView();
         }
 
         void DrawSettings()
@@ -57,14 +64,14 @@ namespace ClimbGames.Editor
 
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.LabelField("Root Path", BuildSettings.BuildRootPath);
+                EditorGUILayout.LabelField("Root Path", BuildSettings.RootPath);
                 if (GUILayout.Button("Browse", GUILayout.Width(70)))
                 {
                     // 폴더 선택 창 오픈
-                    string selectedPath = EditorUtility.OpenFolderPanel("Select Build Root Directory", BuildSettings.BuildRootPath, "");
+                    string selectedPath = EditorUtility.OpenFolderPanel("Select Root Directory", BuildSettings.RootPath, "");
                     if (!string.IsNullOrEmpty(selectedPath))
                     {
-                        BuildSettings.BuildRootPath = selectedPath;
+                        BuildSettings.RootPath = selectedPath;
                         GUI.FocusControl(null); // 입력 포커스 해제
 
                         RefreshBinFileList();
@@ -74,9 +81,66 @@ namespace ClimbGames.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            BuildSettings.bundleVersion = EditorGUILayout.TextField("Bundle Version", BuildSettings.bundleVersion);
-            BuildSettings.versionCode = EditorGUILayout.IntField("Version Code", BuildSettings.versionCode);
-            BuildSettings.buildNumber = EditorGUILayout.IntField("Build Number", BuildSettings.buildNumber);
+            BuildSettings.BuildType = (BuildType)EditorGUILayout.EnumPopup("Build Type", BuildSettings.BuildType);
+            BuildSettings.BundleVersion = EditorGUILayout.TextField("Bundle Version", BuildSettings.BundleVersion);
+            BuildSettings.VersionCode = EditorGUILayout.IntField("Version Code", BuildSettings.VersionCode);
+            BuildSettings.BuildNumber = EditorGUILayout.IntField("Build Number", BuildSettings.BuildNumber);
+            EditorGUILayout.Space(5);
+
+            var targetGroup = BuildSettings.TargetGroup;
+            switch (targetGroup)
+            {
+                case BuildTargetGroup.Android:
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("KeystoreName", BuildSettings.KeystoreName);
+                        if (GUILayout.Button("Browse", GUILayout.Width(70)))
+                        {
+                            string selectedPath = EditorUtility.OpenFilePanel("Select Keystore File", Application.dataPath, "keystore,jks");
+                            if (!string.IsNullOrEmpty(selectedPath))
+                            {
+                                // 절대 경로를 유니티 상대 경로(Assets/...)로 변환 시도
+                                if (selectedPath.StartsWith(Application.dataPath))
+                                {
+                                    BuildSettings.KeystoreName = "Assets" + selectedPath.Substring(Application.dataPath.Length);
+                                }
+                                else
+                                {
+                                    BuildSettings.KeystoreName = selectedPath;
+                                }
+                            }
+                        }
+
+                        GUIContent clearIcon = EditorGUIUtility.IconContent("TreeEditor.Trash");
+                        clearIcon.tooltip = "Clear Keystore Settings";
+                        if (GUILayout.Button(clearIcon, GUILayout.Width(28), GUILayout.Height(19)))
+                        {
+                            BuildSettings.KeystoreName = string.Empty;
+                            BuildSettings.KeystorePass = string.Empty;
+                            BuildSettings.KeyaliasName = string.Empty;
+                            BuildSettings.KeyaliasPass = string.Empty;
+                            GUI.FocusControl(null); // 입력 필드 포커스 해제
+                        }
+                        EditorGUILayout.EndHorizontal();
+
+                        BuildSettings.KeystorePass = EditorGUILayout.TextField("KeystorePass", BuildSettings.KeystorePass);
+                        BuildSettings.KeyaliasName = EditorGUILayout.TextField("KeyaliasName", BuildSettings.KeyaliasName);
+                        BuildSettings.KeyaliasPass = EditorGUILayout.TextField("KeyaliasPass", BuildSettings.KeyaliasPass);
+                        BuildSettings.BuildAppBundle = EditorGUILayout.Toggle("Build App Bundle", BuildSettings.BuildAppBundle);
+
+                        break;
+                    }
+            }
+            BuildSettings.DevelopmentBuild = EditorGUILayout.Toggle("Development Build", BuildSettings.DevelopmentBuild);
+
+            EditorGUILayout.Space(5);
+            if (GUILayout.Button($"Build {targetGroup}", GUILayout.Height(35)))
+            {
+                EditorApplication.delayCall += () =>
+                {
+                    ExecuteAppBuild();
+                };
+            }
         }
 
         void DrawAddressables()
@@ -103,14 +167,13 @@ namespace ClimbGames.Editor
 
             bool isEmptyBin = _binDropdownOptions.Count == 0 || _binDropdownOptions[_selectedBinIndex] == "empty";
             // [New Build] 버튼
-            if (GUILayout.Button("New Build", GUILayout.Height(35)))
-                ExecuteNewBuild();
+            if (GUILayout.Button("New Content", GUILayout.Height(35)))
+                ExecuteNewContent();
 
             // [Update Content] 버튼 (bin이 'empty'면 비활성화)
             EditorGUI.BeginDisabledGroup(isEmptyBin);
             if (GUILayout.Button("Update Content", GUILayout.Height(35)))
                 ExecuteUpdateContent();
-
             EditorGUI.EndDisabledGroup();
         }
 
@@ -136,7 +199,6 @@ namespace ClimbGames.Editor
             EditorGUI.BeginDisabledGroup(isEmptyEnv);
             if (GUILayout.Button("Apply Editor Environment", GUILayout.Height(35)))
                 ApplyEditorEnvironment();
-
             EditorGUI.EndDisabledGroup();
         }
 
@@ -148,7 +210,7 @@ namespace ClimbGames.Editor
             _binFilePaths.Clear();
             _binDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesRootPath, "ContentState");
+            string rootPath = Path.Combine(BuildSettings.AddressablesPath, "ContentState");
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "addressables_content_state.bin", SearchOption.AllDirectories)
@@ -190,7 +252,7 @@ namespace ClimbGames.Editor
             _envFilePaths.Clear();
             _envDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesRootPath, "ContentState");
+            string rootPath = Path.Combine(BuildSettings.AddressablesPath, "ContentState");
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "EditorEnv_*.zip", SearchOption.AllDirectories)
@@ -228,16 +290,52 @@ namespace ClimbGames.Editor
             }
         }
 
+        void ExecuteAppBuild()
+        {
+            if (!EditorUtility.DisplayDialog("App Build", "Are you sure you want to start the build?", "Yes", "No"))
+                return;
+
+            BuildSettings.ApplySettings();
+
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            AddressableAssetSettings.PlayerBuildOption originAddressablesBuildOption = settings.BuildAddressablesWithPlayerBuild;
+            settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+            ProjectBuilder.BuildPlayerContent();
+
+            var targetGroup = BuildSettings.TargetGroup;
+            switch (targetGroup)
+            {
+                case BuildTargetGroup.Android:
+                    {
+                        ProjectBuilder.BuildAndroid();
+                        break;
+                    }
+                default: EditorUtility.DisplayDialog("Feature Not Implemented", $"{targetGroup} build support is not implemented yet.", "OK"); break;
+            }
+
+            settings.BuildAddressablesWithPlayerBuild = originAddressablesBuildOption;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+
+            if (_uploadToHfs)
+                UploadToHfs().Forget();
+
+            RefreshBinFileList();
+            RefreshEnvFileList();
+        }
+
         /// <summary>
         /// New Build 실행 및 파일 백업
         /// </summary>
-        private void ExecuteNewBuild()
+        private void ExecuteNewContent()
         {
             if (!EditorUtility.DisplayDialog("New Build", "Are you sure you want to proceed with a new full bundle build?", "Yes", "No"))
                 return;
 
             BuildSettings.ApplySettings();
-            AssetBuilder.BuildPlayerContent();
+            ProjectBuilder.BuildPlayerContent();
 
             if (_uploadToHfs)
                 UploadToHfs().Forget();
@@ -265,7 +363,7 @@ namespace ClimbGames.Editor
                 return;
 
             BuildSettings.ApplySettings();
-            AssetBuilder.BuildContentUpdate(selectedBinPath);
+            ProjectBuilder.BuildContentUpdate(selectedBinPath);
 
             if (_uploadToHfs)
                 UploadToHfs().Forget();
@@ -315,7 +413,7 @@ namespace ClimbGames.Editor
                 EditorUtility.DisplayProgressBar("HFS Upload", text, info.progress);
             });
 
-            await AssetBuilder.UploadToHfs(progress);
+            await ProjectBuilder.UploadToHfs(progress);
             EditorUtility.ClearProgressBar();
         }
     }

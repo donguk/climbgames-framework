@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ClimbGames.UI;
@@ -44,8 +45,19 @@ namespace ClimbGames.Tset
             }
             Progress = 1f;
 
-            if (UIManager.Instance != null)
-                Debug.Log("UIManager Init");
+            try
+            {
+                if (UIManager.Instance != null)
+                {
+                    await UniTask.Delay(1000);
+                    Debug.Log("UIManager Init");
+                }
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogException(e);
+            }
+
             return true;
         }
     }
@@ -64,12 +76,39 @@ namespace ClimbGames.Tset
 
         void Update()
         {
-            if (Keyboard.current == null)
-                return;
-
-            if (Keyboard.current.enterKey.wasReleasedThisFrame)
-            {
+            if (Keyboard.current != null && Keyboard.current.enterKey.wasReleasedThisFrame)
                 SceneTransition.TransitionAsync("01_Title").Forget();
+
+            if (Mouse.current != null)
+            {
+                //Debug.Log("[BootScene] Update: Mouse - 1");
+                if (Mouse.current.press != null)
+                {
+                    //Debug.Log("[BootScene] Update: Mouse - 2");
+                    if (Mouse.current.leftButton.wasReleasedThisFrame)
+                    {
+                        Debug.Log("[BootScene] Update: Mouse - 3");
+                        SceneTransition.TransitionAsync("01_Title").Forget();
+                    }
+                }
+            }
+
+            if (Touchscreen.current != null)
+            {
+                //Debug.Log("[BootScene] Update: Touchscreen - 1");
+                if (Touchscreen.current.primaryTouch != null)
+                {
+                    //Debug.Log("[BootScene] Update: Touchscreen - 2");
+                    if (Touchscreen.current.primaryTouch.press != null)
+                    {
+                        //Debug.Log("[BootScene] Update: Touchscreen - 3");
+                        if (Touchscreen.current.primaryTouch.press.wasReleasedThisFrame)
+                        {
+                            Debug.Log("[BootScene] Update: Touchscreen - 4");
+                            SceneTransition.TransitionAsync("01_Title").Forget();
+                        }
+                    }
+                }
             }
         }
     }
