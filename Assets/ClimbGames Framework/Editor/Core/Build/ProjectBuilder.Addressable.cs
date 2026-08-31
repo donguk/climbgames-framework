@@ -212,6 +212,9 @@ namespace ClimbGames.Editor
                 };
                 using (UnityWebRequest www = UnityWebRequest.Post(destinationUrl, formData))
                 {
+                    string auth = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("climbgames-admin:climbgames2@"));
+                    www.SetRequestHeader("Authorization", "Basic " + auth);
+
                     var operation = www.SendWebRequest();
                     while (operation.isDone == false)
                     {

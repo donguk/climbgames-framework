@@ -30,7 +30,7 @@ namespace ClimbGames
         {
             if (int.TryParse(tif_patch.text, out var number))
             {
-                string catalogPath = $"http://localhost/climbgames-root/framework/Android/{tif_version.text}/catalog_{tif_version.text}_{number}.json";
+                string catalogPath = $"http://192.168.0.10/climbgames-root/framework/Android/{tif_version.text}/catalog_{tif_version.text}_{number}.json";
 
                 var patchInfo = await AssetManager.CheckForCatalogUpdates(catalogPath);
                 txt_catalog_result.text = patchInfo.ToString();
