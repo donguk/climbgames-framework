@@ -50,14 +50,14 @@ namespace ClimbGames.Editor
             string profileName = customArgs.GetValue<string>("profileName");
 
             bool existProfile = false;
-            string profilePath = Path.Combine(BuildProfile.TargetPath, profileName);
+            string profilePath = Path.Combine(BuildProfile.TargetPath, $"{profileName}.asset");
             if (File.Exists(profilePath))
                 existProfile = true;
 
             if (existProfile == false)
             {
                 string branchName = customArgs.GetValue<string>("branchName");
-                profilePath = Path.Combine(BuildProfile.TargetPath, branchName);
+                profilePath = Path.Combine(BuildProfile.TargetPath, $"{branchName}.asset");
                 if (File.Exists(profilePath) == false)
                     throw new Exception($"Can not find buildProfile: {profileName} or {branchName}");
             }
