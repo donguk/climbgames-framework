@@ -184,7 +184,7 @@ namespace ClimbGames.Editor
             string text = File.ReadAllText(destJenkinsfilePath);
 
             text = text.Replace("#GIT_URL#", gitUrl);
-            UTF8Encoding encoding = new UTF8Encoding(true);
+            UTF8Encoding encoding = new UTF8Encoding(false);
             File.WriteAllText(destJenkinsfilePath, text, encoding);
 
             string scriptsPath = Path.Combine(projectRoot, "Jenkins/Scripts");

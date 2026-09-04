@@ -1,6 +1,6 @@
 {
     "name": "com.climbgames.framework",
-    "version": "1.0.40",
+    "version": "1.0.41",
     "displayName": "ClimbGames Framework",
     "description": "Game framework for Unity",
     "unity": "2022.3",
