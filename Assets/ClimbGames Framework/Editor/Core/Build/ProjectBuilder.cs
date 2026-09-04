@@ -20,11 +20,12 @@ namespace ClimbGames.Editor
             settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
             EditorUtility.SetDirty(settings);
 
-            string fileName = @$"{PlayerSettings.productName}_
-                {BuildSettings.BuildType}_
-                {BuildSettings.BundleVersion}({BuildSettings.VersionCode})_
-                {BuildSettings.BuildNumber}.{(BuildSettings.BuildAppBundle ? "aab" : "apk")}";
+            string fileName = $"{PlayerSettings.productName}_" +
+                            $"{BuildSettings.BuildType}_" +
+                            $"{BuildSettings.BundleVersion}({BuildSettings.VersionCode})_" +
+                            $"{BuildSettings.BuildNumber}.{(BuildSettings.BuildAppBundle ? "aab" : "apk")}";
 
+            Debug.Log($"???? : {fileName}");
             string buildPathName = Path.Combine($"{BuildSettings.BuildPath}", $"{fileName}");
             BuildPlayerOptions options = new BuildPlayerOptions()
             {

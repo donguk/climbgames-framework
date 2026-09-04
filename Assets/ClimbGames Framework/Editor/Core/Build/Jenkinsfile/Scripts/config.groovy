@@ -1,6 +1,7 @@
 import groovy.transform.Field
 
 @Field buildTarget
+@Field profileName
 @Field branchName
 @Field buildVersion
 @Field versionCode
