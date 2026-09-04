@@ -9,6 +9,7 @@ pipeline {
         stage('Checkout') {
             
             environment {
+                //GIT_URL = "${scm.userRemoteConfigs[0].url}"
                 GIT_URL = "#GIT_URL#"
             }
 
