@@ -15,7 +15,7 @@ def start(config) {
         -nographics ^
         -buildTarget ${config.buildTarget} ^
         -projectPath "${config.projectPath}" ^
-        -executeMethod ClimbGames.Editor.CommandLineBuilder.BuildAndroid() ^
+        -executeMethod ClimbGames.Editor.CommandLineBuilder.BuildAndroid ^
         -customArgs:"${customArgs}" ^
         -logFile -
     """
