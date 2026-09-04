@@ -1,12 +1,13 @@
 def start(config) {
 
-    def customArgs = """
-        profileName: ,
-        branchName:${config.branchName},
-        buildVersion:${config.buildVersion},
-        versionCode:${config.versionCode},
-        isContentUpdates:${config.isContentUpdates}
-        """
+    def arguments = [
+        profileName: config.profileName,
+        branchName: config.branchName,
+        buildVersion: config.buildVersion,
+        versionCode: config.versionCode,
+        isContentUpdates: config.isContentUpdates
+    ]
+    def customArgs = arguments.collect { k, v -> "$k:$v" }.join(',')
 
     bat """
         "${config.unityHome}\\Unity.exe" ^
