@@ -5,6 +5,7 @@ def start(config) {
         branchName: config.branchName,
         buildVersion: config.buildVersion,
         versionCode: config.versionCode,
+        buildNumber: config.buildNumber,
         isContentUpdates: config.isContentUpdates
     ]
     def customArgs = arguments.collect { k, v -> "$k:$v" }.join(',')

@@ -64,7 +64,7 @@ namespace ClimbGames.Editor
             }
 
             BuildProfile profile = AssetDatabase.LoadAssetAtPath<BuildProfile>(profilePath);
-            profile.bundleVersion = customArgs.GetValue<string>("bundleVersion");
+            profile.bundleVersion = customArgs.GetValue<string>("buildVersion");
             profile.versionCode = customArgs.GetValue<int>("versionCode");
 
             BuildSettings.LoadFromProfile(profile);
