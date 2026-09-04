@@ -25,7 +25,7 @@ namespace ClimbGames
             {
                 if (internalId.EndsWith(".hash")) // hash 파일 url 로 부터 bin, json 파일 url 생성
                 {
-                    string catalogPath = UpdateCatalogPath;
+                    string catalogPath = UpdateCatalogPath.Trim();
                     if (catalogPath.EndsWith(".json") || catalogPath.EndsWith(".bin"))
                     {
                         var uri = new System.Uri(catalogPath);

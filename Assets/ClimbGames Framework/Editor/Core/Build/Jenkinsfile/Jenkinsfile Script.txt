@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout()
+    }    
+
+    stages {
+        stage('Checkout') {
+            
+            environment {
+                GIT_URL = "#GIT_URL#"
+            }
+
+            steps {
+
+                checkout scmGit(
+                    branches: [[name: "${params.BRANCH_NAME}"]],
+                    userRemoteConfigs: [[
+                        url: "${env.GIT_URL}",
+                        credentialsId: 'github-climbgames'
+                    ]]
+                )
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                
+                script {
+                    def builder = load 'Jenkins/Scripts/builder.groovy'
+                    builder.platformBuild()
+                }
+            }
+        }
+    }
+}

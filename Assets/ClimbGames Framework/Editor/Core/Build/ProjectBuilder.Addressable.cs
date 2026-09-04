@@ -8,9 +8,37 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;
+using UnityEditor;
 
 namespace ClimbGames.Editor
 {
+    struct AddressableAssetSettingsScope : IDisposable
+    {
+        private AddressableAssetSettings settings;
+        private AddressableAssetSettings.PlayerBuildOption playerBuildOption;
+        private string remoteLoadPath;
+        private bool buildRemoteCatalog;
+
+        public AddressableAssetSettingsScope(AddressableAssetSettings settings)
+        {
+            this.settings = settings;
+
+            playerBuildOption = settings.BuildAddressablesWithPlayerBuild;
+            remoteLoadPath = settings.profileSettings.GetValueByName(settings.activeProfileId, "Remote.LoadPath");
+            buildRemoteCatalog = settings.BuildRemoteCatalog;
+        }
+
+        public void Dispose()
+        {
+            settings.BuildAddressablesWithPlayerBuild = playerBuildOption;
+            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", remoteLoadPath);
+            settings.BuildRemoteCatalog = buildRemoteCatalog;
+
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
     public static partial class ProjectBuilder
     {
         public static string RemoteBuildPath
@@ -36,10 +64,9 @@ namespace ClimbGames.Editor
                 Directory.Delete(remoteBuildPath, true);
 
             var settings = AddressableAssetSettingsDefaultObject.Settings;
-            string rawPath = settings.profileSettings.GetValueByName(settings.activeProfileId, "Remote.LoadPath");
-
-            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}";
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", newPath);
+            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}");
+            settings.BuildRemoteCatalog = true;
+            EditorUtility.SetDirty(settings);
 
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
             if (string.IsNullOrEmpty(result.Error))
@@ -54,8 +81,6 @@ namespace ClimbGames.Editor
             {
                 Debug.LogError($"[ProjectBuilder] Fail BuildPlayerContent: {result?.Error}");
             }
-
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", rawPath);
         }
 
         public static void BuildContentUpdate(string contentStateFilePath)
@@ -65,10 +90,9 @@ namespace ClimbGames.Editor
                 Directory.Delete(remoteBuildPath, true);
 
             var settings = AddressableAssetSettingsDefaultObject.Settings;
-            string rawPath = settings.profileSettings.GetValueByName(settings.activeProfileId, "Remote.LoadPath");
-
-            string newPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}";
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", newPath);
+            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}");
+            settings.BuildRemoteCatalog = true;
+            EditorUtility.SetDirty(settings);
 
             AddressablesPlayerBuildResult result = ContentUpdateScript.BuildContentUpdate(settings, contentStateFilePath);
             if (result != null && string.IsNullOrEmpty(result.Error))
@@ -82,8 +106,6 @@ namespace ClimbGames.Editor
             {
                 Debug.LogError($"[ProjectBuilder] Fail BuildContentUpdate: {result?.Error}");
             }
-
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", rawPath);
         }
 
         static void CopyContentState(string contentStateFilePath)

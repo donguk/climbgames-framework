@@ -295,29 +295,22 @@ namespace ClimbGames.Editor
             if (!EditorUtility.DisplayDialog("App Build", "Are you sure you want to start the build?", "Yes", "No"))
                 return;
 
-            BuildSettings.ApplySettings();
-
-            var settings = AddressableAssetSettingsDefaultObject.Settings;
-            AddressableAssetSettings.PlayerBuildOption originAddressablesBuildOption = settings.BuildAddressablesWithPlayerBuild;
-            settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
-            ProjectBuilder.BuildPlayerContent();
-
-            var targetGroup = BuildSettings.TargetGroup;
-            switch (targetGroup)
+            using (new AddressableAssetSettingsScope(AddressableAssetSettingsDefaultObject.Settings))
             {
-                case BuildTargetGroup.Android:
-                    {
-                        ProjectBuilder.BuildAndroid();
-                        break;
-                    }
-                default: EditorUtility.DisplayDialog("Feature Not Implemented", $"{targetGroup} build support is not implemented yet.", "OK"); break;
-            }
+                BuildSettings.ApplySettings();
+                ProjectBuilder.BuildPlayerContent();
 
-            settings.BuildAddressablesWithPlayerBuild = originAddressablesBuildOption;
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
+                var targetGroup = BuildSettings.TargetGroup;
+                switch (targetGroup)
+                {
+                    case BuildTargetGroup.Android:
+                        {
+                            ProjectBuilder.BuildAndroid();
+                            break;
+                        }
+                    default: EditorUtility.DisplayDialog("Feature Not Implemented", $"{targetGroup} build support is not implemented yet.", "OK"); break;
+                }
+            }
 
             if (_uploadToHfs)
                 UploadToHfs().Forget();
@@ -334,8 +327,11 @@ namespace ClimbGames.Editor
             if (!EditorUtility.DisplayDialog("New Build", "Are you sure you want to proceed with a new full bundle build?", "Yes", "No"))
                 return;
 
-            BuildSettings.ApplySettings();
-            ProjectBuilder.BuildPlayerContent();
+            using (new AddressableAssetSettingsScope(AddressableAssetSettingsDefaultObject.Settings))
+            {
+                BuildSettings.ApplySettings();
+                ProjectBuilder.BuildPlayerContent();
+            }
 
             if (_uploadToHfs)
                 UploadToHfs().Forget();
@@ -362,8 +358,11 @@ namespace ClimbGames.Editor
             if (!EditorUtility.DisplayDialog("Update Content", $"Proceed with the patch build based on the selected file?\n{selectedBinPath}", "Yes", "No"))
                 return;
 
-            BuildSettings.ApplySettings();
-            ProjectBuilder.BuildContentUpdate(selectedBinPath);
+            using (new AddressableAssetSettingsScope(AddressableAssetSettingsDefaultObject.Settings))
+            {
+                BuildSettings.ApplySettings();
+                ProjectBuilder.BuildContentUpdate(selectedBinPath);
+            }
 
             if (_uploadToHfs)
                 UploadToHfs().Forget();
