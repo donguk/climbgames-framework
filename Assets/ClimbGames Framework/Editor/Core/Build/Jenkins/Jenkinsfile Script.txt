@@ -1,5 +1,9 @@
-def buildConfig
-def platformBuild
+@Library('climbgames-library') _
+import climbgames.PipelineConfig
+import climbgames.IBuildProcess
+
+def settings
+def buildProcess
 
 pipeline {
     agent any
@@ -28,8 +32,11 @@ pipeline {
 
                 script {
 
-                    buildConfig = load 'Jenkins/Scripts/config.groovy'
-                    platformBuild = buildConfig.setup()
+                    def config = setupConfig(this)
+                    
+                    def settingsFactory = load("Jenkins/Scripts/CustomSettings.groovy") as Closure
+                    settings = settingsFactory(config)
+                    buildProcess = createBuildProcess(config)
                 }
             }
         }
@@ -39,7 +46,7 @@ pipeline {
                 
                 script {
                     
-                    platformBuild.start(buildConfig)
+                    buildProcess.build(settings)
                 }
             }
         }
@@ -49,7 +56,7 @@ pipeline {
 
                 script {
                     
-                    platformBuild.deploy(buildConfig)
+                    buildProcess.deploy(settings)
                 }
             }
         }

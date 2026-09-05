@@ -13,19 +13,22 @@ class DefaultSettings implements IBuildSettings {
 
     void init() {
         
-        println "================================="
-        println " BuildTarget: ${config.buildTarget}"
-        println " ProfileName: ${config.profileName}"
-        println " BranchName: ${config.branchName}"
-        println " BuildVersion: ${config.buildVersion}"
-        println " VersionCode: ${config.versionCode}"
-        println " BuildNumber: ${config.buildNumber}"
-        println " IsContentUpdates: ${config.isContentUpdates}"
-        println " UnityHome: ${config.unityHome}"
-        println " ProjectPath: ${config.projectPath}"
-        println " RelativeBuildPath: ${config.relativeBuildPath}"
-        println " BuildFileName: ${config.buildFileName}"
-        println "================================="
+        config.script?.echo """
+                            =================================
+                             BuildTarget: ${config.buildTarget}
+                             ProfileName: ${config.profileName}
+                             BranchName: ${config.branchName}
+                             BuildVersion: ${config.buildVersion}
+                             VersionCode: ${config.versionCode}
+                             BuildNumber: ${config.buildNumber}
+                             IsContentUpdates: ${config.isContentUpdates}
+                             UnityHome: ${config.unityHome}
+                             ProjectPath: ${config.projectPath}
+                             RelativeBuildPath: ${config.relativeBuildPath}
+                             BuildFileName: ${config.buildFileName}
+                             CustomArgs: ${getCustomArgs()}
+                            =================================
+        """.stripIndent()
 
         executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildAndroid"
 
@@ -48,10 +51,10 @@ class DefaultSettings implements IBuildSettings {
 
     @Override
     String getCustomArgs() {
+
         if (!customArgMap) {
             return ""
         }
-
         return customArgMap.collect { key, value -> "$key:${value != null ? value : ''}"}
                             .join(',')
     }
