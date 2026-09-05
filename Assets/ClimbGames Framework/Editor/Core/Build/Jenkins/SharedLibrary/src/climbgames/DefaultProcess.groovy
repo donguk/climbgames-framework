@@ -1,11 +1,11 @@
 package climbgames
 
-class DefaultBuildProcess implements IBuildProcess {
+class DefaultProcess implements IBuildProcess {
 
     @override 
     void build(IBuildSettings settings) {
         
-        println "[${this.class.simpleName}] start: ${settings.config.buildTarget}"
+        println "[${this.class.simpleName}] build: ${settings.config.buildTarget}"
 
         PipelineConfig config = settings.config
         def arguments = [        
