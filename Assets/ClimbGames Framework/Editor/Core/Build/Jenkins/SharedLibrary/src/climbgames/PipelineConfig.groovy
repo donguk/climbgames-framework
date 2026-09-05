@@ -8,7 +8,7 @@ class PipelineConfig implements Serializable {
     String buildVersion
     String versionCode
     String buildNumber
-    boolean isContentUpdates
+    Boolean isContentUpdates
     String unityHome
     String projectPath
     String relativeBuildPath
