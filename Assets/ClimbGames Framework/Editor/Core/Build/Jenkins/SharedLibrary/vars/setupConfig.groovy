@@ -1,8 +1,8 @@
 import climbgames.PipelineConfig
 
-def call(steps) {
+def call(script) {
 
-    def config = new PipelineConfig(steps)
+    def config = new PipelineConfig(script)
 
     config.init()
     return config

@@ -7,7 +7,7 @@ class DefaultProcess implements IBuildProcess {
         
         PipelineConfig config = settings.config
         
-        config.steps.bat """
+        config.script.bat """
             "${config.unityHome}\\Unity.exe" ^
             -batchmode ^
             -quit ^

@@ -2,7 +2,7 @@ package climbgames
 
 class PipelineConfig implements Serializable {
 
-    transient Object steps
+    transient Object script
 
     String buildTarget
     String profileName
@@ -17,27 +17,27 @@ class PipelineConfig implements Serializable {
     String buildPath
     String buildFileName
 
-    PipelineConfig(Object steps) {
+    PipelineConfig(Object script) {
 
-        this.steps = steps
+        this.script = script
     }
 
     void init() {
 
-        buildTarget = steps.params.BUILD_TARGET
-        profileName = steps.params.PROFILE_NAME
-        branchName = steps.params.BRANCH_NAME
-        buildVersion = steps.params.BUILD_VERSION
-        versionCode = steps.params.VERSION_CODE
-        buildNumber = steps.env.BUILD_NUMBER
-        isContentUpdates = steps.params.IS_CONTENT_UPDATES as boolean
-        unityHome = steps.tool(name: steps.env.UNITY_NAME, type: 'org.jenkinsci.plugins.unity3d.Unity3dInstallation')
+        buildTarget = script.params.BUILD_TARGET
+        profileName = script.params.PROFILE_NAME
+        branchName = script.params.BRANCH_NAME
+        buildVersion = script.params.BUILD_VERSION
+        versionCode = script.params.VERSION_CODE
+        buildNumber = script.env.BUILD_NUMBER
+        isContentUpdates = script.params.IS_CONTENT_UPDATES as boolean
+        unityHome = script.tool(name: script.env.UNITY_NAME, type: 'org.jenkinsci.plugins.unity3d.Unity3dInstallation')
 
-        projectPath = steps.env.WORKSPACE
+        projectPath = script.env.WORKSPACE
         relativeBuildPath = "Build"
         buildPath = "${projectPath}/${relativeBuildPath}/${buildTarget}"
 
-        String productName = steps.params.PRODUCT_NAME
+        String productName = script.params.PRODUCT_NAME
         if (productName) {
             buildFileName = "${productName}_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
         } else {
