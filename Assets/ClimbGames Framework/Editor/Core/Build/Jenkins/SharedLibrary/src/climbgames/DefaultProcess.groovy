@@ -7,22 +7,7 @@ class DefaultProcess implements IBuildProcess {
         
         PipelineConfig config = settings.config
         
-        def arguments = [        
-            profileName: config.profileName,
-            branchName: config.branchName,
-            buildVersion: config.buildVersion,
-            versionCode: config.versionCode,
-            buildNumber: config.buildNumber,
-            isContentUpdates: config.isContentUpdates,
-            relativeBuildPath: config.relativeBuildPath,
-            buildFileName: config.buildFileName,
-        ]
-        def customArgs = arguments
-                        .collect { k, v -> "$k:${v != null ? v : ''}" }
-                        .join(',')
-
-        def steps = config.steps
-        steps.bat """
+        config.steps.bat """
             "${config.unityHome}\\Unity.exe" ^
             -batchmode ^
             -quit ^
@@ -30,7 +15,7 @@ class DefaultProcess implements IBuildProcess {
             -buildTarget ${config.buildTarget} ^
             -projectPath "${config.projectPath}" ^
             -executeMethod ${settings.executeMethod} ^
-            -customArgs:"${customArgs}" ^
+            -customArgs:"${settings.getCustomArgs()}" ^
             -logFile -
         """
     }

@@ -9,7 +9,10 @@ class DefaultSettings implements IBuildSettings {
     DefaultSettings(PipelineConfig config) {
         
         this.config = config
+    }
 
+    void init() {
+        
         println "================================="
         println " BuildTarget: ${config.buildTarget}"
         println " ProfileName: ${config.profileName}"
@@ -23,6 +26,17 @@ class DefaultSettings implements IBuildSettings {
         println " RelativeBuildPath: ${config.relativeBuildPath}"
         println " BuildFileName: ${config.buildFileName}"
         println "================================="
+
+        executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildAndroid"
+
+        addCustomArg("profileName", config.profileName)
+        addCustomArg("branchName", config.branchName)
+        addCustomArg("buildVersion", config.buildVersion)
+        addCustomArg("versionCode", config.versionCode)
+        addCustomArg("buildNumber", config.buildNumber)
+        addCustomArg("isContentUpdates", config.isContentUpdates)
+        addCustomArg("relativeBuildPath", config.relativeBuildPath)
+        addCustomArg("buildFileName", config.buildFileName)
     }
 
     DefaultSettings addCustomArg(String key, Object value) {

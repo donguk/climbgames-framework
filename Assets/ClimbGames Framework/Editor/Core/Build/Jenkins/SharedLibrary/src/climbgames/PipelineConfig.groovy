@@ -17,10 +17,13 @@ class PipelineConfig implements Serializable {
     String buildPath
     String buildFileName
 
-    void setup(Object steps) {
-        
+    PipelineConfig(Object steps) {
+
         this.steps = steps
-        
+    }
+
+    void init() {
+
         buildTarget = steps.params.BUILD_TARGET
         profileName = steps.params.PROFILE_NAME
         branchName = steps.params.BRANCH_NAME
@@ -40,7 +43,5 @@ class PipelineConfig implements Serializable {
         } else {
             buildFileName = "Application_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
         }
-        
-        return this
     }
 }
