@@ -15,7 +15,7 @@ class PipelineConfig implements Serializable {
     final String buildPath
     final String buildFileName
 
-    PipelineConfig(Object steps) {
+    void setup(Object steps) {
         
         buildTarget = steps.params.BUILD_TARGET
         profileName = steps.params.PROFILE_NAME
@@ -51,5 +51,7 @@ class PipelineConfig implements Serializable {
         steps.echo " RelativeBuildPath: ${relativeBuildPath}"
         steps.echo " BuildFileName: ${buildFileName}"
         steps.echo "================================="
+
+        return this
     }
 }
