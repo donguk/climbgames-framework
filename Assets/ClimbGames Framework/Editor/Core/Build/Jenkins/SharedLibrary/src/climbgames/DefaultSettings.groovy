@@ -12,7 +12,18 @@ class DefaultSettings implements IBuildSettings {
     }
 
     void init() {
-        
+
+        executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildAndroid"
+
+        addCustomArg("profileName", config.profileName)
+        addCustomArg("branchName", config.branchName)
+        addCustomArg("buildVersion", config.buildVersion)
+        addCustomArg("versionCode", config.versionCode)
+        addCustomArg("buildNumber", config.buildNumber)
+        addCustomArg("isContentUpdates", config.isContentUpdates)
+        addCustomArg("relativeBuildPath", config.relativeBuildPath)
+        addCustomArg("buildFileName", config.buildFileName)
+
         config.script?.echo """
                             =================================
                              BuildTarget: ${config.buildTarget}
@@ -29,17 +40,6 @@ class DefaultSettings implements IBuildSettings {
                              CustomArgs: ${getCustomArgs()}
                             =================================
         """.stripIndent()
-
-        executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildAndroid"
-
-        addCustomArg("profileName", config.profileName)
-        addCustomArg("branchName", config.branchName)
-        addCustomArg("buildVersion", config.buildVersion)
-        addCustomArg("versionCode", config.versionCode)
-        addCustomArg("buildNumber", config.buildNumber)
-        addCustomArg("isContentUpdates", config.isContentUpdates)
-        addCustomArg("relativeBuildPath", config.relativeBuildPath)
-        addCustomArg("buildFileName", config.buildFileName)
     }
 
     DefaultSettings addCustomArg(String key, Object value) {
