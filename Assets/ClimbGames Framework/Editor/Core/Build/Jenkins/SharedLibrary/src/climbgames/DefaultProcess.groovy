@@ -2,7 +2,7 @@ package climbgames
 
 class DefaultProcess implements IBuildProcess {
 
-    @override 
+    @Override 
     void build(IBuildSettings settings) {
         
         println "[${this.class.simpleName}] build: ${settings.config.buildTarget}"
@@ -35,7 +35,7 @@ class DefaultProcess implements IBuildProcess {
         """
     }
 
-    @override 
+    @Override 
     void deploy(IBuildSettings settings) {
 
         println "[${this.class.simpleName}] deploy: ${settings.config.buildTarget}"

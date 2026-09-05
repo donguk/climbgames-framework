@@ -1,6 +1,6 @@
 import climbgames.PipelineConfig
 import climbgames.IBuildProcess
-import climbgames.DefaultBuildProcess
+import climbgames.DefaultProcess
 
 def call(config) {
 
@@ -10,7 +10,7 @@ def call(config) {
     if (fileExists(scriptPath)) {
         buildProcess = load(scriptPath) as IBuildProcess
     } else {
-        buildProcess = new DefaultBuildProcess()
+        buildProcess = new DefaultProcess()
     }
 
     return buildProcess
