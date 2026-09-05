@@ -42,11 +42,11 @@ def setup() {
     println " BuildFileName: ${buildFileName}"
     println "================================="
 
-    def scriptPath = "Jenkins/Scripts/${buildTarget}_builder.groovy"
+    def scriptPath = "Jenkins/Scripts/${buildTarget}_build.groovy"
     if (!fileExists(scriptPath))
         error "Unsupported BUILD_TARGET '${buildTarget}'. Please check parameter or add '${scriptPath}'."
     
-    return load "Jenkins/Scripts/${buildTarget}_builder.groovy"
+    return load (scriptPath)
 }
 
 return this
