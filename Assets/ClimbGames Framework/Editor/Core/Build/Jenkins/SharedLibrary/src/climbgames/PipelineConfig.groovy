@@ -2,6 +2,8 @@ package climbgames
 
 class PipelineConfig implements Serializable {
 
+    transient Object steps
+
     String buildTarget
     String profileName
     String branchName
@@ -16,6 +18,8 @@ class PipelineConfig implements Serializable {
     String buildFileName
 
     void setup(Object steps) {
+        
+        this.steps = steps
         
         buildTarget = steps.params.BUILD_TARGET
         profileName = steps.params.PROFILE_NAME
@@ -37,20 +41,6 @@ class PipelineConfig implements Serializable {
             buildFileName = "Application_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
         }
         
-        steps.echo "================================="
-        steps.echo " BuildTarget: ${buildTarget}"
-        steps.echo " ProfileName: ${profileName}"
-        steps.echo " BranchName: ${branchName}"
-        steps.echo " BuildVersion: ${buildVersion}"
-        steps.echo " VersionCode: ${versionCode}"
-        steps.echo " BuildNumber: ${buildNumber}"
-        steps.echo " IsContentUpdates: ${isContentUpdates}"
-        steps.echo " UnityHome: ${unityHome}"
-        steps.echo " ProjectPath: ${projectPath}"
-        steps.echo " RelativeBuildPath: ${relativeBuildPath}"
-        steps.echo " BuildFileName: ${buildFileName}"
-        steps.echo "================================="
-
         return this
     }
 }

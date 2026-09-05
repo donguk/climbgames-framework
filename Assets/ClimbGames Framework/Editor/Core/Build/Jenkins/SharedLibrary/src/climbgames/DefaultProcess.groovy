@@ -5,9 +5,8 @@ class DefaultProcess implements IBuildProcess {
     @Override 
     void build(IBuildSettings settings) {
         
-        println "[${this.class.simpleName}] build: ${settings.config.buildTarget}"
-
         PipelineConfig config = settings.config
+        
         def arguments = [        
             profileName: config.profileName,
             branchName: config.branchName,
@@ -22,7 +21,8 @@ class DefaultProcess implements IBuildProcess {
                         .collect { k, v -> "$k:${v != null ? v : ''}" }
                         .join(',')
 
-        bat """
+        def steps = config.steps
+        steps.bat """
             "${config.unityHome}\\Unity.exe" ^
             -batchmode ^
             -quit ^
