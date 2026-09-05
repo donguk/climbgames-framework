@@ -29,8 +29,8 @@ def start(config) {
 
 def deploy(config) {
 
-    def addressablePath = "${config.buildPath}/${config.buildTarget}/Addressables/ServerData/${config.buildVersion}"
-    def apkFile = "${config.buildPath}/${config.buildTarget}/${config.buildFileName}.apk"
+    def addressablePath = "${config.buildPath}/Addressables/ServerData/${config.buildVersion}"
+    def apkFile = "${config.buildPath}/${config.buildFileName}.apk"
 
     echo "addressablePath: ${addressablePath}"
     echo "apkFile: ${apkFile}"

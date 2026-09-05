@@ -10,6 +10,7 @@ import groovy.transform.Field
 @Field unityHome
 @Field projectPath
 @Field relativeBuildPath
+@Field buildPath
 @Field buildFileName
 
 def setup() {
@@ -23,6 +24,7 @@ def setup() {
     unityHome = tool name: "${env.UNITY_NAME}", type: 'org.jenkinsci.plugins.unity3d.Unity3dInstallation'
     projectPath = "${env.WORKSPACE}"
     relativeBuildPath = "Build"
+    buildPath = "${projectPath}/${relativeBuildPath}/${buildTarget}"
 
     if (params.PRODUCT_NAME != null)
         buildFileName = "${params.PRODUCT_NAME}_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
