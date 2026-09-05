@@ -12,7 +12,7 @@ namespace ClimbGames.Editor
     {
         public static event Action PreBuildProcess;
 
-        public static void BuildAndroid()
+        public static void BuildAndroid(string fileName = default)
         {
             PreBuildProcess?.Invoke();
 
@@ -20,10 +20,14 @@ namespace ClimbGames.Editor
             settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
             EditorUtility.SetDirty(settings);
 
-            string fileName = $"{PlayerSettings.productName}_" +
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = $"{PlayerSettings.productName}_" +
                             $"{BuildSettings.BuildType}_" +
                             $"{BuildSettings.BundleVersion}({BuildSettings.VersionCode})_" +
-                            $"{BuildSettings.BuildNumber}.{(BuildSettings.BuildAppBundle ? "aab" : "apk")}";
+                            $"{BuildSettings.BuildNumber}";
+            }
+            fileName += $".{(BuildSettings.BuildAppBundle ? "aab" : "apk")}";
 
             Debug.Log($"???? : {fileName}");
             string buildPathName = Path.Combine($"{BuildSettings.BuildPath}", $"{fileName}");
@@ -68,6 +72,7 @@ namespace ClimbGames.Editor
             profile.versionCode = customArgs.GetValue<int>("versionCode");
 
             BuildSettings.LoadFromProfile(profile);
+            BuildSettings.RootPath = customArgs.GetValue<string>("buildPath");
             BuildSettings.BuildNumber = customArgs.GetValue<int>("buildNumber");
 
             bool isContentUpdates = customArgs.GetValue<bool>("isContentUpdates");
@@ -82,7 +87,7 @@ namespace ClimbGames.Editor
             else
             {
                 ProjectBuilder.BuildPlayerContent();
-                ProjectBuilder.BuildAndroid();
+                ProjectBuilder.BuildAndroid(customArgs.GetValue("buildFileName", string.Empty));
             }
         }
     }

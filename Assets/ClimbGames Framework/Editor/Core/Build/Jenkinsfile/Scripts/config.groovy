@@ -6,9 +6,11 @@ import groovy.transform.Field
 @Field buildVersion
 @Field versionCode
 @Field buildNumber
-@Field isContentUpdates 
+@Field isContentUpdates
 @Field unityHome
 @Field projectPath
+@Field buildPath
+@Field buildFileName
 
 def setup() {
     
@@ -20,6 +22,12 @@ def setup() {
     isContentUpdates = params.IS_CONTENT_UPDATES
     unityHome = tool name: "${env.UNITY_NAME}", type: 'org.jenkinsci.plugins.unity3d.Unity3dInstallation'
     projectPath = "${env.WORKSPACE}"
+    buildPath = "${projectPath}/Build"
+
+    if (params.PRODUCT_NAME != null)
+        buildFileName = "${params.PRODUCT_NAME}_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
+    else
+        buildFileName = "Application_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
 
     println "================================="
     println " BuildTarget: ${buildTarget}"
@@ -30,7 +38,15 @@ def setup() {
     println " IsContentUpdates: ${isContentUpdates}"
     println " UnityHome: ${unityHome}"
     println " ProjectPath: ${projectPath}"
+    println " BuildPath: ${buildPath}"
+    println " BuildFileName: ${buildFileName}"
     println "================================="
+
+    def scriptPath = "Jenkins/Scripts/${buildTarget}_builder.groovy"
+    if (!fileExists(scriptPath))
+        error "Unsupported BUILD_TARGET '${buildTarget}'. Please check parameter or add '${scriptPath}'."
+    
+    return load "Jenkins/Scripts/${buildTarget}_builder.groovy"
 }
 
 return this

@@ -154,6 +154,7 @@ namespace ClimbGames.Editor
             BundleVersion = profile.bundleVersion;
             VersionCode = profile.versionCode;
             PatchUrl = profile.patchUrl;
+            buildAppBundle = BuildType == BuildType.Live;
         }
 
 

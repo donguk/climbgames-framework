@@ -1,14 +1,18 @@
 def start(config) {
 
-    def arguments = [
+    def arguments = [        
         profileName: config.profileName,
         branchName: config.branchName,
         buildVersion: config.buildVersion,
         versionCode: config.versionCode,
         buildNumber: config.buildNumber,
-        isContentUpdates: config.isContentUpdates
+        isContentUpdates: config.isContentUpdates,
+        buildPath: config.buildPath,
+        buildFileName: config.buildFileName,
     ]
-    def customArgs = arguments.collect { k, v -> "$k:$v" }.join(',')
+    def customArgs = arguments
+                    .collect { k, v -> "$k:${v != null ? v : ''}" }
+                    .join(',')
 
     bat """
         "${config.unityHome}\\Unity.exe" ^
@@ -21,6 +25,16 @@ def start(config) {
         -customArgs:"${customArgs}" ^
         -logFile -
     """
+}
+
+def deploy(config) {
+
+    def addressablePath = "${config.buildPath}/${config.buildTarget}/Addressables/ServerData/${config.buildVersion}"
+    def apkFile = "${config.buildPath}/${config.buildTarget}/${config.buildFileName}.apk"
+
+    echo "addressablePath: ${addressablePath}"
+    echo "apkFile: ${apkFile}"
+    echo "Please implement the Deploy() method..."
 }
 
 return this
