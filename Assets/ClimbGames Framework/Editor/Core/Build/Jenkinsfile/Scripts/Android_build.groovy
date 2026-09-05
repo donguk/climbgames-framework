@@ -7,7 +7,7 @@ def start(config) {
         versionCode: config.versionCode,
         buildNumber: config.buildNumber,
         isContentUpdates: config.isContentUpdates,
-        buildPath: config.buildPath,
+        relativeBuildPath: config.relativeBuildPath,
         buildFileName: config.buildFileName,
     ]
     def customArgs = arguments

@@ -9,7 +9,7 @@ import groovy.transform.Field
 @Field isContentUpdates
 @Field unityHome
 @Field projectPath
-@Field buildPath
+@Field relativeBuildPath
 @Field buildFileName
 
 def setup() {
@@ -22,7 +22,7 @@ def setup() {
     isContentUpdates = params.IS_CONTENT_UPDATES
     unityHome = tool name: "${env.UNITY_NAME}", type: 'org.jenkinsci.plugins.unity3d.Unity3dInstallation'
     projectPath = "${env.WORKSPACE}"
-    buildPath = "${projectPath}/Build"
+    relativeBuildPath = "Build"
 
     if (params.PRODUCT_NAME != null)
         buildFileName = "${params.PRODUCT_NAME}_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
@@ -38,7 +38,7 @@ def setup() {
     println " IsContentUpdates: ${isContentUpdates}"
     println " UnityHome: ${unityHome}"
     println " ProjectPath: ${projectPath}"
-    println " BuildPath: ${buildPath}"
+    println " relativeBuildPath: ${relativeBuildPath}"
     println " BuildFileName: ${buildFileName}"
     println "================================="
 

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEngine;
 
 
 namespace ClimbGames.Editor
@@ -72,8 +73,10 @@ namespace ClimbGames.Editor
             profile.versionCode = customArgs.GetValue<int>("versionCode");
 
             BuildSettings.LoadFromProfile(profile);
-            BuildSettings.RootPath = customArgs.GetValue<string>("buildPath");
             BuildSettings.BuildNumber = customArgs.GetValue<int>("buildNumber");
+
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            BuildSettings.RootPath = Path.Combine(projectRoot, customArgs.GetValue<string>("relativeBuildPath"));
 
             bool isContentUpdates = customArgs.GetValue<bool>("isContentUpdates");
             if (isContentUpdates)
