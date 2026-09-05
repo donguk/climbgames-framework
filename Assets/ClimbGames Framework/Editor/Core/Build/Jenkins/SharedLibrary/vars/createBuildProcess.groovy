@@ -4,7 +4,7 @@ import climbgames.DefaultProcess
 
 def call(config) {
 
-    String scriptPath = "Jenkins/Scripts/BuildProcess_${config.buildType}.groovy"
+    String scriptPath = "Jenkins/Scripts/BuildProcess_${config.buildTarget}.groovy"
     IBuildProcess buildProcess
 
     if (fileExists(scriptPath)) {
