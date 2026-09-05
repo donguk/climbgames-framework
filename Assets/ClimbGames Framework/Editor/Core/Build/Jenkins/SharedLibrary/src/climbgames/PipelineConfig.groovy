@@ -2,18 +2,18 @@ package climbgames
 
 class PipelineConfig implements Serializable {
 
-    final String buildTarget
-    final String profileName
-    final String branchName
-    final String buildVersion
-    final String versionCode
-    final String buildNumber
-    final boolean isContentUpdates
-    final String unityHome
-    final String projectPath
-    final String relativeBuildPath
-    final String buildPath
-    final String buildFileName
+    String buildTarget
+    String profileName
+    String branchName
+    String buildVersion
+    String versionCode
+    String buildNumber
+    boolean isContentUpdates
+    String unityHome
+    String projectPath
+    String relativeBuildPath
+    String buildPath
+    String buildFileName
 
     void setup(Object steps) {
         
@@ -36,7 +36,6 @@ class PipelineConfig implements Serializable {
         } else {
             buildFileName = "Application_${branchName}_${buildVersion}(${versionCode})_${buildNumber}"
         }
-        
         
         steps.echo "================================="
         steps.echo " BuildTarget: ${buildTarget}"
