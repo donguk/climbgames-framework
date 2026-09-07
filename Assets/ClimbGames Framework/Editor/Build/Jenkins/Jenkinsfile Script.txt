@@ -34,8 +34,8 @@ pipeline {
 
                     def config = setupConfig(this)
                     
-                    def settingsFactory = load("Jenkins/Scripts/CustomSettings.groovy") as Closure
-                    settings = settingsFactory(config)
+                    def createSettings = load("Jenkins/Scripts/CustomSettings.groovy") as Closure
+                    settings = createSettings(config)
                     buildProcess = createBuildProcess(config)
                 }
             }
