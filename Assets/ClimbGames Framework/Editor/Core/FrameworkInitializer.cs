@@ -8,12 +8,12 @@ using UnityEngine;
 namespace ClimbGames.Editor
 {
     [InitializeOnLoad]
-    public static class FrameworkEditor
+    public static class FrameworkInitializer
     {
         private const string EmptySceneGUID = "1d61250f766252d459de01ed701a82ed";
         private const string UIEnvironmentSceneGUID = "86d684a88f3f0184da6516468018b5ff";
 
-        static FrameworkEditor()
+        static FrameworkInitializer()
         {
             EditorApplication.delayCall += Initialize;
         }
@@ -27,6 +27,7 @@ namespace ClimbGames.Editor
             UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
             RegisterUIEnvironmentScene();
             AddLayerToTagManager(UIManager.WORLD_UI_LAYER);
+            FrameworkEditorSettings.instance.UpdateRuntimeSettings();
         }
 
         private static void CreateSettingsIfNotExist()

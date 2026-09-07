@@ -33,6 +33,8 @@ namespace ClimbGames
                         else
                         {
                             // addressable 확인
+
+                            // if prelaod asset, setup in OnEnable()
                         }
 #if UNITY_EDITOR
                         if (_instance == null)
@@ -67,5 +69,12 @@ namespace ClimbGames
             return default;
         }
 #endif
+
+        void OnEnable()
+        {
+            var assetPath = typeof(T).GetCustomAttribute<AssetPathAttribute>();
+            if (assetPath != null && assetPath.IsPreloaded)
+                _instance = (T)this;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace ClimbGames.Editor
             string fileName = Path.GetFileNameWithoutExtension(pathName);
             text = text.Replace("#SCRIPTNAME#", fileName);
 
-            string @namespace = FrameworkSettings.Instance.ProjectNamesapce;
+            string @namespace = FrameworkEditorSettings.instance.ProjectNamesapce;
             if (string.IsNullOrEmpty(@namespace))
                 @namespace = "ClimbGames";
 

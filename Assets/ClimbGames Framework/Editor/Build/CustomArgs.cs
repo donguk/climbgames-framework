@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ClimbGames
+namespace ClimbGames.Editor
 {
     public class CustomArgs
     {

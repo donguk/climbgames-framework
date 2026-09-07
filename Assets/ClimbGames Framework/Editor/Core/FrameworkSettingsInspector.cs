@@ -3,7 +3,7 @@ using UnityEditor;
 namespace ClimbGames.Editor
 {
     [CustomEditor(typeof(FrameworkSettings))]
-    public class FrameworkSettingsEditor : UnityEditor.Editor
+    public class FrameworkSettingsInspector : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
@@ -12,14 +12,16 @@ namespace ClimbGames.Editor
 
             EditorGUI.BeginChangeCheck();
 
-            base.OnInspectorGUI();
+            serializedObject.Update();
+            DrawPropertiesExcluding(serializedObject, "m_Script");
+            serializedObject.ApplyModifiedProperties();
 
             if (EditorGUI.EndChangeCheck())
             {
                 bool isChanged;
 
                 if (isChanged = useEmptyScene != settings.UseEmptyScene)
-                    FrameworkEditor.UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
+                    FrameworkInitializer.UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
 
                 if (isChanged)
                 {

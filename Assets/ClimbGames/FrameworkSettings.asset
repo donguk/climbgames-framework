@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba0b67441af76c1419d317a0ba11c6cd, type: 3}
   m_Name: FrameworkSettings
   m_EditorClassIdentifier: ClimbGames.Framework::ClimbGames.FrameworkSettings
-  showSceneName: 1
-  projectNamesapce: 
   useDefaultTransition: 1
   defaultTransitionTime: 0.2
   useEmptyScene: 1
