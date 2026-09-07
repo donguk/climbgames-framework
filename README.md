@@ -9,7 +9,7 @@
 2. [MonoSingleton (제네릭 싱글톤)](#2-monosingleton-제네릭-싱글톤)
 3. [FSM (유한 상태 머신)](#3-fsm-유한-상태-머신)
 4. [UIManager (UI 및 레이어 관리)](#4-uimanager-ui-및-레이어-관리)
-5. [Build](#5-빌드-및-젠킨스-연동)
+5. [빌드 및 젠킨스 연동](#5-빌드-및-젠킨스-연동)
 
 ---
 
@@ -99,6 +99,7 @@ var invView = await UIManager.Instance.ShowUI<InventoryView>("UI/InventoryView",
 UIManager.Instance.Hide(invView);
 ```
 
+---
 
 ## 5. 빌드 및 젠킨스 연동 
 에디터 상에서 **빌드 툴을 통해 직접 바로 빌드를 수행**하거나, **`Tools` > `ClimbGames` > `Create Profile`** 메뉴에서 빌드 프로파일을 생성한 후 **젠킨스(Jenkins)를 통해 원격 빌드**를 진행할 수 있습니다.
@@ -111,15 +112,11 @@ UIManager.Instance.Hide(invView);
   * `addressables_content_state.bin` 파일을 활용한 콘텐츠 업데이트 빌드 지원
   * Addressables 빌드 결과물을 `EditorEnv.zip`으로 백업 및 테스트 기능 제공
 
----
-
 ### 2. 젠킨스 공유 라이브러리 (Jenkins Shared Library)
 * **저장 경로**: `ClimbGames Framework/Editor/Build/Jenkins/SharedLibrary`
 * **설명**: 
   * 젠킨스 파이프라인에서 공통으로 사용되는 OOP 기반 빌드/배포 프레임워크 라이브러리
   * `PipelineConfig`, `DefaultSettings`, `DefaultProcess` 등 기반 구조 제공
-
----
 
 ### 3. 젠킨스 스크립트 임포트 (Jenkins Custom Scripts)
 * **저장 경로**: `ClimbGames Framework/Editor/Build/Jenkins/Scripts`
