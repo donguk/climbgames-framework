@@ -7,25 +7,31 @@ namespace ClimbGames.Editor
     {
         public override void OnInspectorGUI()
         {
+            DrawSettingsInspector();
+        }
+
+        public void DrawSettingsInspector(params string[] propertyToExclude)
+        {
             var settings = (FrameworkSettings)target;
             bool useEmptyScene = settings.UseEmptyScene;
 
             EditorGUI.BeginChangeCheck();
 
             serializedObject.Update();
-            DrawPropertiesExcluding(serializedObject, "m_Script");
+            if (propertyToExclude != null && propertyToExclude.Length > 0)
+                DrawPropertiesExcluding(serializedObject, propertyToExclude);
+            else
+                DrawDefaultInspector();
             serializedObject.ApplyModifiedProperties();
 
             if (EditorGUI.EndChangeCheck())
             {
-                bool isChanged;
+                EditorUtility.SetDirty(settings);
 
-                if (isChanged = useEmptyScene != settings.UseEmptyScene)
-                    FrameworkInitializer.UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
-
-                if (isChanged)
+                bool isUseEmptySceneChanged = useEmptyScene != settings.UseEmptyScene;
+                if (isUseEmptySceneChanged)
                 {
-                    EditorUtility.SetDirty(settings);
+                    FrameworkInitializer.UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
                     AssetDatabase.SaveAssets();
                 }
             }

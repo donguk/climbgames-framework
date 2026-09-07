@@ -20,6 +20,7 @@ namespace ClimbGames
 
         }
 
+#if UNITY_EDITOR
         void OnGUI()
         {
             if (FrameworkSettings.Instance.ShowSceneName == false)
@@ -33,5 +34,6 @@ namespace ClimbGames
             GUI.Box(rect, "", GUIStyles.BackgroundBoxStyle);
             GUI.Label(rect, content, GUIStyles.SceneLabelStyle);
         }
+#endif
     }
 }

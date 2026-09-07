@@ -19,6 +19,7 @@ namespace ClimbGames.Editor
         public void UpdateRuntimeSettings()
         {
             FrameworkSettings.Instance.ShowSceneName = showSceneName;
+            EditorUtility.SetDirty(FrameworkSettings.Instance);
         }
     }
 }

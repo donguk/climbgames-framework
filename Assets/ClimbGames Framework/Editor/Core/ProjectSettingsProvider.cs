@@ -58,7 +58,8 @@ namespace ClimbGames.Editor
                     if (settings != null)
                     {
                         UnityEditor.Editor.CreateCachedEditor(settings, null, ref cachedRuntimeSettings);
-                        cachedRuntimeSettings.OnInspectorGUI();
+                        if (cachedRuntimeSettings is FrameworkSettingsInspector inspector)
+                            inspector.DrawSettingsInspector("m_Script");
                     }
                 },
 
