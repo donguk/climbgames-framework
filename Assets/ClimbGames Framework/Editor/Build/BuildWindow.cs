@@ -81,7 +81,13 @@ namespace ClimbGames.Editor
             }
             EditorGUILayout.EndHorizontal();
 
+            EditorGUI.BeginChangeCheck();
             BuildSettings.BuildType = (BuildType)EditorGUILayout.EnumPopup("Build Type", BuildSettings.BuildType);
+            if (EditorGUI.EndChangeCheck())
+            {
+                RefreshBinFileList();
+                RefreshEnvFileList();
+            }
             BuildSettings.BundleVersion = EditorGUILayout.TextField("Bundle Version", BuildSettings.BundleVersion);
             BuildSettings.VersionCode = EditorGUILayout.IntField("Version Code", BuildSettings.VersionCode);
             BuildSettings.BuildNumber = EditorGUILayout.IntField("Build Number", BuildSettings.BuildNumber);
@@ -210,7 +216,7 @@ namespace ClimbGames.Editor
             _binFilePaths.Clear();
             _binDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesPath, "ContentState");
+            string rootPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/");
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "addressables_content_state.bin", SearchOption.AllDirectories)
@@ -252,7 +258,7 @@ namespace ClimbGames.Editor
             _envFilePaths.Clear();
             _envDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesPath, "ContentState");
+            string rootPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}");
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "EditorEnv_*.zip", SearchOption.AllDirectories)

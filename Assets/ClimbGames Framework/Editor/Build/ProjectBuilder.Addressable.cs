@@ -110,7 +110,7 @@ namespace ClimbGames.Editor
 
         static void CopyContentState(string contentStateFilePath)
         {
-            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ContentState/{BuildSettings.BundleVersion}");
+            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
             File.Copy(contentStateFilePath, Path.Combine(destinationPath, "addressables_content_state.bin"), true);
@@ -124,10 +124,10 @@ namespace ClimbGames.Editor
                 return;
 
             // 백업 폴더 및 Zip 파일 경로 설정: AddressablesState/EditorEnv_0.1.0_1.zip
-            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ContentState/{BuildSettings.BundleVersion}");
+            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
-            string zipFileName = $"EditorEnv_{BuildSettings.BundleVersion}_{BuildSettings.BuildNumber}.zip";
+            string zipFileName = $"EditorEnv_{BuildSettings.BuildType}_{BuildSettings.BundleVersion}_{BuildSettings.BuildNumber}.zip";
             string destinationZipPath = Path.Combine(destinationPath, zipFileName);
 
             try
@@ -152,7 +152,7 @@ namespace ClimbGames.Editor
             if (Directory.Exists(remoteBuildPath) == false)
                 return;
 
-            var destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"ServerData/{BuildSettings.BundleVersion}");
+            var destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}/ServerData");
             Directory.CreateDirectory(destinationPath);
 
             string[] targetExtensions = { ".json", ".bin", ".hash" };
@@ -172,28 +172,47 @@ namespace ClimbGames.Editor
 
         public static async UniTask UploadToHfs(IProgress<FileUploadInfo> progress = null)
         {
-            string uploadUrl = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}";
-
-            string serverDataPath = Path.Combine(BuildSettings.AddressablesPath, $"ServerData/{BuildSettings.BundleVersion}");
+            string serverDataPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}/ServerData");
             if (Directory.Exists(serverDataPath) == false)
                 return;
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(serverDataPath);
-            var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
-
-            // 폴더 생성
-            var directories = files.Select(f => f.DirectoryName.Replace("\\", "/")).ToList();
-            HashSet<string> folderHash = new HashSet<string>();
-            foreach (var path in directories)
+            var targetFiles = Directory.GetFiles(serverDataPath, "*.*", SearchOption.AllDirectories);
+            HashSet<string> targetFolders = new HashSet<string>()
             {
-                int index = path.LastIndexOf($"{BuildSettings.BundleVersion}");
+                $"{BuildSettings.TargetPlatform}",
+                $"{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}",
+                $"{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}/{BuildSettings.BundleVersion}",
+            };
+            foreach (var filePath in targetFiles)
+            {
+                var directoryName = Path.GetDirectoryName(filePath).Replace("\\", "/");
+                int index = directoryName.LastIndexOf("ServerData");
                 if (index > -1)
-                    folderHash.Add(path.Substring(index));
+                {
+                    var subDirectory = directoryName.Substring(index + "ServerData".Length);
+                    if (string.IsNullOrEmpty(subDirectory) == false)
+                    {
+                        string[] names = subDirectory.Split('/');
+                        string resultName = "";
+                        foreach (var folderName in names)
+                        {
+                            if (string.IsNullOrEmpty(folderName) == false)
+                            {
+                                if (string.IsNullOrEmpty(resultName) == false)
+                                    resultName += "/";
+
+                                resultName += folderName;
+                                string subFolderPath = $"{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}/{BuildSettings.BundleVersion}/{resultName}";
+                                targetFolders.Add(subFolderPath); //
+                            }
+                        }
+                    }
+                }
             }
-            foreach (var folder in folderHash)
+            foreach (var path in targetFolders)
             {
                 // HTTP MKCOL 메서드로 폴더 생성 요청
-                string folderUrl = $"{uploadUrl}/{folder}";
+                string folderUrl = $"{BuildSettings.PatchUrl}/{path}";
                 using (UnityWebRequest www = new UnityWebRequest(folderUrl, "MKCOL"))
                 {
                     try
@@ -205,7 +224,7 @@ namespace ClimbGames.Editor
                     }
                     catch (Exception e)
                     {
-                        // 405: 폴더 이미 존재
+                        // 405: already exsit folder
                         if (www.responseCode != 405)
                         {
                             UnityEngine.Debug.LogException(e);
@@ -217,38 +236,46 @@ namespace ClimbGames.Editor
 
             FileUploadInfo uploadInfo = new FileUploadInfo()
             {
-                totalCount = files.Length
+                totalCount = targetFiles.Length
             };
-            foreach (var file in files)
+            string uploadPath = $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}/{BuildSettings.BundleVersion}";
+            foreach (var filePath in targetFiles)
             {
-                uploadInfo.fileName = file.Name;
+                uploadInfo.fileName = Path.GetFileName(filePath);
 
-                string folderPath = file.DirectoryName.Replace("\\", "/");
-                int index = folderPath.LastIndexOf($"{BuildSettings.BundleVersion}");
-                string destinationUrl = $"{uploadUrl}/{folderPath.Substring(index)}";
+                var directoryName = Path.GetDirectoryName(filePath).Replace("\\", "/");
+                int index = directoryName.LastIndexOf("ServerData");
+                string destinationUrl = $"{uploadPath}{directoryName.Substring(index + "ServerData".Length)}";
 
-                var fileData = await File.ReadAllBytesAsync(file.FullName);
-                var formData = new List<IMultipartFormSection>
+                try
                 {
-                    new MultipartFormFileSection("file", fileData, file.Name, "application/octet-stream")
-                };
-                using (UnityWebRequest www = UnityWebRequest.Post(destinationUrl, formData))
-                {
-                    string auth = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("climbgames-admin:climbgames2@"));
-                    www.SetRequestHeader("Authorization", "Basic " + auth);
-
-                    var operation = www.SendWebRequest();
-                    while (operation.isDone == false)
+                    var fileData = await File.ReadAllBytesAsync(filePath);
+                    var formData = new List<IMultipartFormSection>
                     {
-                        uploadInfo.progress = operation.progress;
-                        progress?.Report(uploadInfo);
-                        await UniTask.Yield(); // 다음 프레임 대기
-                    }
+                        new MultipartFormFileSection("file", fileData, uploadInfo.fileName, "application/octet-stream")
+                    };
+                    using (UnityWebRequest www = UnityWebRequest.Post(destinationUrl, formData))
+                    {
+                        string auth = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("climbgames-admin:climbgames2@"));
+                        www.SetRequestHeader("Authorization", "Basic " + auth);
 
-                    if (www.result != UnityWebRequest.Result.Success)
-                        Debug.LogError($"[UploadToHfs] Fail File: {file.Name} | Error: {www.error} | Response Code: {www.responseCode}");
+                        var operation = www.SendWebRequest();
+                        while (operation.isDone == false)
+                        {
+                            uploadInfo.progress = operation.progress;
+                            progress?.Report(uploadInfo);
+                            await UniTask.Yield(); // 다음 프레임 대기
+                        }
+
+                        if (www.result != UnityWebRequest.Result.Success)
+                            Debug.LogError($"[UploadToHfs] Fail upload..: {filePath} | Error: {www.error} | Response Code: {www.responseCode}");
+                    }
+                    uploadInfo.currentIndex++;
                 }
-                uploadInfo.currentIndex++;
+                catch (Exception e)
+                {
+                    Debug.LogError($"[UploadToHfs] Fail upload ex: {filePath} | ex: {e}");
+                }
             }
         }
     }
