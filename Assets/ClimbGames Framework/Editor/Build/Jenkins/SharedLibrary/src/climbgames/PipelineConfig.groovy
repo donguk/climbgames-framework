@@ -33,8 +33,9 @@ class PipelineConfig implements Serializable {
 
         switch (branchName)
         {
-            case 'develop': buildType = 'dev'; break
-            default: buildType = branchName; break
+            case 'qa': buildType = 'QA'; break;
+            case 'live': buildType = 'Live'; break;
+            default: buildType = 'Dev'; break
         }
         profileName = script.params.PROFILE_NAME
         isContentUpdates = script.params.IS_CONTENT_UPDATES as boolean
