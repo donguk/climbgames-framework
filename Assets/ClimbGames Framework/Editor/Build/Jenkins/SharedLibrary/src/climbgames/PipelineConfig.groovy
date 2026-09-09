@@ -2,7 +2,7 @@ package climbgames
 
 class PipelineConfig implements Serializable {
 
-    transient Object script
+    transient def script
 
     String buildTarget    
     String branchName
@@ -18,7 +18,7 @@ class PipelineConfig implements Serializable {
     String buildPath
     String buildFileName
 
-    PipelineConfig(Object script) {
+    PipelineConfig(def script) {
 
         this.script = script
     }

@@ -2,6 +2,13 @@ package climbgames
 
 class DefaultProcess implements IBuildProcess {
 
+    transient protected def script
+
+    void init(def script) {
+
+        this.script = script
+    }
+
     @Override 
     void build(IBuildSettings settings) {
         

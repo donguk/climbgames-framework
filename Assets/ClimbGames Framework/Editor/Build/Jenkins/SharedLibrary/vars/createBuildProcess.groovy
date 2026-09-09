@@ -13,5 +13,9 @@ def call(config) {
         buildProcess = new DefaultProcess()
     }
 
+    if (buildProcess instanceof DefaultProcess) {
+        (buildProcess as DefaultProcess).init(config.script)
+    }
+    
     return buildProcess
 }
