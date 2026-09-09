@@ -314,6 +314,11 @@ namespace ClimbGames.Editor
                             ProjectBuilder.BuildAndroid();
                             break;
                         }
+                    case BuildTargetGroup.iOS:
+                        {
+                            ProjectBuilder.BuildiOS();
+                            break;
+                        }
                     default: EditorUtility.DisplayDialog("Feature Not Implemented", $"{targetGroup} build support is not implemented yet.", "OK"); break;
                 }
             }

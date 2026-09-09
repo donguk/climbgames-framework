@@ -143,6 +143,18 @@ namespace ClimbGames.Editor
                         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
                         break;
                     }
+
+                case BuildTargetGroup.iOS:
+                    {
+                        PlayerSettings.SetScriptingBackend(NamedBuildTarget.iOS, ScriptingImplementation.IL2CPP);
+
+                        PlayerSettings.iOS.buildNumber = buildNumber.ToString();
+                        PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+                        PlayerSettings.iOS.appleDeveloperTeamID = "";
+                        PlayerSettings.iOS.iOSManualProvisioningProfileID = "";
+                        PlayerSettings.iOS.iOSManualProvisioningProfileType = ProvisioningProfileType.Development;
+                        break;
+                    }
             }
         }
 

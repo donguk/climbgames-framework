@@ -42,6 +42,25 @@ namespace ClimbGames.Editor
             Console.Out.WriteLine($"[ProjectBuilder] BuildAndroid: {buildPathName}");
             BuildPipeline.BuildPlayer(options);
         }
+
+        public static void BuildiOS()
+        {
+            PreBuildProcess?.Invoke();
+
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
+            EditorUtility.SetDirty(settings);
+
+            BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions()
+            {
+                scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
+                locationPathName = Path.Combine(BuildSettings.BuildPath, "xcode"),
+                target = BuildTarget.iOS,
+                options = BuildSettings.DevelopmentBuild ? BuildOptions.Development : BuildOptions.None,
+            };
+
+            BuildPipeline.BuildPlayer(buildPlayerOptions);
+        }
     }
 
     public static class CommandLineBuilder
