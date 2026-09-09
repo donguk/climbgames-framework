@@ -110,7 +110,7 @@ namespace ClimbGames.Editor
 
         static void CopyContentState(string contentStateFilePath)
         {
-            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
+            string destinationPath = Path.Combine(BuildSettings.BuildPath, $"{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
             File.Copy(contentStateFilePath, Path.Combine(destinationPath, "addressables_content_state.bin"), true);
@@ -123,8 +123,8 @@ namespace ClimbGames.Editor
             if (Directory.Exists(libraryPath) == false)
                 return;
 
-            // 백업 폴더 및 Zip 파일 경로 설정: AddressablesState/EditorEnv_0.1.0_1.zip
-            string destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
+            // 백업 폴더 및 Zip 파일 경로 설정: 0.1.0/EditorEnv_0.1.0_1.zip
+            string destinationPath = Path.Combine(BuildSettings.BuildPath, $"{BuildSettings.BundleVersion}");
             Directory.CreateDirectory(destinationPath);
 
             string zipFileName = $"EditorEnv_{BuildSettings.BuildType}_{BuildSettings.BundleVersion}_{BuildSettings.BuildNumber}.zip";
@@ -152,7 +152,7 @@ namespace ClimbGames.Editor
             if (Directory.Exists(remoteBuildPath) == false)
                 return;
 
-            var destinationPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}/ServerData");
+            var destinationPath = Path.Combine(BuildSettings.BuildPath, $"{BuildSettings.BundleVersion}/ServerData");
             Directory.CreateDirectory(destinationPath);
 
             string[] targetExtensions = { ".json", ".bin", ".hash" };
@@ -172,7 +172,7 @@ namespace ClimbGames.Editor
 
         public static async UniTask UploadToHfs(IProgress<FileUploadInfo> progress = null)
         {
-            string serverDataPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/{BuildSettings.BundleVersion}/ServerData");
+            string serverDataPath = Path.Combine(BuildSettings.BuildPath, $"{BuildSettings.BundleVersion}/ServerData");
             if (Directory.Exists(serverDataPath) == false)
                 return;
 

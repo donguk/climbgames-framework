@@ -216,7 +216,7 @@ namespace ClimbGames.Editor
             _binFilePaths.Clear();
             _binDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}/");
+            string rootPath = BuildSettings.BuildPath;
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "addressables_content_state.bin", SearchOption.AllDirectories)
@@ -258,7 +258,7 @@ namespace ClimbGames.Editor
             _envFilePaths.Clear();
             _envDropdownOptions.Clear();
 
-            string rootPath = Path.Combine(BuildSettings.AddressablesPath, $"{BuildSettings.BuildType}");
+            string rootPath = BuildSettings.BuildPath;
             if (Directory.Exists(rootPath))
             {
                 var files = Directory.GetFiles(rootPath, "EditorEnv_*.zip", SearchOption.AllDirectories)

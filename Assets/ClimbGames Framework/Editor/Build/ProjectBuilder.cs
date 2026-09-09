@@ -30,7 +30,6 @@ namespace ClimbGames.Editor
             }
             fileName += $".{(BuildSettings.BuildAppBundle ? "aab" : "apk")}";
 
-            Debug.Log($"???? : {fileName}");
             string buildPathName = Path.Combine($"{BuildSettings.BuildPath}", $"{fileName}");
             BuildPlayerOptions options = new BuildPlayerOptions()
             {
@@ -81,7 +80,7 @@ namespace ClimbGames.Editor
             bool isContentUpdates = customArgs.GetValue<bool>("isContentUpdates");
             if (isContentUpdates)
             {
-                string contentStateFilePath = Path.Combine(BuildSettings.AddressablesPath, $"ContentState/{profile.bundleVersion}/addressables_content_state.bin");
+                string contentStateFilePath = Path.Combine(BuildSettings.BuildPath, $"{profile.bundleVersion}/addressables_content_state.bin");
                 if (File.Exists(contentStateFilePath) == false)
                     throw new Exception($"Not Exist {profile.bundleVersion}'s addressables_content_state.bin");
 

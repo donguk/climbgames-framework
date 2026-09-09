@@ -43,8 +43,7 @@ namespace ClimbGames.Editor
             get => rootPath;
             set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", rootPath = value);
         }
-        public static string BuildPath => Path.Combine(RootPath, $"{TargetPlatform}");
-        public static string AddressablesPath => Path.Combine(RootPath, $"{TargetPlatform}/Addressables");
+        public static string BuildPath => Path.Combine(rootPath, $"{TargetPlatform}/{buildType}");
         public static BuildType BuildType
         {
             get => buildType;
