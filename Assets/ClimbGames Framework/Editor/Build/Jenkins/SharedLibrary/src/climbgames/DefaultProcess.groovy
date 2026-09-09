@@ -33,6 +33,8 @@ class DefaultProcess implements IBuildProcess {
         script.echo "[${this.class.simpleName}] deploy: ${settings.config.buildTarget}"
     }
 
+
+    // upload func
     void uploadToHfs(String sourcePath, String remoteUrl, String userAuth = '') {
 
         // 문자열 끝에 붙어 있는 슬래시(/)를 모두 제거
@@ -75,6 +77,26 @@ class DefaultProcess implements IBuildProcess {
                 }
             }
         }      
+    }
+
+    void uploadFileToHfs(String filePath, String remoteUrl, String userAuth = '') {
+
+        // dir 블록 안에서 findFiles 실행 시 file.path는 상대 경로로 나옵니다 (예: "catalog.json", "aa/test.bundle")
+        def normalizedPath = filePath.replace('\\', '/')
+
+        // 경로에서 파일명만 추출 (예: "a/b/catalog.json" -> "catalog.json")
+        def fileName = normalizedPath.contains('/') 
+                        ? normalizedPath.substring(normalizedPath.lastIndexOf('/') + 1) 
+                        : normalizedPath
+
+        def fileRemoteUrl = "${remoteUrl}/${fileName}"
+
+        // curl PUT 업로드 (file.path는 현재 dir 기준 상대 경로)
+        if (script.isUnix()) {
+            script.sh "curl -s -f -u '${userAuth}' -X PUT --data-binary '@${filePath}' '${fileRemoteUrl}'"
+        } else {
+            script.bat "curl -s -f -u \"${userAuth}\" -X PUT --data-binary \"@${filePath}\" \"${fileRemoteUrl}\""
+        }
     }
 
     void createRemoteFolder(String folderUrl, String userAuth = '') {
