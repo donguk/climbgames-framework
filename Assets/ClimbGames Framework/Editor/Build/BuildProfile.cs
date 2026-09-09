@@ -10,7 +10,7 @@ namespace ClimbGames.Editor
         public static string TargetPath = "Assets/ClimbGames/Editor/Build";
         private static string DefaultFileName = "NewBuildProfile.asset";
 
-        public BuildType buildType = Editor.BuildType.Dev;
+        public BuildType buildType = Editor.BuildType.dev;
         public string bundleVersion = "0.1.0";
         public int versionCode = 1;
         public string patchUrl;

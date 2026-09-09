@@ -9,9 +9,9 @@ namespace ClimbGames.Editor
 {
     public enum BuildType
     {
-        Dev,
-        Qa,
-        Live,
+        dev,
+        qa,
+        live,
     }
 
     public static class BuildSettings
@@ -20,7 +20,7 @@ namespace ClimbGames.Editor
 
         // common
         private static string rootPath;
-        private static BuildType buildType = BuildType.Dev;
+        private static BuildType buildType = BuildType.dev;
         private static string bundleVersion = "0.1.0";
         private static int versionCode = 1;
         private static int buildNumber = 1;
@@ -106,7 +106,7 @@ namespace ClimbGames.Editor
             string defatulRootPath = Path.Combine(Directory.GetCurrentDirectory(), "Build");
             rootPath = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", defatulRootPath);
 
-            if (System.Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", "Dev"), out var result))
+            if (System.Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", "dev"), out var result))
                 buildType = (BuildType)result;
 
             bundleVersion = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", "0.1.0");
@@ -153,7 +153,7 @@ namespace ClimbGames.Editor
             BundleVersion = profile.bundleVersion;
             VersionCode = profile.versionCode;
             PatchUrl = profile.patchUrl;
-            buildAppBundle = BuildType == BuildType.Live;
+            buildAppBundle = BuildType == BuildType.live;
         }
     }
 }
