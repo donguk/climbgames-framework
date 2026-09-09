@@ -42,7 +42,7 @@ class PipelineConfig implements Serializable {
 
         projectPath = script.env.WORKSPACE
         relativeBuildPath = "Build"
-        buildPath = "${projectPath}/${relativeBuildPath}/${buildTarget}"
+        buildPath = "${projectPath}/${relativeBuildPath}/${buildTarget}/${buildType}"
 
         String productName = script.params.PRODUCT_NAME
         if (productName) {
