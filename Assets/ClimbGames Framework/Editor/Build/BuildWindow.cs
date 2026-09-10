@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
 
 namespace ClimbGames.Editor
 {
@@ -62,6 +61,7 @@ namespace ClimbGames.Editor
             GUILayout.Label("Settings", EditorStyles.boldLabel);
             EditorGUILayout.Space();
 
+            EditorGUILayout.LabelField("Target Platform", $"{BuildSettings.TargetPlatform}", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             {
                 EditorGUILayout.LabelField("Root Path", BuildSettings.RootPath);
@@ -134,6 +134,15 @@ namespace ClimbGames.Editor
                         BuildSettings.KeyaliasPass = EditorGUILayout.TextField("KeyaliasPass", BuildSettings.KeyaliasPass);
                         BuildSettings.BuildAppBundle = EditorGUILayout.Toggle("Build App Bundle", BuildSettings.BuildAppBundle);
 
+                        break;
+                    }
+                case BuildTargetGroup.iOS:
+                    {
+                        BuildSettings.AppleEnableAutomaticSigning = EditorGUILayout.Toggle("AutomaticSigning", BuildSettings.AppleEnableAutomaticSigning);
+                        BuildSettings.AppleDeveloperTeamID = EditorGUILayout.TextField("DeveloperTeamID", BuildSettings.AppleDeveloperTeamID);
+
+                        BuildSettings.iOSManualProvisioningProfileType = (ProvisioningProfileType)EditorGUILayout.EnumPopup("ProvisioningProfileType", BuildSettings.iOSManualProvisioningProfileType);
+                        BuildSettings.iOSManualProvisioningProfileID = EditorGUILayout.TextField("ProvisioningProfileID", BuildSettings.iOSManualProvisioningProfileID);
                         break;
                     }
             }

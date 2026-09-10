@@ -35,6 +35,13 @@ namespace ClimbGames.Editor
         private static string keyaliasPass;
         //
 
+        // iOS
+        private static bool appleEnableAutomaticSigning;
+        private static string appleDeveloperTeamID;
+        private static string _iOSManualProvisioningProfileID;
+        private static ProvisioningProfileType _iOSManualProvisioningProfileType;
+        //
+
         public static string TargetPlatform => EditorUserBuildSettings.activeBuildTarget.ToString();
         public static BuildTargetGroup TargetGroup => BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
 
@@ -99,6 +106,26 @@ namespace ClimbGames.Editor
             get => buildAppBundle;
             set => EditorPrefs.SetBool($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildAppBundle)}", buildAppBundle = value);
         }
+        public static bool AppleEnableAutomaticSigning
+        {
+            get => appleEnableAutomaticSigning;
+            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(BuildSettings)}_{nameof(appleEnableAutomaticSigning)}", appleEnableAutomaticSigning = value);
+        }
+        public static string AppleDeveloperTeamID
+        {
+            get => appleDeveloperTeamID;
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(appleDeveloperTeamID)}", appleDeveloperTeamID = value);
+        }
+        public static string iOSManualProvisioningProfileID
+        {
+            get => _iOSManualProvisioningProfileID;
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileID)}", _iOSManualProvisioningProfileID = value);
+        }
+        public static ProvisioningProfileType iOSManualProvisioningProfileType
+        {
+            get => _iOSManualProvisioningProfileType;
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileType)}", (_iOSManualProvisioningProfileType = value).ToString());
+        }
 
         static BuildSettings()
         {
@@ -123,6 +150,7 @@ namespace ClimbGames.Editor
         public static void ApplySettings()
         {
             PlayerSettings.bundleVersion = bundleVersion;
+
             switch (TargetGroup)
             {
                 case BuildTargetGroup.Android:
@@ -137,8 +165,6 @@ namespace ClimbGames.Editor
                         PlayerSettings.Android.keyaliasName = keyaliasName;
                         PlayerSettings.Android.keyaliasPass = keyaliasPass;
 
-                        EditorUserBuildSettings.connectProfiler = developmentBuild;
-                        EditorUserBuildSettings.allowDebugging = developmentBuild;
                         EditorUserBuildSettings.buildAppBundle = buildAppBundle;
                         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
                         break;
@@ -149,13 +175,16 @@ namespace ClimbGames.Editor
                         PlayerSettings.SetScriptingBackend(NamedBuildTarget.iOS, ScriptingImplementation.IL2CPP);
 
                         PlayerSettings.iOS.buildNumber = buildNumber.ToString();
-                        PlayerSettings.iOS.appleEnableAutomaticSigning = true;
-                        PlayerSettings.iOS.appleDeveloperTeamID = "";
-                        PlayerSettings.iOS.iOSManualProvisioningProfileID = "";
-                        PlayerSettings.iOS.iOSManualProvisioningProfileType = ProvisioningProfileType.Development;
+                        PlayerSettings.iOS.appleEnableAutomaticSigning = appleEnableAutomaticSigning;
+                        PlayerSettings.iOS.appleDeveloperTeamID = appleDeveloperTeamID;
+                        PlayerSettings.iOS.iOSManualProvisioningProfileID = _iOSManualProvisioningProfileID;
+                        PlayerSettings.iOS.iOSManualProvisioningProfileType = _iOSManualProvisioningProfileType;
                         break;
                     }
             }
+
+            EditorUserBuildSettings.connectProfiler = developmentBuild;
+            EditorUserBuildSettings.allowDebugging = developmentBuild;
         }
 
         public static void LoadFromProfile(BuildProfile profile)
@@ -164,7 +193,10 @@ namespace ClimbGames.Editor
             BundleVersion = profile.bundleVersion;
             VersionCode = profile.versionCode;
             PatchUrl = profile.patchUrl;
-            buildAppBundle = BuildType == BuildType.Live;
+
+            buildAppBundle = buildType == BuildType.Live;
+            iOSManualProvisioningProfileType = buildType == BuildType.Live ? ProvisioningProfileType.Distribution : ProvisioningProfileType.Development;
+            developmentBuild = buildType != BuildType.Live;
         }
     }
 }
