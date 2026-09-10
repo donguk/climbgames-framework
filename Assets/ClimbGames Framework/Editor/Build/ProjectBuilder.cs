@@ -54,7 +54,7 @@ namespace ClimbGames.Editor
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions()
             {
                 scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
-                locationPathName = Path.Combine(BuildSettings.BuildPath, "build_xcode"),
+                locationPathName = Path.Combine(BuildSettings.BuildPath, "xcode"),
                 target = BuildTarget.iOS,
                 options = BuildSettings.DevelopmentBuild ? BuildOptions.Development : BuildOptions.None,
             };

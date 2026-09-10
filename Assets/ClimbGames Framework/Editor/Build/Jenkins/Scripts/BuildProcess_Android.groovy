@@ -6,11 +6,10 @@ class BuildProcess_Android extends DefaultProcess implements Serializable {
     @Override 
     void build(IBuildSettings settings) {
 
-        super.build(settings)
+        settings.executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildAndroid"
+        // implement additional settings...
 
-        // Please implement it if necessary.
-        //
-        //
+        super.build(settings)
     }
 
     @Override 
