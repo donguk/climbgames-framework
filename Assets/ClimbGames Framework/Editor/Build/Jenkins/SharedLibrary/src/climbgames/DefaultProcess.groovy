@@ -123,7 +123,7 @@ class DefaultProcess implements IBuildProcess {
         }
     }
 
-    void exportIpa(xcode_download_url, team_id, p12_base64, p12_password, provision_base64) {
+    void githubAction_ExportIpa(xcode_download_url, team_id, p12_base64, p12_password, provision_base64) {
         
         script.withCredentials([script.string(credentialsId: 'github-access-token', variable: 'GITHUB_TOKEN')]) {
 
