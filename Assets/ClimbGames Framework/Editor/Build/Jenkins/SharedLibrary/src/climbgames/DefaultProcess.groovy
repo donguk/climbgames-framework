@@ -33,8 +33,6 @@ class DefaultProcess implements IBuildProcess {
         script.echo "[${this.class.simpleName}] deploy: ${settings.config.buildTarget}"
     }
 
-
-    // upload func
     void uploadToHfs(String sourcePath, String remoteUrl, String userAuth = '') {
 
         // 문자열 끝에 붙어 있는 슬래시(/)를 모두 제거
@@ -109,4 +107,66 @@ class DefaultProcess implements IBuildProcess {
             script.bat(script: cmd, returnStatus: true)
         }
     }
+
+    void deleteFile(String filePath) {
+
+        if (script.fileExists(filePath)) {
+            
+            def deleteFilePath = filePath.replace('/', '\\')
+            def cmd = "del /f /q ${deleteFilePath}"
+
+            if (script.isUnix()) {
+                script.sh(script: cmd, returnStatus: true)
+            } else {
+                script.bat(script: cmd, returnStatus: true)
+            }
+        }
+    }
+
+    void exportIpa(xcode_download_url, team_id, p12_base64, p12_password, provision_base64) {
+        
+        script.withCredentials([script.string(credentialsId: 'github-access-token', variable: 'GITHUB_TOKEN')]) {
+
+            def githubToken = "${script.env.GITHUB_TOKEN}"
+            def repoOwner   = 'donguk'
+            def repoName    = 'workflow-build-pipeline'
+            def uri = "https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/ios-export-ipa.yml/dispatches"
+
+            script.echo """
+                        =================================
+                         githubToken: ${githubToken}
+                         repoOwner: ${repoOwner}
+                         repoName: ${repoName}
+                         uri: ${uri}
+                         xcode: ${xcode_download_url}
+                        =================================
+            """.stripIndent()
+            
+            script.powershell '''
+                $headers = @{
+                    "Authorization" = "Bearer $env:GITHUB_TOKEN"
+                    "Accept"        = "application/vnd.github+json"
+                    "X-GitHub-Api-Version" = "2022-11-28"
+                }
+                
+                $body = @{
+                    ref = "main"
+                    inputs = @{
+                        xcode_download_url = "''' + xcode_download_url + '''"
+                        team_id = "''' + team_id + '''"
+                        p12_base64 = "''' + p12_base64 + '''"
+                        p12_password = "''' + p12_password + '''"
+                        provision_base64 = "''' + provision_base64 + '''"
+                        build_number = "$env:BUILD_NUMBER"
+                    }
+                } | ConvertTo-Json -Depth 3
+
+                Invoke-RestMethod -Uri "''' + uri + '''" `
+                    -Method Post `
+                    -Headers $headers `
+                    -ContentType "application/json" `
+                    -Body $body
+                '''
+        }
+    } 
 }
