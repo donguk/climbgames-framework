@@ -139,6 +139,8 @@ class DefaultProcess implements IBuildProcess {
                          repoName: ${repoName}
                          uri: ${uri}
                          xcode: ${xcodeUrl}
+                         buildType: ${buildType}
+                         buildVersion: ${buildVersion}
                         =================================
             """.stripIndent()
             
