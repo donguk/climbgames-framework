@@ -123,7 +123,7 @@ class DefaultProcess implements IBuildProcess {
         }
     }
 
-    void githubAction_ExportIpa(xcode_download_url, team_id, p12_base64, p12_password, provision_base64) {
+    void githubActions_ExportIpa(xcodeUrl, teamID, p12Base64, p12Password, provisionBase64, buildType, buildVersion) {
         
         script.withCredentials([script.string(credentialsId: 'github-access-token', variable: 'GITHUB_TOKEN')]) {
 
@@ -138,7 +138,7 @@ class DefaultProcess implements IBuildProcess {
                          repoOwner: ${repoOwner}
                          repoName: ${repoName}
                          uri: ${uri}
-                         xcode: ${xcode_download_url}
+                         xcode: ${xcodeUrl}
                         =================================
             """.stripIndent()
             
@@ -152,11 +152,13 @@ class DefaultProcess implements IBuildProcess {
                 $body = @{
                     ref = "main"
                     inputs = @{
-                        xcode_download_url = "''' + xcode_download_url + '''"
-                        team_id = "''' + team_id + '''"
-                        p12_base64 = "''' + p12_base64 + '''"
-                        p12_password = "''' + p12_password + '''"
-                        provision_base64 = "''' + provision_base64 + '''"
+                        xcode_download_url = "''' + xcodeUrl + '''"
+                        team_id = "''' + teamID + '''"
+                        p12_base64 = "''' + p12Base64 + '''"
+                        p12_password = "''' + p12Password + '''"
+                        provision_base64 = "''' + provisionBase64 + '''"
+                        build_type = "''' + buildType + '''"
+                        build_version = "''' + buildVersion + '''"
                         build_number = "$env:BUILD_NUMBER"
                     }
                 } | ConvertTo-Json -Depth 3
