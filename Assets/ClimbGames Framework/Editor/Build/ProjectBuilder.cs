@@ -58,7 +58,8 @@ namespace ClimbGames.Editor
                 target = BuildTarget.iOS,
                 options = BuildSettings.DevelopmentBuild ? BuildOptions.Development : BuildOptions.None,
             };
-
+            // 
+            //buildPlayerOptions.options |= BuildOptions.AcceptExternalModificationsToPlayer;
             BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
     }
