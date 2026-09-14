@@ -22,7 +22,7 @@ class DefaultSettings implements IBuildSettings {
         addCustomArg("buildNumber", config.buildNumber)
         addCustomArg("isContentUpdates", config.isContentUpdates)
         addCustomArg("relativeBuildPath", config.relativeBuildPath)
-        addCustomArg("buildFileName", config.buildFileName)
+        addCustomArg("productName", config.productName)
 
         config.script?.echo """
                             =================================
@@ -36,7 +36,7 @@ class DefaultSettings implements IBuildSettings {
                              UnityHome: ${config.unityHome}
                              ProjectPath: ${config.projectPath}
                              RelativeBuildPath: ${config.relativeBuildPath}
-                             BuildFileName: ${config.buildFileName}
+                             productName: ${config.productName}
                              CustomArgs: ${getCustomArgs()}
                             =================================
         """.stripIndent()

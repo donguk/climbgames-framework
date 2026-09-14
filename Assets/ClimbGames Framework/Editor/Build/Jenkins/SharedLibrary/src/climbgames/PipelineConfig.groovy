@@ -16,7 +16,7 @@ class PipelineConfig implements Serializable {
     String projectPath
     String relativeBuildPath
     String buildPath
-    String buildFileName
+    String productName
 
     PipelineConfig(def script) {
 
@@ -30,6 +30,7 @@ class PipelineConfig implements Serializable {
         buildVersion = script.params.BUILD_VERSION
         versionCode = script.params.VERSION_CODE
         buildNumber = script.env.BUILD_NUMBER
+        productName = script.params.PRODUCT_NAME
 
         switch (branchName)
         {
@@ -44,12 +45,13 @@ class PipelineConfig implements Serializable {
         projectPath = script.env.WORKSPACE
         relativeBuildPath = "Build"
         buildPath = "${projectPath}/${relativeBuildPath}/${buildTarget}/${buildType}"
+    }
 
-        String productName = script.params.PRODUCT_NAME
+    String getBuildFileName() {
+
         if (productName) {
-            buildFileName = "${productName}_${buildType}_${buildVersion}(${versionCode})_${buildNumber}"
-        } else {
-            buildFileName = "Application_${buildType}_${buildVersion}(${versionCode})_${buildNumber}"
-        }
+            return "${productName}_${buildType}_${buildVersion}(${versionCode})_${buildNumber}"
+        } 
+        return "Application_${buildType}_${buildVersion}(${versionCode})_${buildNumber}"
     }
 }

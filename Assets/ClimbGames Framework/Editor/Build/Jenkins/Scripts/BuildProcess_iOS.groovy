@@ -7,9 +7,12 @@ class BuildProcess_iOS extends DefaultProcess implements Serializable {
     void build(IBuildSettings settings) {
 
         settings.executeMethod = "ClimbGames.Editor.CommandLineBuilder.BuildiOS"
-        //settings.addCustomArg("automaticSigning", true)
-
+            
         super.build(settings)
+
+        // Please implement it if necessary.
+        //
+        //
     }
 
     @Override 
