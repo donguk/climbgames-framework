@@ -26,6 +26,8 @@ class BuildProcess_Android extends DefaultProcess implements Serializable {
         
         config.script?.echo "buildPath: ${addressablePath}"
         config.script?.echo "Please implement the Deploy() method..."
+
+        return "http://download_link"
     }
 }
 

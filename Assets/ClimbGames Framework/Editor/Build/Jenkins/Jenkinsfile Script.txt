@@ -56,7 +56,8 @@ pipeline {
 
                 script {
                     
-                    buildProcess.deploy(settings)
+                    def downloadUrl = buildProcess.deploy(settings)
+                    echo "downloadUrl: ${downloadUrl}"
                 }
             }
         }

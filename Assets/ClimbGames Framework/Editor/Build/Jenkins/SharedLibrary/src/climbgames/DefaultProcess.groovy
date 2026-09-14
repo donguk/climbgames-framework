@@ -28,9 +28,9 @@ class DefaultProcess implements IBuildProcess {
     }
 
     @Override 
-    void deploy(IBuildSettings settings) {
+    def deploy(IBuildSettings settings) {
 
-        script.echo "[${this.class.simpleName}] deploy: ${settings.config.buildTarget}"
+        return "http://download_link"
     }
 
     void uploadToHfs(String sourcePath, String remoteUrl, String userAuth = '') {
