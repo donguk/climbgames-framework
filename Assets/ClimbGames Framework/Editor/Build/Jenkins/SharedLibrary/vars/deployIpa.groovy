@@ -1,6 +1,4 @@
-def call(script, buildType, buildVersion, buildNumber, ipaUrl, bundleID, appTitle) {
-
-    def userAuth = 'climbgames-admin:climbgames2@'
+def call(script, buildType, buildVersion, buildNumber, ipaUrl, bundleID, appTitle, userAuth = '') {
 
     URL url = new URL(ipaUrl)
     def basePath = "${url.path}"
