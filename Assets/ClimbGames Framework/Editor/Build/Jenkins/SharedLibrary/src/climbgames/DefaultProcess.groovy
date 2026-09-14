@@ -32,19 +32,4 @@ class DefaultProcess implements IBuildProcess {
 
         return "http://download_link"
     }    
-
-    void deleteFile(String filePath) {
-
-        if (script.fileExists(filePath)) {
-            
-            def deleteFilePath = filePath.replace('/', '\\')
-            def cmd = "del /f /q ${deleteFilePath}"
-
-            if (script.isUnix()) {
-                script.sh(script: cmd, returnStatus: true)
-            } else {
-                script.bat(script: cmd, returnStatus: true)
-            }
-        }
-    }
 }

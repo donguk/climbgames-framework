@@ -9,7 +9,7 @@ class HfsUploader implements Serializable {
         this.script = script
     }
 
-    void uploadToHfs(String sourcePath, String remoteUrl, String userAuth = '') {
+    void upload(String sourcePath, String remoteUrl, String userAuth = '') {
 
         // 문자열 끝에 붙어 있는 슬래시(/)를 모두 제거
         remoteUrl = remoteUrl.replaceAll('/+$', '')
@@ -53,7 +53,7 @@ class HfsUploader implements Serializable {
         }      
     }
 
-    void uploadFileToHfs(String filePath, String remoteUrl, String userAuth = '') {
+    void uploadFile(String filePath, String remoteUrl, String userAuth = '') {
 
         // dir 블록 안에서 findFiles 실행 시 file.path는 상대 경로로 나옵니다 (예: "catalog.json", "aa/test.bundle")
         def normalizedPath = filePath.replace('\\', '/')
