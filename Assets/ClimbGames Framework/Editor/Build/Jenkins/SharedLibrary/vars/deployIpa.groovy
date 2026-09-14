@@ -135,7 +135,7 @@ def call(script, buildType, buildVersion, buildNumber, ipaUrl, bundleID, appTitl
         <div class="title">${appTitle}</div>
         <div class="version">version: ${buildVersion}</div>
         <div class="number">number: ${buildNumber}</div>
-        <a class="download" href="${remotePath}/manifest.plist">download</a>
+        <a class="download" href="itms-services://?action=download-manifest&url=${remotePath}/manifest.plist">download</a>
     </div>
 </body>
 </html>
