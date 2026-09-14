@@ -64,7 +64,7 @@ namespace ClimbGames.Editor
                 Directory.Delete(remoteBuildPath, true);
 
             var settings = AddressableAssetSettingsDefaultObject.Settings;
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}");
+            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
             settings.BuildRemoteCatalog = true;
             EditorUtility.SetDirty(settings);
 
@@ -90,7 +90,7 @@ namespace ClimbGames.Editor
                 Directory.Delete(remoteBuildPath, true);
 
             var settings = AddressableAssetSettingsDefaultObject.Settings;
-            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BundleVersion}");
+            settings.profileSettings.SetValue(settings.activeProfileId, "Remote.LoadPath", $"{BuildSettings.PatchUrl}/{BuildSettings.TargetPlatform}/{BuildSettings.BuildType}/{BuildSettings.BundleVersion}");
             settings.BuildRemoteCatalog = true;
             EditorUtility.SetDirty(settings);
 
