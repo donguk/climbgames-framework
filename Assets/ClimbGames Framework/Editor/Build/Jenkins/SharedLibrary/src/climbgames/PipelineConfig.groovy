@@ -1,6 +1,6 @@
 package climbgames
 
-class PipelineConfig implements Serializable {
+class PipelineConfig implements  {
 
     transient def script
 

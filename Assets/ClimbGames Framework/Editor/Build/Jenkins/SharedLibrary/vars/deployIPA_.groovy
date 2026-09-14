@@ -1,5 +1,7 @@
 def call(script, buildType, buildVersion, buildNumber, ipaUrl, bundleID, appTitle, userAuth = '') {
 
+    //
+
     URL url = new URL(ipaUrl)
     def basePath = "${url.path}"
     def baseUrl = "${url.protocol}://${url.authority}${basePath.replaceAll(/\/[^\/]+$/, '')}"
