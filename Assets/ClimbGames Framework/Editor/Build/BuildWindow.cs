@@ -23,6 +23,8 @@ namespace ClimbGames.Editor
         private int _selectedEnvIndex = 0;
 
         private bool _uploadToHfs = true;
+        private string _hfsUserName, _hfsPassword;
+
         private Vector2 _scrollPosition;
 
         [MenuItem("Tools/ClimbGames/Build Window")]
@@ -35,6 +37,9 @@ namespace ClimbGames.Editor
 
         private void OnEnable()
         {
+            _hfsUserName = EditorPrefs.GetString($"{Application.dataPath.GetHashCode()}{nameof(_hfsUserName)}");
+            _hfsPassword = EditorPrefs.GetString($"{Application.dataPath.GetHashCode()}{nameof(_hfsPassword)}");
+
             RefreshBinFileList();
             RefreshEnvFileList();
         }
@@ -178,6 +183,14 @@ namespace ClimbGames.Editor
             EditorGUILayout.EndHorizontal();
 
             _uploadToHfs = EditorGUILayout.Toggle("Upload To HFS", _uploadToHfs);
+            if (_uploadToHfs)
+            {
+                _hfsUserName = EditorGUILayout.TextField(" UserName", _hfsUserName);
+                _hfsPassword = EditorGUILayout.TextField(" Password", _hfsPassword);
+
+                EditorPrefs.SetString($"{Application.dataPath.GetHashCode()}{nameof(_hfsUserName)}", _hfsUserName);
+                EditorPrefs.SetString($"{Application.dataPath.GetHashCode()}{nameof(_hfsPassword)}", _hfsPassword);
+            }
             EditorGUILayout.Space(5);
 
             bool isEmptyBin = _binDropdownOptions.Count == 0 || _binDropdownOptions[_selectedBinIndex] == "empty";
@@ -432,7 +445,7 @@ namespace ClimbGames.Editor
                 EditorUtility.DisplayProgressBar("HFS Upload", text, info.progress);
             });
 
-            await ProjectBuilder.UploadToHfs(progress);
+            await ProjectBuilder.UploadToHfs(progress, $"{_hfsUserName}:{_hfsPassword}");
             EditorUtility.ClearProgressBar();
         }
     }
