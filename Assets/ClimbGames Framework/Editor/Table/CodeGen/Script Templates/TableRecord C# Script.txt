@@ -1,0 +1,14 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+
+namespace #NAMESPACE#
+{
+    [Serializable]
+    public partial class #SCRIPTNAME#
+    {
+        #FIELDS#
+
+        #PROPERTIES#
+    }
+}

@@ -1,0 +1,15 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+
+namespace #NAMESPACE#
+{
+    [Serializable]
+    public partial class #SCRIPTNAME# : ScriptableObject
+    {
+        // key: #RECORDKEYNAME#
+        [SerializeField] private SerializableDictionary<#RECORDKEY#, #TABLERECORD#> datas;
+
+        public IReadOnlyDictionary<#RECORDKEY#, #TABLERECORD#> Datas => datas;
+    }
+}

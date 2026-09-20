@@ -9,6 +9,7 @@
     },
     "dependencies": {
         "com.cysharp.unitask": "2.5.10",
-        "com.unity.addressables": "2.9.1"
+        "com.unity.addressables": "2.9.1",
+        "com.github.exceldatareader.exceldatareader": "3.6.0"
     }
 }

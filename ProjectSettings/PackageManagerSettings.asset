@@ -36,7 +36,7 @@ MonoBehaviour:
     m_Scopes:
     - com.cysharp.unitask
     - com.cysharp.r3
-    - com.github-glitchenzo.nugetforunity
+    - com.github.exceldatareader.exceldatareader
     m_IsDefault: 0
     m_Capabilities: 0
     m_ConfigSource: 4
