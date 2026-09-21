@@ -9,9 +9,9 @@ namespace ClimbGames.Editor.Table
 
         protected TableSchema schema;
 
-        public DictionaryTableGenerator(TableSchema schema)
+        public DictionaryTableGenerator(ISchema schema)
         {
-            this.schema = schema;
+            this.schema = (TableSchema)schema;
         }
 
         public override void Write(string path)
@@ -21,11 +21,11 @@ namespace ClimbGames.Editor.Table
             string scriptName = schema.TableName + "Table";
             string scriptText = CreateScript(DictionaryTableScriptGUID, schema.Namespace, scriptName);
 
-            var keColumn = schema.KeyColumn;
+            var keColumn = schema.Header.KeyColumn;
             if (keColumn != null)
             {
                 scriptText = scriptText.Replace("#RECORDKEYNAME#", keColumn.FieldName);
-                scriptText = scriptText.Replace("#RECORDKEY#", keColumn.FieldType.ToCodeName());
+                scriptText = scriptText.Replace("#RECORDKEY#", keColumn.GetTypeCodeName(schema));
                 scriptText = scriptText.Replace("#TABLERECORD#", recordName);
 
                 Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));

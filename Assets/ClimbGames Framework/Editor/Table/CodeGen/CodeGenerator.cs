@@ -5,10 +5,6 @@ using UnityEditor;
 
 namespace ClimbGames.Editor.Table
 {
-    public interface ISchema
-    {
-    }
-
     public interface ICodeGenerator
     {
         void Write(string path);
@@ -18,18 +14,12 @@ namespace ClimbGames.Editor.Table
     {
         public static ICodeGenerator Get(ISchema schema)
         {
-            if (schema is TableSchema tableSchema)
+            switch (schema.SchemaType)
             {
-                switch (tableSchema.TableType)
-                {
-                    case TableType.List: return new ListTableGenerator(tableSchema);
-                    case TableType.Dictionary: return new DictionaryTableGenerator(tableSchema);
-                    case TableType.KeyValue: return new KeyValueTableGenerator(tableSchema);
-                }
-            }
-            else if (schema is EnumSchema)
-            {
-                return new TableEnumGenerator();
+                case SchemaType.ListTable: return new ListTableGenerator(schema);
+                case SchemaType.DictionaryTable: return new DictionaryTableGenerator(schema);
+                case SchemaType.KeyValueTable: return new KeyValueTableGenerator(schema);
+                case SchemaType.TableEnum: return new TableEnumGenerator(schema);
             }
 
             return new CodeGenerator();
@@ -37,7 +27,7 @@ namespace ClimbGames.Editor.Table
 
         public void Write(string path)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
     }
 
@@ -49,12 +39,17 @@ namespace ClimbGames.Editor.Table
 
         protected void Write(string text, string filePath)
         {
-            Directory.CreateDirectory(TableConverter.CodeGeneratePath);
+            Directory.CreateDirectory(TableEditorSettings.CodeGenPath);
 
             UTF8Encoding encoding = new UTF8Encoding(true);
             File.WriteAllText(filePath, text, encoding);
 
             AssetDatabase.ImportAsset(filePath);
+        }
+
+        protected string CreateScript(string templateGUID, string scriptName)
+        {
+            return CreateScript(templateGUID, null, scriptName);
         }
 
         protected string CreateScript(string templateGUID, string @namespace, string scriptName)
@@ -74,30 +69,30 @@ namespace ClimbGames.Editor.Table
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
 
             StringBuilder fieldBuilder = new StringBuilder();
-            var columnList = schema.ColumnList;
-            for (int i = 0; i < columnList.Count; ++i)
+            var columns = schema.Header.Columns;
+            for (int i = 0; i < columns.Count; ++i)
             {
-                var column = columnList[i];
+                var column = columns[i];
                 string intent = null;
                 if (i > 0)
                     intent = "\t\t";
 
-                fieldBuilder.Append($"{intent}[SerializeField] private {column.FieldType.ToCodeName(schema.Namespace)} {column.FieldName};");
-                if (i + 1 < columnList.Count)
+                fieldBuilder.Append($"{intent}[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
+                if (i + 1 < columns.Count)
                     fieldBuilder.Append("\n");
             }
             scriptText = scriptText.Replace("#FIELDS#", $"{fieldBuilder.ToString()}");
             fieldBuilder.Clear();
 
-            for (int i = 0; i < columnList.Count; ++i)
+            for (int i = 0; i < columns.Count; ++i)
             {
-                var column = columnList[i];
+                var column = columns[i];
                 string intent = null;
                 if (i > 0)
                     intent = "\t\t";
 
-                fieldBuilder.Append($"{intent}public {column.FieldType.ToCodeName(schema.Namespace)} {column.PropertyName} => {column.FieldName};");
-                if (i + 1 < columnList.Count)
+                fieldBuilder.Append($"{intent}public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
+                if (i + 1 < columns.Count)
                     fieldBuilder.Append("\n");
             }
             scriptText = scriptText.Replace("#PROPERTIES#", $"{fieldBuilder.ToString()}");

@@ -18,11 +18,11 @@ namespace ClimbGames.Editor.Table
 
         public override void CreateAsset(IExcelDataReader reader, string path)
         {
-            var columnList = schema.ColumnList;
-            if (columnList.Count > 1)
+            var columns = schema.Header.Columns;
+            if (columns.Count > 1)
             {
-                var keyColumn = columnList[0];
-                var valueColumn = columnList[1];
+                var keyColumn = columns[0];
+                var valueColumn = columns[1];
 
                 var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
                 var fieldInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -47,7 +47,7 @@ namespace ClimbGames.Editor.Table
 
                         if (dictionary.Contains(convertedKey))
                         {
-                            Debug.LogError($"[TableData] {schema.TableName}: duplicated key({convertedKey})");
+                            Debug.LogError($"[TableData] {schema.TableName}: duplicated key({convertedKey})/ depth({reader.Depth})");
                             continue;
                         }
 

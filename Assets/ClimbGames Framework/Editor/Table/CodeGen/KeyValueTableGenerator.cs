@@ -9,9 +9,9 @@ namespace ClimbGames.Editor.Table
 
         protected TableSchema schema;
 
-        public KeyValueTableGenerator(TableSchema schema)
+        public KeyValueTableGenerator(ISchema schema)
         {
-            this.schema = schema;
+            this.schema = (TableSchema)schema;
         }
 
         public override void Write(string path)
@@ -19,14 +19,14 @@ namespace ClimbGames.Editor.Table
             string scriptName = schema.TableName + "Table";
             string scriptText = CreateScript(KeyValueTableScriptGUID, schema.Namespace, scriptName);
 
-            var columnList = schema.ColumnList;
-            if (columnList.Count > 1)
+            var columns = schema.Header.Columns;
+            if (columns.Count > 1)
             {
-                scriptText = scriptText.Replace("#RECORDKEYNAME#", columnList[0].FieldName);
-                scriptText = scriptText.Replace("#RECORDVALUENAME#", columnList[1].FieldName);
+                scriptText = scriptText.Replace("#RECORDKEYNAME#", columns[0].FieldName);
+                scriptText = scriptText.Replace("#RECORDVALUENAME#", columns[1].FieldName);
 
-                scriptText = scriptText.Replace("#RECORDKEY#", columnList[0].FieldType.ToCodeName());
-                scriptText = scriptText.Replace("#RECORDVALUE#", columnList[1].FieldType.ToCodeName());
+                scriptText = scriptText.Replace("#RECORDKEY#", columns[0].GetTypeCodeName(schema));
+                scriptText = scriptText.Replace("#RECORDVALUE#", columns[1].GetTypeCodeName(schema));
 
                 Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             }

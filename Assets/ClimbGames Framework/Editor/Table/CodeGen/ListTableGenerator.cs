@@ -9,9 +9,9 @@ namespace ClimbGames.Editor.Table
 
         protected TableSchema schema;
 
-        public ListTableGenerator(TableSchema schema)
+        public ListTableGenerator(ISchema schema)
         {
-            this.schema = schema;
+            this.schema = (TableSchema)schema;
         }
 
         public override void Write(string path)

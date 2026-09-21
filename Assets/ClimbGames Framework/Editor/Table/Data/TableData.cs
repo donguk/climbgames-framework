@@ -17,15 +17,17 @@ namespace ClimbGames.Editor.Table
     {
         public static ITableData Get(TableSchema schema)
         {
-            switch (schema.TableType)
+            switch (schema.SchemaType)
             {
-                case TableType.List: return new ListTableData(schema);
-                case TableType.Dictionary: return new DictionaryTableData(schema);
-                case TableType.KeyValue: return new KeyValueTableData(schema);
+                case SchemaType.ListTable: return new ListTableData(schema);
+                case SchemaType.DictionaryTable: return new DictionaryTableData(schema);
+                case SchemaType.KeyValueTable: return new KeyValueTableData(schema);
             }
 
             return new TableData();
         }
+
+        private Dictionary<string, FieldInfo> fieldInfos;
 
         public virtual void CreateAsset(IExcelDataReader reader, string path)
         {
@@ -34,22 +36,26 @@ namespace ClimbGames.Editor.Table
 
         protected object ReadRecord(IExcelDataReader reader, TableSchema schema)
         {
-            var type = schema.GetRecordType();
-            var data = Activator.CreateInstance(type);
+            if (fieldInfos == null)
+                fieldInfos = new Dictionary<string, FieldInfo>();
 
-            var columns = schema.ColumnList;
+            var recordType = Type.GetType($"{schema.Namespace}.{schema.TableName}TableRecord, Assembly-CSharp");
+            var data = Activator.CreateInstance(recordType);
+
+            var columns = schema.Header.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var value = reader.GetValue(columns[i].Index);
-                var fieldInfo = schema.GetFieldInfo(columns[i].FieldName);
+                string fieldName = columns[i].FieldName;
+
+                if (fieldInfos.TryGetValue(fieldName, out var fieldInfo) == false)
+                    fieldInfos[fieldName] = fieldInfo = recordType.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
                 var fieldType = fieldInfo.FieldType;
                 if (fieldType.IsGenericType)
                 {
                     if (fieldType.GetGenericTypeDefinition() == typeof(List<>))
-                    {
                         fieldInfo.SetValue(data, ReadListValue(fieldType, value));
-                    }
                 }
                 else
                 {
@@ -90,10 +96,17 @@ namespace ClimbGames.Editor.Table
 
             if (targetType.IsEnum)
             {
-                if (value is string text)
-                    return Enum.Parse(targetType, text, ignoreCase: true);
+                try
+                {
+                    if (value is string text)
+                        return Enum.Parse(targetType, text, ignoreCase: true);
 
-                return Enum.ToObject(targetType, value);
+                    return Enum.ToObject(targetType, value);
+                }
+                catch (ArgumentException)
+                {
+                    return Activator.CreateInstance(targetType);
+                }
             }
 
             return Convert.ChangeType(value, targetType);

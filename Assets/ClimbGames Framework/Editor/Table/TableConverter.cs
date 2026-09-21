@@ -11,12 +11,7 @@ namespace ClimbGames.Editor.Table
     [InitializeOnLoad]
     public static class TableConverter
     {
-        private static string dataPath = "Assets/Tables";
-        private static string scriptPath = "Assets/Tables/Scripts";
         private const string ReloadFlagKey = "CodeGen_IsWaitingForReload";
-
-        public static string DataPath = dataPath;
-        public static string CodeGeneratePath => scriptPath;
 
         static TableConverter()
         {
@@ -51,6 +46,10 @@ namespace ClimbGames.Editor.Table
 
         static void GenerateCodes()
         {
+            var schemas = new List<ISchema>();
+            var enumSchema = new EnumSchema();
+            schemas.Add(enumSchema);
+
             string[] excelFiles = FindExcelFiles(Path.Combine(Directory.GetCurrentDirectory(), "Tables"));
             foreach (var filePath in excelFiles)
             {
@@ -60,16 +59,23 @@ namespace ClimbGames.Editor.Table
                     {
                         do
                         {
-                            var schema = new TableSchema(reader.Name);
+                            var schema = new TableSchema(reader.Name, enumSchema);
                             if (schema.Resolve(reader))
-                                CodeGenerator.Get(schema).Write(scriptPath);
+                            {
+                                schemas.Add(schema);
+                            }
                             else
+                            {
                                 Debug.LogError($"[Tables] {schema.TableName} table schema is invalid");
+                            }
                         }
                         while (reader.NextResult());
                     }
                 }
             }
+
+            foreach (var schema in schemas)
+                CodeGenerator.Get(schema).Write(TableEditorSettings.CodeGenPath);
         }
 
         static void CreateAssets()
@@ -86,7 +92,7 @@ namespace ClimbGames.Editor.Table
                             var schema = new TableSchema(reader.Name);
                             if (schema.Read(reader))
                             {
-                                TableData.Get(schema).CreateAsset(reader, dataPath);
+                                TableData.Get(schema).CreateAsset(reader, TableEditorSettings.DataPath);
                             }
                         }
                         while (reader.NextResult());

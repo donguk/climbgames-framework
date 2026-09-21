@@ -19,7 +19,7 @@ namespace ClimbGames.Editor.Table
 
         public override void CreateAsset(IExcelDataReader reader, string path)
         {
-            var keyColumn = schema.KeyColumn;
+            var keyColumn = schema.Header.KeyColumn;
             if (keyColumn != null)
             {
                 var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
