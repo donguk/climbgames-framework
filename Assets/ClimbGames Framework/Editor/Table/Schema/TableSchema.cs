@@ -40,7 +40,18 @@ namespace ClimbGames.Editor.Table
         public bool Resolve(IExcelDataReader reader)
         {
             if (Read(reader))
-                Header.Resolve(reader);
+            {
+                while (reader.Read())
+                {
+                    if (Header.Resolve(reader))
+                    {
+                        if (TableEditorSettings.ReadHeaderEnumValues == false)
+                            break;
+                    }
+
+                    EnumSchema.ReadHeaderValues(reader);
+                }
+            }
 
             return Header.IsValid;
         }

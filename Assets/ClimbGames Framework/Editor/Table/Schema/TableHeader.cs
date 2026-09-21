@@ -1,28 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using ExcelDataReader;
 
 namespace ClimbGames.Editor.Table
 {
     public class TableHeader
     {
-        private static Regex ColumnRegex = new Regex(@"^([a-zA-Z_][a-zA-Z0-9_]*)(?:\[([^\]]+)\])?$");
-        private static Regex KeyRegex = new Regex(@"^(?i:key)(?:<[^>]+>)?$");
-
         private TableSchema schema;
         private List<ColumnInfo> columns;
         private int keyIndex;
+        private List<ColumnInfo> resolveColumns;
 
         public SchemaType SchemaType { get; private set; }
         public bool IsValid => columns.Count > 0;
         public IReadOnlyList<ColumnInfo> Columns => columns;
         public ColumnInfo KeyColumn => keyIndex < columns.Count ? columns[keyIndex] : null;
+        public int ResolveCount => resolveColumns.Count;
 
         public TableHeader(TableSchema schema)
         {
             this.schema = schema;
+
             columns = new List<ColumnInfo>();
+            resolveColumns = new List<ColumnInfo>();
         }
 
         public bool Read(IExcelDataReader reader)
@@ -38,7 +38,7 @@ namespace ClimbGames.Editor.Table
                 {
                     string columnName = reader.GetString(i);
 
-                    if (ColumnInfo.TryParse(columnName, schema, out var column))
+                    if (ColumnInfo.TryParse(columnName, i, schema, out var column))
                     {
                         if (nameHash.Add(column.FieldName) == false)
                         {
@@ -52,8 +52,10 @@ namespace ClimbGames.Editor.Table
                             keyIndex = columns.Count;
                         }
 
-                        column.Index = i;
                         columns.Add(column);
+
+                        if (string.IsNullOrEmpty(column.TypeName))
+                            resolveColumns.Add(column);
                     }
                 }
             }
@@ -64,35 +66,25 @@ namespace ClimbGames.Editor.Table
             return columns.Count > 0;
         }
 
-        public void Resolve(IExcelDataReader reader)
+        public bool Resolve(IExcelDataReader reader)
         {
-            using (new ListPoolScope<int>(out var list))
+            for (int i = 0; i < resolveColumns.Count;)
             {
-                for (int i = 0; i < columns.Count; ++i)
+                var colunm = resolveColumns[i];
+
+                var fieldType = reader.GetFieldType(colunm.Index);
+                if (fieldType != null)
                 {
-                    if (string.IsNullOrEmpty(columns[i].TypeName))
-                        list.Add(i);
+                    colunm.SetFieldType(fieldType);
+                    resolveColumns.RemoveAt(i);
                 }
-
-                while (list.Count > 0 && reader.Read())
+                else
                 {
-                    for (int i = 0; i < list.Count;)
-                    {
-                        var colunm = columns[list[i]];
-
-                        var fieldType = reader.GetFieldType(colunm.Index);
-                        if (fieldType != null && fieldType != typeof(object))
-                        {
-                            colunm.SetFieldType(fieldType);
-                            list.RemoveAt(i);
-                        }
-                        else
-                        {
-                            ++i;
-                        }
-                    }
+                    ++i;
                 }
             }
+
+            return ResolveCount <= 0;
         }
     }
 }

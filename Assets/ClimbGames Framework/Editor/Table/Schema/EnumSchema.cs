@@ -24,28 +24,33 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly Regex DeclaredRegex = new Regex(@"\benum\s+([A-Za-z_][A-Za-z0-9_]*)\b");
 
+        class HeaderPosition
+        {
+            public EnumDefinition Definition { get; set; }
+            public int ColumnIndex { get; set; }
+        }
+
         private Dictionary<string, EnumDefinition> definitions;
-        private Dictionary<int, EnumDefinition> readEnums;
+        private Dictionary<int, EnumDefinition> readPositions;
         private Dictionary<string, DeclaredEnum> declaredEnums;
+        private List<HeaderPosition> headerPositions;
 
         public string ScriptName => nameof(SchemaType.TableEnum);
         public SchemaType SchemaType => SchemaType.TableEnum;
         public IReadOnlyList<EnumDefinition> Definitions => definitions.Values.ToList();
+        public int HeaderCount => headerPositions.Count;
 
         public EnumSchema()
         {
             definitions = new Dictionary<string, EnumDefinition>();
-            readEnums = new Dictionary<int, EnumDefinition>();
-        }
-
-        public void AddDefinition(string enumName)
-        {
-            if (definitions.ContainsKey(enumName) == false)
-                definitions.Add(enumName, new EnumDefinition(enumName));
+            readPositions = new Dictionary<int, EnumDefinition>();
+            headerPositions = new List<HeaderPosition>();
         }
 
         public bool Read(IExcelDataReader reader)
         {
+            headerPositions.Clear();
+
             for (int i = 0; i < reader.FieldCount; ++i)
             {
                 Type fieldType = reader.GetFieldType(i);
@@ -53,30 +58,48 @@ namespace ClimbGames.Editor.Table
                 {
                     string columnName = reader.GetString(i).Trim();
 
-                    if (EnumDefinition.TryParse(columnName, out var declaration))
+                    if (EnumDefinition.TryParse(columnName, out var definition))
                     {
-                        if (definitions.ContainsKey(declaration.Name) == false)
-                        {
-                            declaration.Index = i;
-                            definitions.Add(declaration.Name, declaration);
+                        if (definitions.TryGetValue(columnName, out var previous))
+                            definition.Merge(previous);
 
-                            readEnums[i] = declaration;
-                        }
+                        // update definition
+                        definitions[definition.Name] = definition;
+                        readPositions[i] = definition;
                     }
                     else
                     {
-                        if (readEnums.TryGetValue(i, out declaration))
-                            declaration.AddValue(columnName);
+                        if (readPositions.TryGetValue(i, out definition))
+                            definition.AddValue(columnName);
                     }
                 }
-                else if (readEnums.ContainsKey(i))
+                else if (readPositions.ContainsKey(i))
                 {
                     // close 
-                    readEnums.Remove(i);
+                    readPositions.Remove(i);
                 }
             }
 
-            return readEnums.Count <= 0;
+            return readPositions.Count <= 0;
+        }
+
+        public void AddHeader(string enumName, int columnIndex)
+        {
+            if (definitions.TryGetValue(enumName, out var definition) == false)
+                definitions[enumName] = definition = new EnumDefinition(enumName);
+
+            //
+            headerPositions.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
+        }
+
+        public void ReadHeaderValues(IExcelDataReader reader)
+        {
+            for (int i = 0; i < headerPositions.Count; ++i)
+            {
+                var position = headerPositions[i];
+                string value = reader.GetValue(position.ColumnIndex).ToString();
+                position.Definition.AddValue(value);
+            }
         }
 
         public string GetCodeName(string enumName)
@@ -84,14 +107,13 @@ namespace ClimbGames.Editor.Table
             if (string.IsNullOrEmpty(enumName))
                 return "string";
 
-            if (TryGetDeclaredEnum(enumName, out var declared))
+            if (TryGetDeclaredEnum(enumName, out var declared) && declared.IsTableEnum == false)
             {
-                string @namespace = declared.EnumType.Namespace;
-                if (@namespace.StartsWith(Namespace))
-                    @namespace = @namespace.Substring(Namespace.Length + 1);
+                string fullName = declared.EnumType.FullName;
+                if (fullName.StartsWith($"{Namespace}."))
+                    fullName = fullName.Substring(Namespace.Length + 1);
 
-                if (string.IsNullOrEmpty(@namespace) == false)
-                    return $"{@namespace}.{enumName}";
+                return fullName;
             }
 
             return enumName;

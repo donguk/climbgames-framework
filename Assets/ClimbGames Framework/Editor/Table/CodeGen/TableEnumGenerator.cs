@@ -60,10 +60,17 @@ namespace ClimbGames.Editor.Table
             var values = definition.Values;
             for (int i = 0; i < values.Count; ++i)
             {
-                if (i > 0)
-                    enumBuilder.AppendLine();
+                if (EnumDefinition.NameRegex.Match(values[i]).Success)
+                {
+                    if (i > 0)
+                        enumBuilder.AppendLine();
 
-                enumBuilder.Append($"\t\t{values[i]},");
+                    enumBuilder.Append($"\t\t{values[i]},");
+                }
+                else
+                {
+                    Debug.Log($"[EnumType] {definition.Name}: invalid value({values[i]})");
+                }
             }
             scriptText = scriptText.Replace("#VALUES#", enumBuilder.ToString());
 

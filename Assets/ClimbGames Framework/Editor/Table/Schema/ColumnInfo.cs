@@ -11,7 +11,7 @@ namespace ClimbGames.Editor.Table
         private static readonly Regex ListRegex = new Regex(@"^(?i:list)(?:<([^>]+)>)?$");
         private static readonly Regex EnumRegex = new Regex(@"^(?i:enum):([A-Za-z_][A-Za-z0-9_]*)$");
 
-        public int Index { get; set; }
+        public int Index { get; private set; }
         public string FieldName { get; private set; }
         public string PropertyName { get; private set; }
         public string TypeName { get; private set; }
@@ -20,25 +20,26 @@ namespace ClimbGames.Editor.Table
         public bool IsList { get; private set; }
         public bool IsEnum { get; private set; }
 
-        public ColumnInfo(string name)
+        public ColumnInfo(int index, string name)
         {
+            Index = index;
             FieldName = name.ToCamelCaseName();
             PropertyName = name.ToPascalCaseName();
         }
 
-        public static bool TryParse(string value, TableSchema schema, out ColumnInfo column)
+        public static bool TryParse(string value, int columnIndex, TableSchema schema, out ColumnInfo column)
         {
-            column = Parse(value, schema);
+            column = Parse(value, columnIndex, schema);
             return column != null;
         }
 
-        public static ColumnInfo Parse(string value, TableSchema schema)
+        public static ColumnInfo Parse(string value, int columnIndex, TableSchema schema)
         {
             var match = ColumnRegex.Match(value);
             if (match.Success)
             {
                 string fieldName = match.Groups[1].Value;
-                var column = new ColumnInfo(fieldName);
+                var column = new ColumnInfo(columnIndex, fieldName);
 
                 if (match.Groups[2].Success)
                 {
@@ -104,7 +105,7 @@ namespace ClimbGames.Editor.Table
                                 TypeName = match.Groups[1].Value;
 
                                 // enum 추가
-                                schema.EnumSchema.AddDefinition(TypeName);
+                                schema.EnumSchema.AddHeader(TypeName, Index);
                             }
                         }
                         break;

@@ -10,6 +10,8 @@ namespace ClimbGames.Editor.Table
         private static string dataPath;
         private static string codePath;
 
+        public static bool ReadHeaderEnumValues => true;
+
         public static string DataPath
         {
             get => dataPath;

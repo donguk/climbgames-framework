@@ -6,10 +6,9 @@ namespace ClimbGames.Editor.Table
 {
     public class EnumDefinition
     {
-        private static Regex EnumRegex = new Regex(@"^\[enum:([A-Za-z_][A-Za-z0-9_]*)\]$");
-        private static Regex NameRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$");
+        private static readonly Regex EnumRegex = new Regex(@"^\[enum:([A-Za-z_][A-Za-z0-9_]*)\]$");
+        public static readonly Regex NameRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$");
 
-        public int Index { get; set; }
         public string Name { get; private set; }
         public bool IsDeclaration { get; private set; }
 
@@ -26,20 +25,13 @@ namespace ClimbGames.Editor.Table
 
         public void AddValue(string value)
         {
-            if (NameRegex.Match(value).Success)
-            {
-                values.Add(value);
-            }
-            else
-            {
-                Debug.Log($"[EnumType] {Name}: invalid name({value})");
-            }
+            values.Add(value);
         }
 
         public void Merge(EnumDefinition other)
         {
             foreach (var value in other.values)
-                AddValue(value);
+                values.Add(value);
         }
 
         public static bool TryParse(string value, out EnumDefinition declaration)
