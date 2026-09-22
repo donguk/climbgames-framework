@@ -42,7 +42,7 @@ namespace ClimbGames.Editor.Table
                         var convertedKey = ConvertValue(key, keyType);
                         if (keyHash.Add(convertedKey) == false)
                         {
-                            Debug.LogError($"[TableData] {schema.TableName}: duplicated key({convertedKey})/ depth({reader.Depth})");
+                            Debug.LogError($"[Tables] {schema.TableName}: duplicated key({convertedKey})/ depth({reader.Depth})");
                             continue;
                         }
 
@@ -51,7 +51,7 @@ namespace ClimbGames.Editor.Table
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"[TableData] {schema.TableName}: fail add depth({reader.Depth})/ ex({ex.Message})");
+                        Debug.LogError($"[Tables] {schema.TableName} can not add data({reader.Depth}): {ex.Message}");
                         continue;
                     }
                 }

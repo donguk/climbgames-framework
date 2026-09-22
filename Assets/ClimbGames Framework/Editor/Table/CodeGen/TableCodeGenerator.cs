@@ -8,7 +8,7 @@ namespace ClimbGames.Editor.Table
 {
     public interface ICodeGenerator
     {
-        void Write(string path);
+        bool Write(string path);
     }
 
     public class TableCodeGenerator : ICodeGenerator
@@ -29,24 +29,34 @@ namespace ClimbGames.Editor.Table
             return new TableCodeGenerator();
         }
 
-        public static void Write(string path, List<ISchema> schemas)
+        public static bool Write(string path, List<ISchema> schemas)
         {
+            bool isChanged = false;
             foreach (var schema in schemas)
-                Get(schema).Write(path);
+                isChanged |= Get(schema).Write(path);
 
-            WriteTables(path, schemas);
+            isChanged |= WriteTables(path, schemas);
+            return isChanged;
         }
 
-        public virtual void Write(string path) { }
+        public virtual bool Write(string path) { return false; }
 
-        protected static void Write(string text, string filePath)
+        protected static bool Write(string text, string filePath)
         {
             Directory.CreateDirectory(TableEditorSettings.CodeGenPath);
+
+            if (File.Exists(filePath))
+            {
+                string oldText = File.ReadAllText(filePath);
+                if (oldText == text)
+                    return false;
+            }
 
             UTF8Encoding encoding = new UTF8Encoding(true);
             File.WriteAllText(filePath, text, encoding);
 
             AssetDatabase.ImportAsset(filePath);
+            return true;
         }
 
         protected static string CreateScript(string templateGUID, string scriptName)
@@ -65,7 +75,7 @@ namespace ClimbGames.Editor.Table
             return scriptText;
         }
 
-        protected static string WriteRecord(TableSchema schema, string path)
+        protected static bool WriteRecord(TableSchema schema, string path)
         {
             string scriptName = schema.TableName + "TableRecord";
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
@@ -96,11 +106,10 @@ namespace ClimbGames.Editor.Table
             fieldBuilder.Clear();
             propertyBuilder.Clear();
 
-            Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
-            return scriptName;
+            return Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
         }
 
-        protected static void WriteTables(string path, List<ISchema> schemas)
+        protected static bool WriteTables(string path, List<ISchema> schemas)
         {
             if (schemas.Count > 0)
             {
@@ -133,8 +142,10 @@ namespace ClimbGames.Editor.Table
                 propertyBuilder.Clear();
                 caseBuilder.Clear();
 
-                Write(scriptText, Path.Combine(path, $"Tables.cs"));
+                return Write(scriptText, Path.Combine(path, $"Tables.cs"));
             }
+
+            return false;
         }
     }
 }

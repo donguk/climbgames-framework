@@ -61,7 +61,7 @@ namespace ClimbGames.Editor
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogWarning($"[ArgumentParser] '{key}' 키의 값 '{value}'를 {typeof(T).Name} 타입으로 변환 실패. 기본값({defaultValue})을 사용합니다. 예외: {ex.Message}");
+                Debug.LogWarning($"[ArgumentParser] '{key}' 키의 값 '{value}'를 {typeof(T).Name} 타입으로 변환 실패. 기본값({defaultValue})을 사용합니다. 예외: {ex.Message}");
                 return defaultValue;
             }
         }

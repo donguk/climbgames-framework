@@ -14,16 +14,19 @@ namespace ClimbGames.Editor.Table
             this.schema = (TableSchema)schema;
         }
 
-        public override void Write(string path)
+        public override bool Write(string path)
         {
-            WriteRecord(schema, path);
+            bool isChanged = WriteRecord(schema, path);
+            string recordName = schema.TableName + "TableRecord";
 
             string scriptName = schema.TableName + "Table";
             string scriptText = CreateScript(ListTableScriptGUID, schema.Namespace, scriptName);
 
-            scriptText = scriptText.Replace("#TABLERECORD#", schema.TableName + "TableRecord");
+            scriptText = scriptText.Replace("#TABLERECORD#", recordName);
 
-            Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+            isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+
+            return isChanged;
         }
     }
 }

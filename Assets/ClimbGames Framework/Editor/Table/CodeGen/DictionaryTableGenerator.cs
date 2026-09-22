@@ -15,9 +15,10 @@ namespace ClimbGames.Editor.Table
             this.schema = (TableSchema)schema;
         }
 
-        public override void Write(string path)
+        public override bool Write(string path)
         {
-            string recordName = WriteRecord(schema, path);
+            bool isChanged = WriteRecord(schema, path);
+            string recordName = schema.TableName + "TableRecord";
 
             string scriptName = schema.TableName + "Table";
             string scriptText = CreateScript(DictionaryTableScriptGUID, schema.Namespace, scriptName);
@@ -31,12 +32,14 @@ namespace ClimbGames.Editor.Table
                 scriptText = scriptText.Replace("#RECORD_KEYPROPERTY#", keColumn.PropertyName);
                 scriptText = scriptText.Replace("#RECORD_KEY#", keColumn.GetTypeCodeName(schema));
 
-                Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+                isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             }
             else
             {
                 Debug.LogError($"[DictionaryTableGenerator] table({schema.TableName}) key column is null");
             }
+
+            return isChanged;
         }
     }
 }

@@ -14,9 +14,10 @@ namespace ClimbGames.Editor.Table
             this.schema = (TableSchema)schema;
         }
 
-        public override void Write(string path)
+        public override bool Write(string path)
         {
-            string recordName = WriteRecord(schema, path);
+            bool isChanged = WriteRecord(schema, path);
+            string recordName = schema.TableName + "TableRecord";
 
             string scriptName = schema.TableName + "Table";
             string scriptText = CreateScript(KeyValueTableScriptGUID, schema.Namespace, scriptName);
@@ -35,12 +36,14 @@ namespace ClimbGames.Editor.Table
                 scriptText = scriptText.Replace("#RECORD_KEY#", columns[0].GetTypeCodeName(schema));
                 scriptText = scriptText.Replace("#RECORD_VALUE#", columns[1].GetTypeCodeName(schema));
 
-                Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+                isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             }
             else
             {
                 Debug.LogError($"[KeyValueTableGenerator] table({schema.TableName}) column is invalid");
             }
+
+            return isChanged;
         }
     }
 }

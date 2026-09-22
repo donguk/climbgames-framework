@@ -9,6 +9,8 @@ namespace ClimbGames
         {
             await AssetManager.Initialize();
 
+            //await Tables.LoadAsync("Tables");
+
             await UIManager.Instance.ShowUI<UIPanelTitle>("UIPanelTitle", UILayer.View);
         }
     }

@@ -19,7 +19,7 @@ namespace ClimbGames.Editor.Table
             this.schema = (EnumSchema)schema;
         }
 
-        public override void Write(string path)
+        public override bool Write(string path)
         {
             string scriptName = schema.ScriptName;
             string scriptText = CreateScript(TableEnumScriptGUID, schema.Namespace, scriptName);
@@ -47,9 +47,9 @@ namespace ClimbGames.Editor.Table
             }
 
             scriptText = scriptText.Replace("#ENUMS#", builder.ToString());
-            Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
-
             builder.Clear();
+
+            return Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
         }
 
         string CreateEnumText(EnumDefinition definition)

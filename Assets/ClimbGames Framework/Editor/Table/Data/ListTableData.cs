@@ -33,7 +33,7 @@ namespace ClimbGames.Editor.Table
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[TableData] {schema.TableName}: fail add depth({reader.Depth})/ ex({ex.Message})");
+                    Debug.LogError($"[Tables] {schema.TableName} can not add data({reader.Depth}): {ex.Message}");
                     continue;
                 }
             }

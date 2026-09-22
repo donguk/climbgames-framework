@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.CodeDom.Compiler;
+using UnityEditor.Compilation;
+using System;
 
 namespace ClimbGames.Editor.Table
 {
@@ -12,33 +14,57 @@ namespace ClimbGames.Editor.Table
     public static class TableConverter
     {
         private const string ReloadFlagKey = "CodeGen_IsWaitingForReload";
+        private static bool compilationFailed;
 
         static TableConverter()
         {
+            compilationFailed = false;
+            CompilationPipeline.compilationFinished -= OnCompilationFinished;
+            CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
+
             if (SessionState.GetBool(ReloadFlagKey, false))
             {
                 SessionState.SetBool(ReloadFlagKey, false);
+
                 // 리로드 직후 내부 상태가 완전히 안정될 때까지 한 프레임 지연 후 실행
-
-                // 컴파일 에어가 있는지 확인 필요.
-
-                EditorApplication.delayCall += OnAfterGenerateCode;
+                EditorApplication.delayCall += OnGenerateCodeCompleted;
             }
         }
 
         [MenuItem("Tools/ClimbGames/Table Convert")]
         static void StartConvert()
         {
-            GenerateCodes();
+            compilationFailed = false;
 
-            AssetDatabase.Refresh();
-            SessionState.SetBool(ReloadFlagKey, true);
+            if (GenerateTableCodes())
+            {
+                AssetDatabase.Refresh();
+
+                CompilationPipeline.compilationFinished -= OnCompilationFinished;
+                CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
+
+                CompilationPipeline.compilationFinished += OnCompilationFinished;
+                CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
+            }
+            else
+            {
+                OnGenerateCodeCompleted();
+            }
         }
 
-        static void OnAfterGenerateCode()
+        static void OnGenerateCodeCompleted()
         {
-            CreateAssets();
-            AssetDatabase.Refresh();
+            try
+            {
+                CreateTableAssets();
+
+                AssetDatabase.Refresh();
+                Debug.Log("[Tables] convert success.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[Tables] convert fail: {ex.Message}");
+            }
         }
 
         static string[] FindExcelFiles(string path)
@@ -47,7 +73,7 @@ namespace ClimbGames.Editor.Table
             return files.Concat(Directory.GetFiles(path, "*.xls")).ToArray();
         }
 
-        static void GenerateCodes()
+        static bool GenerateTableCodes()
         {
             var schemas = new List<ISchema>();
             var enumSchema = new EnumSchema();
@@ -77,10 +103,41 @@ namespace ClimbGames.Editor.Table
                 }
             }
 
-            TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
+            return TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
         }
 
-        static void CreateAssets()
+        static void OnCompilationFinished(object context)
+        {
+            CompilationPipeline.compilationFinished -= OnCompilationFinished;
+            CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
+
+            if (compilationFailed)
+                return;
+
+            SessionState.SetBool(ReloadFlagKey, true);
+        }
+
+        private static void OnAssemblyCompilationFinished(string assemblyPath, CompilerMessage[] messages)
+        {
+            foreach (var message in messages)
+            {
+                if (message.type == CompilerMessageType.Error)
+                {
+                    Debug.LogError(
+                            $"[TableCodeGen] Compile Error\n" +
+                            $"Assembly: {assemblyPath}\n" +
+                            $"File: {message.file}\n" +
+                            $"Line: {message.line}\n" +
+                            $"Column: {message.column}\n" +
+                            $"{message.message}");
+
+                    compilationFailed = true;
+                    break;
+                }
+            }
+        }
+
+        static void CreateTableAssets()
         {
             string[] excelFiles = FindExcelFiles(Path.Combine(Directory.GetCurrentDirectory(), "Tables"));
             foreach (var filePath in excelFiles)
