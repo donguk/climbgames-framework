@@ -115,6 +115,22 @@ namespace ClimbGames
             return asyncHandle.Result;
         }
 
+        public static IList<T> LoadAssets<T>(string key)
+        {
+            var asyncHandle = Addressables.LoadAssetsAsync<T>(key);
+            IList<T> list = asyncHandle.WaitForCompletion();
+
+            return list;
+        }
+
+        public static async UniTask<IList<T>> LoadAssetsAsync<T>(string key)
+        {
+            var asyncHandle = Addressables.LoadAssetsAsync<T>(key);
+            await asyncHandle;
+
+            return asyncHandle.Result;
+        }
+
         public static async UniTask<T> InstantiateAsync<T>(string key, Transform parent = null)
         {
             var asyncHandle = Addressables.InstantiateAsync(key, parent);

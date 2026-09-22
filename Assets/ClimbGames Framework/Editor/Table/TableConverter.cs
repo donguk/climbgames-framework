@@ -19,6 +19,9 @@ namespace ClimbGames.Editor.Table
             {
                 SessionState.SetBool(ReloadFlagKey, false);
                 // 리로드 직후 내부 상태가 완전히 안정될 때까지 한 프레임 지연 후 실행
+
+                // 컴파일 에어가 있는지 확인 필요.
+
                 EditorApplication.delayCall += OnAfterGenerateCode;
             }
         }

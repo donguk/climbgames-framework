@@ -70,35 +70,31 @@ namespace ClimbGames.Editor.Table
             string scriptName = schema.TableName + "TableRecord";
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
 
-            StringBuilder builder = new StringBuilder();
+            StringBuilder fieldBuilder = new StringBuilder();
+            StringBuilder propertyBuilder = new StringBuilder();
+
             var columns = schema.Header.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
-                string intent = null;
-                if (builder.Length > 0)
-                    intent = "\t\t";
+                if (fieldBuilder.Length > 0)
+                {
+                    fieldBuilder.AppendLine();
+                    propertyBuilder.AppendLine();
 
-                builder.Append($"{intent}[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
-                if (i + 1 < columns.Count)
-                    builder.Append("\n");
+                    fieldBuilder.Append("        ");
+                    propertyBuilder.Append("        ");
+                }
+
+                fieldBuilder.Append($"[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
+                propertyBuilder.Append($"public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
             }
-            scriptText = scriptText.Replace("#FIELDS#", $"{builder.ToString()}");
-            builder.Clear();
 
-            for (int i = 0; i < columns.Count; ++i)
-            {
-                var column = columns[i];
-                string intent = null;
-                if (builder.Length > 0)
-                    intent = "\t\t";
+            scriptText = scriptText.Replace("#FIELDS#", $"{fieldBuilder.ToString()}");
+            scriptText = scriptText.Replace("#PROPERTIES#", $"{propertyBuilder.ToString()}");
 
-                builder.Append($"{intent}public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
-                if (i + 1 < columns.Count)
-                    builder.Append("\n");
-            }
-            scriptText = scriptText.Replace("#PROPERTIES#", $"{builder.ToString()}");
-            builder.Clear();
+            fieldBuilder.Clear();
+            propertyBuilder.Clear();
 
             Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             return scriptName;
@@ -108,25 +104,34 @@ namespace ClimbGames.Editor.Table
         {
             if (schemas.Count > 0)
             {
-                string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce());
+                string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce(), "Tables");
 
-                StringBuilder builder = new StringBuilder();
+                StringBuilder propertyBuilder = new StringBuilder();
+                StringBuilder caseBuilder = new StringBuilder();
+
                 foreach (var schema in schemas)
                 {
                     if (schema is TableSchema tableSchema)
                     {
-                        if (builder.Length > 0)
+                        if (propertyBuilder.Length > 0)
                         {
-                            builder.AppendLine();
-                            builder.Append("\t\t");
+                            propertyBuilder.AppendLine();
+                            caseBuilder.AppendLine();
+
+                            propertyBuilder.Append("        ");
+                            caseBuilder.Append("                    ");
                         }
 
-                        builder.Append($"public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
+                        propertyBuilder.Append($"public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
+                        caseBuilder.Append($"case {tableSchema.TableName}Table value: {tableSchema.TableName} = value; break;");
                     }
                 }
 
-                scriptText = scriptText.Replace("#PROPERTIES#", $"{builder.ToString()}");
-                builder.Clear();
+                scriptText = scriptText.Replace("#PROPERTIES#", $"{propertyBuilder.ToString()}");
+                scriptText = scriptText.Replace("#CASEFIELDS#", $"{caseBuilder.ToString()}");
+
+                propertyBuilder.Clear();
+                caseBuilder.Clear();
 
                 Write(scriptText, Path.Combine(path, $"Tables.cs"));
             }

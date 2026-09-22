@@ -62,10 +62,13 @@ namespace ClimbGames.Editor.Table
             {
                 if (EnumDefinition.NameRegex.Match(values[i]).Success)
                 {
-                    if (i > 0)
+                    if (enumBuilder.Length > 0)
+                    {
                         enumBuilder.AppendLine();
+                        enumBuilder.Append("        ");
+                    }
 
-                    enumBuilder.Append($"\t\t{values[i]},");
+                    enumBuilder.Append($"{values[i]},");
                 }
                 else
                 {
@@ -74,7 +77,7 @@ namespace ClimbGames.Editor.Table
             }
             scriptText = scriptText.Replace("#VALUES#", enumBuilder.ToString());
 
-            enumBuilder.ToString();
+            enumBuilder.Clear();
             return scriptText;
         }
     }
