@@ -23,13 +23,14 @@ namespace ClimbGames.Editor.Table
             if (keyColumn != null)
             {
                 var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
-                var fieldInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                var methodInfo = fieldInfo.FieldType.GetMethod("Add");
+                var listInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var methodInfo = listInfo.FieldType.GetMethod("Add");
 
-                var keyType = fieldInfo.FieldType.GetGenericArguments()[0];
+                var dictionaryInfo = tableType.GetField("dictionary", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var keyType = dictionaryInfo.FieldType.GetGenericArguments()[0];
 
-                var datas = Activator.CreateInstance(fieldInfo.FieldType);
-                System.Collections.IDictionary dictionary = (System.Collections.IDictionary)datas;
+                var list = Activator.CreateInstance(listInfo.FieldType);
+                HashSet<object> keyHash = new HashSet<object>();
 
                 while (reader.Read())
                 {
@@ -37,15 +38,14 @@ namespace ClimbGames.Editor.Table
                     {
                         var key = reader.GetValue(keyColumn.Index);
                         var convertedKey = ConvertValue(key, keyType);
-                        var record = ReadRecord(reader, schema);
-
-                        if (dictionary.Contains(convertedKey))
+                        if (keyHash.Add(convertedKey) == false)
                         {
                             Debug.LogError($"[TableData] {schema.TableName}: duplicated key({convertedKey})");
                             continue;
                         }
 
-                        methodInfo.Invoke(datas, new[] { convertedKey, record });
+                        var record = ReadRecord(reader, schema);
+                        methodInfo.Invoke(list, new[] { record });
                     }
                     catch (Exception ex)
                     {
@@ -54,10 +54,10 @@ namespace ClimbGames.Editor.Table
                     }
                 }
 
-                var instance = ScriptableObject.CreateInstance(tableType);
-                fieldInfo.SetValue(instance, datas);
+                var tableAsset = ScriptableObject.CreateInstance(tableType);
+                listInfo.SetValue(tableAsset, list);
 
-                AssetDatabase.CreateAsset(instance, Path.Combine(path, $"{schema.TableName}.asset"));
+                AssetDatabase.CreateAsset(tableAsset, Path.Combine(path, $"{schema.TableName}.asset"));
             }
         }
     }

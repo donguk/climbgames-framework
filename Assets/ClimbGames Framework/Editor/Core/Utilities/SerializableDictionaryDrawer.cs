@@ -1,4 +1,3 @@
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace ClimbGames.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            property.serializedObject.Update();
+            //property.serializedObject.Update();
 
             SerializedProperty listProp = property.FindPropertyRelative("list");
             if (listProp == null)
@@ -73,8 +72,8 @@ namespace ClimbGames.Editor
             if (property.isExpanded)
                 _reorderableList.DoList(new Rect(position.x, position.y + 22, position.width, position.height));
 
-            if (property.serializedObject.ApplyModifiedProperties())
-                EditorUtility.SetDirty(property.serializedObject.targetObject);
+            //if (property.serializedObject.ApplyModifiedProperties())
+            //    EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

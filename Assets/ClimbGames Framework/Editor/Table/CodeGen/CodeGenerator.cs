@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -10,8 +11,11 @@ namespace ClimbGames.Editor.Table
         void Write(string path);
     }
 
-    public class CodeGenerator : ICodeGenerator
+    public class TableCodeGenerator : ICodeGenerator
     {
+        private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
+        private static readonly string TablesScriptGUID = "24e9f7f1262fe3d49a67b68f69950d9e";
+
         public static ICodeGenerator Get(ISchema schema)
         {
             switch (schema.SchemaType)
@@ -22,22 +26,20 @@ namespace ClimbGames.Editor.Table
                 case SchemaType.TableEnum: return new TableEnumGenerator(schema);
             }
 
-            return new CodeGenerator();
+            return new TableCodeGenerator();
         }
 
-        public void Write(string path)
+        public static void Write(string path, List<ISchema> schemas)
         {
-            //throw new System.NotImplementedException();
+            foreach (var schema in schemas)
+                Get(schema).Write(path);
+
+            WriteTables(path, schemas);
         }
-    }
 
-    public abstract class TableCodeGenerator : ICodeGenerator
-    {
-        private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
+        public virtual void Write(string path) { }
 
-        public abstract void Write(string path);
-
-        protected void Write(string text, string filePath)
+        protected static void Write(string text, string filePath)
         {
             Directory.CreateDirectory(TableEditorSettings.CodeGenPath);
 
@@ -47,12 +49,12 @@ namespace ClimbGames.Editor.Table
             AssetDatabase.ImportAsset(filePath);
         }
 
-        protected string CreateScript(string templateGUID, string scriptName)
+        protected static string CreateScript(string templateGUID, string scriptName)
         {
             return CreateScript(templateGUID, null, scriptName);
         }
 
-        protected string CreateScript(string templateGUID, string @namespace, string scriptName)
+        protected static string CreateScript(string templateGUID, string @namespace, string scriptName)
         {
             string templatePath = AssetDatabase.GUIDToAssetPath(templateGUID);
             string scriptText = File.ReadAllText(templatePath);
@@ -63,43 +65,71 @@ namespace ClimbGames.Editor.Table
             return scriptText;
         }
 
-        protected string WriteRecord(TableSchema schema, string path)
+        protected static string WriteRecord(TableSchema schema, string path)
         {
             string scriptName = schema.TableName + "TableRecord";
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
 
-            StringBuilder fieldBuilder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             var columns = schema.Header.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
                 string intent = null;
-                if (i > 0)
+                if (builder.Length > 0)
                     intent = "\t\t";
 
-                fieldBuilder.Append($"{intent}[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
+                builder.Append($"{intent}[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
                 if (i + 1 < columns.Count)
-                    fieldBuilder.Append("\n");
+                    builder.Append("\n");
             }
-            scriptText = scriptText.Replace("#FIELDS#", $"{fieldBuilder.ToString()}");
-            fieldBuilder.Clear();
+            scriptText = scriptText.Replace("#FIELDS#", $"{builder.ToString()}");
+            builder.Clear();
 
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
                 string intent = null;
-                if (i > 0)
+                if (builder.Length > 0)
                     intent = "\t\t";
 
-                fieldBuilder.Append($"{intent}public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
+                builder.Append($"{intent}public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
                 if (i + 1 < columns.Count)
-                    fieldBuilder.Append("\n");
+                    builder.Append("\n");
             }
-            scriptText = scriptText.Replace("#PROPERTIES#", $"{fieldBuilder.ToString()}");
-            fieldBuilder.Clear();
+            scriptText = scriptText.Replace("#PROPERTIES#", $"{builder.ToString()}");
+            builder.Clear();
 
             Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             return scriptName;
+        }
+
+        protected static void WriteTables(string path, List<ISchema> schemas)
+        {
+            if (schemas.Count > 0)
+            {
+                string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce());
+
+                StringBuilder builder = new StringBuilder();
+                foreach (var schema in schemas)
+                {
+                    if (schema is TableSchema tableSchema)
+                    {
+                        if (builder.Length > 0)
+                        {
+                            builder.AppendLine();
+                            builder.Append("\t\t");
+                        }
+
+                        builder.Append($"public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
+                    }
+                }
+
+                scriptText = scriptText.Replace("#PROPERTIES#", $"{builder.ToString()}");
+                builder.Clear();
+
+                Write(scriptText, Path.Combine(path, $"Tables.cs"));
+            }
         }
     }
 }

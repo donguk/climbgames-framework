@@ -74,8 +74,7 @@ namespace ClimbGames.Editor.Table
                 }
             }
 
-            foreach (var schema in schemas)
-                CodeGenerator.Get(schema).Write(TableEditorSettings.CodeGenPath);
+            TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
         }
 
         static void CreateAssets()

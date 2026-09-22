@@ -5,10 +5,15 @@ using System.Collections.Generic;
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME# : ScriptableObject
+    public partial class #SCRIPTNAME# : Table, ITable
     {
         [SerializeField] private List<#TABLERECORD#> datas;
 
         public IReadOnlyList<#TABLERECORD#> Datas => datas;
+
+        void ITable.Initialize()
+        {
+            OnInitialized();
+        }
     }
 }

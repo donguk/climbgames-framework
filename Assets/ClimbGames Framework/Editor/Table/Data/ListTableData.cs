@@ -20,16 +20,16 @@ namespace ClimbGames.Editor.Table
         public override void CreateAsset(IExcelDataReader reader, string path)
         {
             var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
-            var fieldInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            var methodInfo = fieldInfo.FieldType.GetMethod("Add");
+            var listInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var methodInfo = listInfo.FieldType.GetMethod("Add");
 
-            var datas = Activator.CreateInstance(fieldInfo.FieldType);
+            var list = Activator.CreateInstance(listInfo.FieldType);
             while (reader.Read())
             {
                 try
                 {
                     var record = ReadRecord(reader, schema);
-                    methodInfo.Invoke(datas, new[] { record });
+                    methodInfo.Invoke(list, new[] { record });
                 }
                 catch (Exception ex)
                 {
@@ -38,10 +38,10 @@ namespace ClimbGames.Editor.Table
                 }
             }
 
-            var instance = ScriptableObject.CreateInstance(tableType);
-            fieldInfo.SetValue(instance, datas);
+            var tableAsset = ScriptableObject.CreateInstance(tableType);
+            listInfo.SetValue(tableAsset, list);
 
-            AssetDatabase.CreateAsset(instance, Path.Combine(path, $"{schema.TableName}.asset"));
+            AssetDatabase.CreateAsset(tableAsset, Path.Combine(path, $"{schema.TableName}.asset"));
         }
     }
 }

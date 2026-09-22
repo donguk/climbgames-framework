@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using System.IO;
 
 namespace ClimbGames.Editor.Table
@@ -24,9 +25,11 @@ namespace ClimbGames.Editor.Table
             var keColumn = schema.Header.KeyColumn;
             if (keColumn != null)
             {
-                scriptText = scriptText.Replace("#RECORDKEYNAME#", keColumn.FieldName);
-                scriptText = scriptText.Replace("#RECORDKEY#", keColumn.GetTypeCodeName(schema));
-                scriptText = scriptText.Replace("#TABLERECORD#", recordName);
+                scriptText = scriptText.Replace("#TABLE_RECORD#", recordName);
+
+                scriptText = scriptText.Replace("#RECORD_KEYNAME#", keColumn.FieldName);
+                scriptText = scriptText.Replace("#RECORD_KEYPROPERTY#", keColumn.PropertyName);
+                scriptText = scriptText.Replace("#RECORD_KEY#", keColumn.GetTypeCodeName(schema));
 
                 Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
             }

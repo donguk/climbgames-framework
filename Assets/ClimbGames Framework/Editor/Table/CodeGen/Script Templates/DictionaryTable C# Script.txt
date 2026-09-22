@@ -1,15 +1,27 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME# : ScriptableObject
+    public partial class #SCRIPTNAME# : Table, ITable
     {
-        // key: #RECORDKEYNAME#
-        [SerializeField] private SerializableDictionary<#RECORDKEY#, #TABLERECORD#> datas;
+        [SerializeField] protected List<#TABLE_RECORD#> datas;
 
-        public IReadOnlyDictionary<#RECORDKEY#, #TABLERECORD#> Datas => datas;
+        // key: #RECORD_KEYNAME#
+        protected Dictionary<#RECORD_KEY#, #TABLE_RECORD#> dictionary;
+
+        public IReadOnlyList<#TABLE_RECORD#> Datas => datas;
+
+        void ITable.Initialize()
+        {
+            dictionary = datas.ToDictionary(x => x.#RECORD_KEYPROPERTY#);
+            
+            OnInitialized();
+        }
+
+        public bool TryGetValue(#RECORD_KEY# key, out #TABLE_RECORD# value) => dictionary.TryGetValue(key, out value);
     }
 }

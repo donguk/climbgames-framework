@@ -17,13 +17,20 @@ namespace ClimbGames.Editor.Table
 
     public abstract class Schema
     {
+        public static string GetNamesapce()
+        {
+            string @amespace = FrameworkEditorSettings.instance.ProjectNamesapce;
+            if (string.IsNullOrEmpty(@amespace))
+                @amespace = "ClimbGames";
+
+            return @amespace;
+        }
+
         public string Namespace { get; private set; }
 
         public Schema()
         {
-            Namespace = FrameworkEditorSettings.instance.ProjectNamesapce;
-            if (string.IsNullOrEmpty(Namespace))
-                Namespace = "ClimbGames";
+            Namespace = GetNamesapce();
         }
     }
 }
