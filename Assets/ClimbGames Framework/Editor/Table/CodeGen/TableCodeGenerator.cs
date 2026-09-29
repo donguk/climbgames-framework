@@ -55,6 +55,7 @@ namespace ClimbGames.Editor.Table
             UTF8Encoding encoding = new UTF8Encoding(true);
             File.WriteAllText(filePath, text, encoding);
 
+            // 동일한 파일이라도 호출시 컴파일
             AssetDatabase.ImportAsset(filePath);
             return true;
         }

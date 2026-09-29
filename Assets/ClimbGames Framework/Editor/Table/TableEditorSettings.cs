@@ -7,11 +7,17 @@ namespace ClimbGames.Editor.Table
     public static class TableEditorSettings
     {
         private static string EditorKey => $"{Application.dataPath.GetHashCode()}";
+        private static string excelPath;
         private static string dataPath;
         private static string codePath;
 
         public static bool ReadHeaderEnumValues => true;
 
+        public static string ExcelPath
+        {
+            get => excelPath;
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", value);
+        }
         public static string DataPath
         {
             get => dataPath;
@@ -26,6 +32,8 @@ namespace ClimbGames.Editor.Table
 
         static TableEditorSettings()
         {
+            string defatulExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
+            excelPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
             dataPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
             codePath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codePath)}", "Assets/Tables/CodeGen");
         }
