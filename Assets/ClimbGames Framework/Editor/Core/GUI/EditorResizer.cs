@@ -17,17 +17,22 @@ namespace ClimbGames.Editor
         private readonly float minSecondSize;
         private readonly float splitterSize;
 
-        private float firstSize;
+        private float sizeRatio;
         private bool isResizing;
 
-        public EditorResizer(Direction direction, float firstSize, float minFirstSize = 10f, float minSecondSize = 10f, float splitterSize = 5f)
+        public EditorResizer(Direction direction, float sizeRatio, float minFirstSize, float minSecondSize, float splitterSize = 2f)
         {
             this.direction = direction;
-            this.firstSize = firstSize;
+            this.sizeRatio = sizeRatio;
 
             this.minFirstSize = minFirstSize;
             this.minSecondSize = minSecondSize;
             this.splitterSize = splitterSize;
+        }
+
+        public EditorResizer(Direction direction, float sizeRatio = 0.5f, float splitterSize = 2f) : this(direction, sizeRatio, 10f, 10f, splitterSize)
+        {
+
         }
 
         public void Resize(Rect rect, out Rect firstRect, out Rect secondRect)
@@ -35,41 +40,62 @@ namespace ClimbGames.Editor
             float totalSize = direction == Direction.Horizontal ? rect.width : rect.height;
             float maxFirstSize = totalSize - splitterSize - minSecondSize;
 
+            float firstSize = totalSize * sizeRatio;
             firstSize = Mathf.Clamp(firstSize, minFirstSize, maxFirstSize);
 
+            Rect splitterRect;
             if (direction == Direction.Horizontal)
             {
                 firstRect = new Rect(rect.x, rect.y, firstSize, rect.height);
-                Rect splitterRect = new Rect(firstRect.xMax, rect.y, splitterSize, rect.height);
+                splitterRect = new Rect(firstRect.xMax, rect.y, splitterSize, rect.height);
                 secondRect = new Rect(splitterRect.xMax, rect.y, rect.xMax - splitterRect.xMax, rect.height);
-
-                HandleResize(rect, splitterRect, maxFirstSize);
             }
             else
             {
                 firstRect = new Rect(rect.x, rect.y, rect.width, firstSize);
-                Rect splitterRect = new Rect(rect.x, firstRect.yMax, rect.width, splitterSize);
+                splitterRect = new Rect(rect.x, firstRect.yMax, rect.width, splitterSize);
                 secondRect = new Rect(rect.x, splitterRect.yMax, rect.width, rect.yMax - splitterRect.yMax);
-
-                HandleResize(rect, splitterRect, maxFirstSize);
             }
+
+            Rect splitterHitRect = DrawSpliter(splitterRect);
+            HandleResize(rect, splitterHitRect, maxFirstSize);
+        }
+
+        private Rect DrawSpliter(Rect rect)
+        {
+            Rect splitterHitRect;
+
+            if (direction == Direction.Horizontal)
+            {
+                splitterHitRect = new Rect(rect.x - 3f, rect.y, rect.width + 6f, rect.height);
+            }
+            else
+            {
+                splitterHitRect = new Rect(rect.x, rect.y - 3f, rect.width, rect.height + 6f);
+            }
+
+            EditorGUI.DrawRect(rect, EditorGUIUtility.isProSkin ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.65f, 0.65f, 0.65f));
+            EditorGUIUtility.AddCursorRect(splitterHitRect, direction == Direction.Horizontal ? MouseCursor.ResizeHorizontal : MouseCursor.ResizeVertical);
+
+            return splitterHitRect;
         }
 
         private void HandleResize(Rect parentRect, Rect splitterRect, float maxFirstSize)
         {
             Event e = Event.current;
 
-            EditorGUIUtility.AddCursorRect(splitterRect, direction == Direction.Horizontal ? MouseCursor.ResizeHorizontal : MouseCursor.ResizeVertical);
-
             if (e.type == EventType.MouseDown && e.button == 0 && splitterRect.Contains(e.mousePosition))
             {
                 isResizing = true;
+                GUIUtility.hotControl = GUIUtility.GetControlID(FocusType.Passive);
+
                 e.Use();
             }
 
             if (e.type == EventType.MouseDrag && isResizing)
             {
                 float newSize;
+                float totalSize = direction == Direction.Horizontal ? parentRect.width : parentRect.height;
 
                 if (direction == Direction.Horizontal)
                 {
@@ -80,7 +106,8 @@ namespace ClimbGames.Editor
                     newSize = e.mousePosition.y - parentRect.y;
                 }
 
-                firstSize = Mathf.Clamp(newSize, minFirstSize, maxFirstSize);
+                newSize = Mathf.Clamp(newSize, minFirstSize, maxFirstSize);
+                sizeRatio = Mathf.Clamp(newSize / totalSize, 0f, 1f);
 
                 GUI.changed = true;
                 e.Use();
@@ -89,6 +116,8 @@ namespace ClimbGames.Editor
             if (e.type == EventType.MouseUp && isResizing)
             {
                 isResizing = false;
+                GUIUtility.hotControl = 0;
+
                 e.Use();
             }
         }

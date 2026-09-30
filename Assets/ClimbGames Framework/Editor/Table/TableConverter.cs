@@ -4,7 +4,6 @@ using ExcelDataReader;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.CodeDom.Compiler;
 using UnityEditor.Compilation;
 using System;
 
@@ -31,8 +30,7 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        [MenuItem("Tools/ClimbGames/Table Convert")]
-        static void StartConvert()
+        public static void StartConvert()
         {
             compilationFailed = false;
 
@@ -60,6 +58,12 @@ namespace ClimbGames.Editor.Table
 
                 AssetDatabase.Refresh();
                 Debug.Log("[Tables] convert success.");
+
+                if (EditorWindow.HasOpenInstances<TableWindow>())
+                {
+                    var window = EditorWindow.GetWindow<TableWindow>();
+                    window?.OnConvertFinished();
+                }
             }
             catch (Exception ex)
             {
@@ -79,7 +83,7 @@ namespace ClimbGames.Editor.Table
             var enumSchema = new EnumSchema();
             schemas.Add(enumSchema);
 
-            string[] excelFiles = FindExcelFiles(Path.Combine(Directory.GetCurrentDirectory(), "Tables"));
+            string[] excelFiles = FindExcelFiles(TableEditorSettings.ExcelPath);
             foreach (var filePath in excelFiles)
             {
                 using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
@@ -139,7 +143,7 @@ namespace ClimbGames.Editor.Table
 
         static void CreateTableAssets()
         {
-            string[] excelFiles = FindExcelFiles(Path.Combine(Directory.GetCurrentDirectory(), "Tables"));
+            string[] excelFiles = FindExcelFiles(TableEditorSettings.ExcelPath);
             foreach (var filePath in excelFiles)
             {
                 using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))

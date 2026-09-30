@@ -3,11 +3,14 @@ using UnityEditor;
 
 namespace ClimbGames.Editor.Table
 {
-    public class TableWindow : EditorWindow
+    public partial class TableWindow : EditorWindow
     {
-        private EditorResizer contentResizer;
+        private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.3f, 100f, 20f);
+        private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal);
 
-        [MenuItem("Tools/ClimbGames/Table Window")]
+        private Vector2 _settingsPosition;
+
+        [MenuItem("Tools/ClimbGames/Table Converter")]
         public static void ShowWindow()
         {
             var window = GetWindow<TableWindow>("Tables Converter");
@@ -15,62 +18,78 @@ namespace ClimbGames.Editor.Table
             window.Show();
         }
 
-        void OnGUI()
+        void OnEnable()
         {
-            //if (contentResizer == null)
-            //    contentResizer = new EditorResizer(EditorResizer.Direction.Horizontal, position.width * 0.5f);
-            //
-            //DrawConvert();
-            //EditorGUILayout.Space(10);
-            //
-            ////Debug.Log($"OnGUI({position})");
-            //
-            //
-            //EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
-            //var contentY = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Height(0)).y;
-            //Rect rect = new Rect(0, contentY, position.width, position.height - contentY);
-            //
-            //
-            //DrawContent(rect);
-            //EditorGUILayout.EndVertical();
+            InitTableFileTree(TableEditorSettings.DataPath);
+            InitTableContent();
         }
 
-        void DrawConvert()
+        void OnGUI()
         {
+            Rect rect = position;
+            rect.x = rect.y = 0f;
+
+            settingsResizer.Resize(rect, out var settingsRect, out var viewRect);
+            DrawSettings(settingsRect);
+
+            viewResizer.Resize(viewRect, out var fileViewRect, out var contentViewRect);
+            DrawFileView(fileViewRect);
+            DrawAssetContent(contentViewRect);
+        }
+
+        bool SelectPathField(string title, string path, out string selectedPath)
+        {
+            selectedPath = string.Empty;
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(title, path);
+            if (GUILayout.Button("Browse", GUILayout.Width(70)))
+            {
+                // 폴더 선택 창 오픈
+                selectedPath = EditorUtility.OpenFolderPanel("Select Directory", TableEditorSettings.ExcelPath, "");
+                if (string.IsNullOrEmpty(selectedPath) == false)
+                {
+                    GUI.FocusControl(null); // 입력 포커스 해제
+                }
+            }
+            GUILayout.EndHorizontal();
+            return string.IsNullOrEmpty(selectedPath) == false;
+        }
+
+        void DrawSettings(Rect rect)
+        {
+            GUILayout.BeginArea(rect);
+            _settingsPosition = EditorGUILayout.BeginScrollView(_settingsPosition);
+            GUILayout.Space(10);
+
             GUILayout.Label("Settings", EditorStyles.boldLabel);
             EditorGUILayout.Space();
 
-            EditorGUILayout.BeginHorizontal();
+            if (SelectPathField("Excel Path", TableEditorSettings.ExcelPath, out var selectedPath))
+                TableEditorSettings.ExcelPath = selectedPath;
+
+            if (SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
             {
-                EditorGUILayout.LabelField("Excel Path", TableEditorSettings.ExcelPath);
-                if (GUILayout.Button("Browse", GUILayout.Width(70)))
-                {
-                    // 폴더 선택 창 오픈
-                    string selectedPath = EditorUtility.OpenFolderPanel("Select Directory", TableEditorSettings.ExcelPath, "");
-                    if (!string.IsNullOrEmpty(selectedPath))
-                    {
-                        BuildSettings.RootPath = selectedPath;
-                        GUI.FocusControl(null); // 입력 포커스 해제
-                    }
-                }
+                TableEditorSettings.DataPath = selectedPath;
+                RefreshFileView(selectedPath);
             }
-            EditorGUILayout.EndHorizontal();
+
+            if (SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
+                TableEditorSettings.CodeGenPath = selectedPath;
 
             EditorGUILayout.Space(5);
             if (GUILayout.Button($"Convert", GUILayout.Height(35)))
             {
-
+                TableConverter.StartConvert();
             }
+
+            EditorGUILayout.Space(10);
+            EditorGUILayout.EndScrollView();
+            GUILayout.EndArea();
         }
 
-        void DrawContent(Rect rect)
+        public void OnConvertFinished()
         {
-            contentResizer.Resize(rect, out var firstRect, out var secondRect);
-
-            //Debug.Log($"rect({rect})");
-
-            GUI.Box(firstRect, "First");
-            GUI.Box(secondRect, "Second");
+            Debug.Log("OnConvertFinished");
         }
     }
 }

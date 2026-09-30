@@ -9,7 +9,7 @@ namespace ClimbGames.Editor.Table
         private static string EditorKey => $"{Application.dataPath.GetHashCode()}";
         private static string excelPath;
         private static string dataPath;
-        private static string codePath;
+        private static string codeGenPath;
 
         public static bool ReadHeaderEnumValues => true;
 
@@ -26,16 +26,16 @@ namespace ClimbGames.Editor.Table
 
         public static string CodeGenPath
         {
-            get => codePath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codePath)}", value);
+            get => codeGenPath;
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", value);
         }
 
         static TableEditorSettings()
         {
             string defatulExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
             excelPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
-            dataPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
-            codePath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codePath)}", "Assets/Tables/CodeGen");
+            dataPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets\\Tables");
+            codeGenPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets\\Tables\\CodeGen");
         }
     }
 }
