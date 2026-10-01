@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -149,6 +150,65 @@ namespace ClimbGames.Editor.Table
                 return schema.EnumSchema.GetCodeName(TypeName);
 
             return TypeName;
+        }
+
+        public string GetWriteCastingCodeText()
+        {
+            if (IsEnum)
+                return "(int)";
+
+            return string.Empty;
+        }
+
+        public string GetWriteCodeText()
+        {
+            string text = GetWriteCastingCodeText();
+
+            text += FieldName;
+
+            if (IsList)
+                text += "[i]";
+
+            switch (TypeName)
+            {
+                case "string": text += " ?? string.Empty"; break;
+            }
+
+            return text;
+        }
+
+        public string GetReadCastingCodeText(TableSchema schema)
+        {
+            if (IsEnum)
+                return $"({schema.EnumSchema.GetCodeName(TypeName)})";
+
+            return string.Empty;
+        }
+
+        public string GetReadTypeCodeText()
+        {
+            if (IsEnum)
+                return TypeCode.Int32.ToString();
+
+            return GetTypeCode().ToString();
+        }
+
+        public TypeCode GetTypeCode()
+        {
+            return TypeName switch
+            {
+                "bool" => TypeCode.Boolean,
+                "string" => TypeCode.String,
+                "short" => TypeCode.UInt16,
+                "int" => TypeCode.Int32,
+                "long" => TypeCode.Int64,
+                "ushort" => TypeCode.UInt16,
+                "uint" => TypeCode.UInt32,
+                "ulong" => TypeCode.UInt64,
+                "float" => TypeCode.Single,
+                "double" => TypeCode.Double,
+                _ => TypeCode.String
+            };
         }
     }
 }

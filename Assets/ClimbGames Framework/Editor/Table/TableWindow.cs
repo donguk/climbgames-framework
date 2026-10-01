@@ -89,6 +89,8 @@ namespace ClimbGames.Editor.Table
             if (EditorGUIs.SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
                 TableEditorSettings.CodeGenPath = selectedPath.ToUnityRelativePath();
 
+            TableEditorSettings.SaveToBytes = EditorGUILayout.Toggle("Save To Bytes", TableEditorSettings.SaveToBytes);
+
             EditorGUILayout.Space(5);
             if (GUILayout.Button($"Convert", GUILayout.Height(35)))
             {
@@ -150,13 +152,13 @@ namespace ClimbGames.Editor.Table
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[Tables] {ex.Message}");
+                Debug.LogError($"[Tables] {ex}");
             }
         }
 
         public void OnConvertFinished()
         {
-            Debug.Log("OnConvertFinished");
+            assetViewer.SetPath(TableEditorSettings.DataPath, "*.asset");
         }
     }
 }

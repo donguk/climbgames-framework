@@ -13,6 +13,7 @@ namespace ClimbGames
     public abstract class Table : ScriptableObject, ITable
     {
         public abstract void Initialize();
+        public abstract byte[] ToBytes();
     }
 
     public abstract class Table<TRecord> : Table where TRecord : TableRecord, new()
@@ -21,7 +22,7 @@ namespace ClimbGames
 
         protected virtual void OnInitialized() { }
 
-        public byte[] ToBytes()
+        public override byte[] ToBytes()
         {
             using (MemoryStream ms = new MemoryStream())
             {

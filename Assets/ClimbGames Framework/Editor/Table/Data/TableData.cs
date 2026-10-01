@@ -5,12 +5,13 @@ using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Linq;
 
 namespace ClimbGames.Editor.Table
 {
     public interface ITableData
     {
-        void CreateAsset(IExcelDataReader reader, string path);
+        ClimbGames.Table CreateAsset(IExcelDataReader reader, string path);
     }
 
     public class TableData : ITableData
@@ -29,7 +30,7 @@ namespace ClimbGames.Editor.Table
 
         private Dictionary<string, FieldInfo> fieldInfos;
 
-        public virtual void CreateAsset(IExcelDataReader reader, string path)
+        public virtual ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)
         {
             throw new NotImplementedException();
         }
@@ -79,7 +80,11 @@ namespace ClimbGames.Editor.Table
             string[] values = value.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < values.Length; ++i)
             {
-                var data = Convert.ChangeType(values[i].Trim(), argumentType);
+                string rawValue = values[i].Trim();
+                if (string.IsNullOrEmpty(rawValue))
+                    continue;
+
+                object data = ConvertValue(values[i].Trim(), argumentType);
                 methodInfo.Invoke(list, new[] { data });
             }
 
@@ -106,6 +111,10 @@ namespace ClimbGames.Editor.Table
                 catch (ArgumentException)
                 {
                     return Activator.CreateInstance(targetType);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[TableData] can not convert value: {ex}");
                 }
             }
 

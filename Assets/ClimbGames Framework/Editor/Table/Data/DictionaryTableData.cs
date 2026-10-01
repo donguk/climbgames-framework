@@ -17,21 +17,20 @@ namespace ClimbGames.Editor.Table
             this.schema = schema;
         }
 
-        public override void CreateAsset(IExcelDataReader reader, string path)
+        public override ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)
         {
+            var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
+            var listInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var methodInfo = listInfo.FieldType.GetMethod("Add");
+
+            var list = Activator.CreateInstance(listInfo.FieldType);
             var keyColumn = schema.Header.KeyColumn;
             if (keyColumn != null)
             {
-                var tableType = Type.GetType($"{schema.Namespace}.{schema.TableName}Table, Assembly-CSharp");
-                var listInfo = tableType.GetField("datas", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                var methodInfo = listInfo.FieldType.GetMethod("Add");
-
                 var dictionaryInfo = tableType.GetField("dictionary", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 var keyType = dictionaryInfo.FieldType.GetGenericArguments()[0];
 
-                var list = Activator.CreateInstance(listInfo.FieldType);
                 HashSet<object> keyHash = new HashSet<object>();
-
                 while (reader.Read())
                 {
                     try
@@ -49,16 +48,17 @@ namespace ClimbGames.Editor.Table
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"[Tables] {schema.TableName} can not add data({reader.Depth}): {ex.Message}");
+                        Debug.LogError($"[Tables] {schema.TableName} can not add data({reader.Depth}): {ex}");
                         continue;
                     }
                 }
-
-                var tableAsset = ScriptableObject.CreateInstance(tableType);
-                listInfo.SetValue(tableAsset, list);
-
-                AssetDatabase.CreateAsset(tableAsset, Path.Combine(path, $"{schema.TableName}.asset"));
             }
+
+            var tableAsset = ScriptableObject.CreateInstance(tableType);
+            listInfo.SetValue(tableAsset, list);
+
+            AssetDatabase.CreateAsset(tableAsset, Path.Combine(path, $"{schema.TableName}.asset"));
+            return tableAsset as ClimbGames.Table;
         }
     }
 }

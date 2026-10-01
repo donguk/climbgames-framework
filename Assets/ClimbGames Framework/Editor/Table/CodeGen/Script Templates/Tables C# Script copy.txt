@@ -13,7 +13,7 @@ namespace #NAMESPACE#
 {
     public static partial class Tables
     {
-        #PROPERTIES#
+#PROPERTIES#
 
         public static void Load(string label)
         {
@@ -27,23 +27,38 @@ namespace #NAMESPACE#
             Load(tables);
         }
 
-        public static void Load(IList<ITable> list)
+        public static void Load<T>(string label) where T : TextAsset
         {
-            foreach (var table in list)
+            var tables = AssetManager.LoadAssets<T>(label);
+            Load(tables);
+        }
+
+        public static async UniTask LoadAsync<T>(string label) where T : TextAsset
+        {
+            var tables = await AssetManager.LoadAssetsAsync<T>(label);
+            Load(tables);
+        }
+
+        public static void Load(IList<ITable> tables)
+        {
+            foreach (var table in tables)
             {
                 table.Initialize();
                 switch (table)
                 {
-                    #CASEFIELDS#
+#CASE_TABLES#
                 }
             }
         }
 
-        public static void Load(IList<TextAsset> assets)
+        public static void Load<T>(IList<T> assets) where T : TextAsset
         {
             foreach (var asset in assets)
             {
-                
+                switch (asset.name)
+                {
+#CASE_ASSETS#
+                }
             }
         }
     }

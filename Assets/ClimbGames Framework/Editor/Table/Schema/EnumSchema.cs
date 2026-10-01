@@ -92,13 +92,29 @@ namespace ClimbGames.Editor.Table
             headerPositions.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
         }
 
+        // row 에서 사용하고있는 enum value 수집
         public void ReadHeaderValues(IExcelDataReader reader)
         {
             for (int i = 0; i < headerPositions.Count; ++i)
             {
                 var position = headerPositions[i];
-                string value = reader.GetValue(position.ColumnIndex).ToString();
-                position.Definition.AddValue(value);
+
+                if (reader.GetFieldType(position.ColumnIndex) == typeof(string))
+                {
+                    string text = reader.GetString(position.ColumnIndex);
+                    if (string.IsNullOrEmpty(text) == false)
+                    {
+                        string[] values = text.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var value in values)
+                        {
+                            string rawValue = value.Trim();
+                            if (string.IsNullOrEmpty(rawValue))
+                                continue;
+
+                            position.Definition.AddValue(value.Trim());
+                        }
+                    }
+                }
             }
         }
 

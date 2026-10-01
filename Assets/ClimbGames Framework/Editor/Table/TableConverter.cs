@@ -67,7 +67,7 @@ namespace ClimbGames.Editor.Table
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[Tables] convert fail: {ex.Message}");
+                Debug.LogError($"[Tables] convert fail: {ex}");
             }
         }
 
@@ -155,7 +155,15 @@ namespace ClimbGames.Editor.Table
                             var schema = new TableSchema(reader.Name);
                             if (schema.Read(reader))
                             {
-                                TableData.Get(schema).CreateAsset(reader, TableEditorSettings.DataPath);
+                                ClimbGames.Table table = TableData.Get(schema).CreateAsset(reader, TableEditorSettings.DataPath);
+                                if (TableEditorSettings.SaveToBytes)
+                                {
+                                    string directoryPath = Path.Combine(TableEditorSettings.DataPath, "Bytes");
+                                    Directory.CreateDirectory(directoryPath);
+
+                                    string savePath = Path.Combine(directoryPath, $"{schema.TableName}.bytes");
+                                    File.WriteAllBytes(savePath, table.ToBytes());
+                                }
                             }
                         }
                         while (reader.NextResult());

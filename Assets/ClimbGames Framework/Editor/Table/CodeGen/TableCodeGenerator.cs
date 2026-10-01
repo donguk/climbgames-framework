@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -83,29 +84,50 @@ namespace ClimbGames.Editor.Table
 
             StringBuilder fieldBuilder = new StringBuilder();
             StringBuilder propertyBuilder = new StringBuilder();
+            StringBuilder writeBuilder = new StringBuilder();
+            StringBuilder readBuilder = new StringBuilder();
 
             var columns = schema.Header.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
-                if (fieldBuilder.Length > 0)
+
+                fieldBuilder.AppendLine($"        [SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
+                propertyBuilder.AppendLine($"        public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
+
+                if (column.IsList)
                 {
-                    fieldBuilder.AppendLine();
-                    propertyBuilder.AppendLine();
+                    writeBuilder.AppendLine($"            int {column.FieldName}Count = {column.FieldName} != null ? {column.FieldName}.Count : 0;");
+                    writeBuilder.AppendLine($"            bw.Write({column.FieldName}Count);");
+                    writeBuilder.AppendLine($"            for (int i = 0; i < {column.FieldName}Count; ++i)");
+                    writeBuilder.AppendLine($"                bw.Write({column.GetWriteCodeText()});");
 
-                    fieldBuilder.Append("        ");
-                    propertyBuilder.Append("        ");
+                    readBuilder.AppendLine($"            {column.FieldName} = new();");
+                    readBuilder.AppendLine($"            int {column.FieldName}Count = br.ReadInt32();");
+                    readBuilder.AppendLine($"            for (int i = 0; i < {column.FieldName}Count; ++i)");
+                    readBuilder.AppendLine($"                {column.FieldName}.Add({column.GetReadCastingCodeText(schema)}br.Read{column.GetReadTypeCodeText()}());");
                 }
-
-                fieldBuilder.Append($"[SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
-                propertyBuilder.Append($"public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
+                else
+                {
+                    writeBuilder.AppendLine($"            bw.Write({column.GetWriteCodeText()});");
+                    readBuilder.AppendLine($"            {column.FieldName} = {column.GetReadCastingCodeText(schema)}br.Read{column.GetReadTypeCodeText()}();");
+                }
             }
+
+            if (fieldBuilder.Length > 0) fieldBuilder.Length -= Environment.NewLine.Length;
+            if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;
+            if (writeBuilder.Length > 0) writeBuilder.Length -= Environment.NewLine.Length;
+            if (readBuilder.Length > 0) readBuilder.Length -= Environment.NewLine.Length;
 
             scriptText = scriptText.Replace("#FIELDS#", $"{fieldBuilder.ToString()}");
             scriptText = scriptText.Replace("#PROPERTIES#", $"{propertyBuilder.ToString()}");
+            scriptText = scriptText.Replace("#WRITE_AREA#", $"{writeBuilder.ToString()}");
+            scriptText = scriptText.Replace("#READ_AREA#", $"{readBuilder.ToString()}");
 
             fieldBuilder.Clear();
             propertyBuilder.Clear();
+            writeBuilder.Clear();
+            readBuilder.Clear();
 
             return Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
         }
@@ -117,31 +139,30 @@ namespace ClimbGames.Editor.Table
                 string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce(), "Tables");
 
                 StringBuilder propertyBuilder = new StringBuilder();
-                StringBuilder caseBuilder = new StringBuilder();
+                StringBuilder caseTableBuilder = new StringBuilder();
+                StringBuilder caseAssetBuilder = new StringBuilder();
 
                 foreach (var schema in schemas)
                 {
                     if (schema is TableSchema tableSchema)
                     {
-                        if (propertyBuilder.Length > 0)
-                        {
-                            propertyBuilder.AppendLine();
-                            caseBuilder.AppendLine();
-
-                            propertyBuilder.Append("        ");
-                            caseBuilder.Append("                    ");
-                        }
-
-                        propertyBuilder.Append($"public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
-                        caseBuilder.Append($"case {tableSchema.TableName}Table value: {tableSchema.TableName} = value; break;");
+                        propertyBuilder.AppendLine($"        public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
+                        caseTableBuilder.AppendLine($"                    case {tableSchema.TableName}Table value: {tableSchema.TableName} = value; break;");
+                        caseAssetBuilder.AppendLine($"                    case \"{tableSchema.TableName}\": {tableSchema.TableName} = {tableSchema.TableName}Table.FromBytes(asset.bytes); break;");
                     }
                 }
 
+                if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;
+                if (caseTableBuilder.Length > 0) caseTableBuilder.Length -= Environment.NewLine.Length;
+                if (caseAssetBuilder.Length > 0) caseAssetBuilder.Length -= Environment.NewLine.Length;
+
                 scriptText = scriptText.Replace("#PROPERTIES#", $"{propertyBuilder.ToString()}");
-                scriptText = scriptText.Replace("#CASEFIELDS#", $"{caseBuilder.ToString()}");
+                scriptText = scriptText.Replace("#CASE_TABLES#", $"{caseTableBuilder.ToString()}");
+                scriptText = scriptText.Replace("#CASE_ASSETS#", $"{caseAssetBuilder.ToString()}");
 
                 propertyBuilder.Clear();
-                caseBuilder.Clear();
+                caseTableBuilder.Clear();
+                caseAssetBuilder.Clear();
 
                 return Write(scriptText, Path.Combine(path, $"Tables.cs"));
             }

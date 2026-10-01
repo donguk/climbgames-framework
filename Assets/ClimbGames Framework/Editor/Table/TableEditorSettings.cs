@@ -10,6 +10,7 @@ namespace ClimbGames.Editor.Table
         private static string excelPath;
         private static string dataPath;
         private static string codeGenPath;
+        private static bool saveToBytes;
 
         public static bool ReadHeaderEnumValues => true;
 
@@ -23,11 +24,15 @@ namespace ClimbGames.Editor.Table
             get => dataPath;
             set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", dataPath = value);
         }
-
         public static string CodeGenPath
         {
             get => codeGenPath;
             set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", codeGenPath = value);
+        }
+        public static bool SaveToBytes
+        {
+            get => saveToBytes;
+            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", saveToBytes = value);
         }
 
         static TableEditorSettings()
@@ -36,6 +41,7 @@ namespace ClimbGames.Editor.Table
             excelPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
             dataPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
             codeGenPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets/Tables/CodeGe");
+            saveToBytes = EditorPrefs.GetBool($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", false);
         }
 
         public static void Reset()
@@ -43,6 +49,7 @@ namespace ClimbGames.Editor.Table
             ExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
             DataPath = "Assets/Tables";
             CodeGenPath = "Assets/Tables/CodeGen";
+            SaveToBytes = false;
         }
     }
 }

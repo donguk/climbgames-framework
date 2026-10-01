@@ -14,18 +14,18 @@ namespace #NAMESPACE#
     [Serializable]
     public partial class #SCRIPTNAME# : TableRecord
     {
-        #FIELDS#
+#FIELDS#
 
-        #PROPERTIES#
+#PROPERTIES#
 
-        public override TableRecord Read(BinaryReader br)
+        public override void Read(BinaryReader br)
         {
-            throw new NotImplementedException();
+#READ_AREA#
         }
 
         public override void Write(BinaryWriter bw)
         {
-            throw new NotImplementedException();
+#WRITE_AREA#
         }
     }
 }

@@ -1,5 +1,6 @@
 using ClimbGames.UI;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ClimbGames
 {
@@ -9,7 +10,7 @@ namespace ClimbGames
         {
             await AssetManager.Initialize();
 
-            //await Tables.LoadAsync("Tables");
+            await Tables.LoadAsync<TextAsset>("tables");
 
             await UIManager.Instance.ShowUI<UIPanelTitle>("UIPanelTitle", UILayer.View);
         }
