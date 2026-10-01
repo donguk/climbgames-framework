@@ -12,16 +12,14 @@ using System.Linq;
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME# : Table, ITable
+    public partial class #SCRIPTNAME# : Table<#TABLE_RECORD#>
     {
-        [SerializeField] protected List<#TABLE_RECORD#> datas;
-
         // key: #RECORD_KEYNAME#
         protected Dictionary<#RECORD_KEY#, #TABLE_RECORD#> dictionary;
 
         public IReadOnlyList<#TABLE_RECORD#> Datas => datas;
 
-        void ITable.Initialize()
+        public override sealed void Initialize()
         {
             dictionary = datas.ToDictionary(x => x.#RECORD_KEYPROPERTY#);
             
@@ -29,5 +27,7 @@ namespace #NAMESPACE#
         }
 
         public bool TryGetValue(#RECORD_KEY# key, out #TABLE_RECORD# value) => dictionary.TryGetValue(key, out value);
+    
+        public static #SCRIPTNAME# FromBytes(byte[] bytes) => CreateInstance<#SCRIPTNAME#>().Load(bytes) as #SCRIPTNAME#;
     }
 }

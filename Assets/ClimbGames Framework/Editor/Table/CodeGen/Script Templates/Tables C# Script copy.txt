@@ -38,5 +38,13 @@ namespace #NAMESPACE#
                 }
             }
         }
+
+        public static void Load(IList<TextAsset> assets)
+        {
+            foreach (var asset in assets)
+            {
+                
+            }
+        }
     }
 }

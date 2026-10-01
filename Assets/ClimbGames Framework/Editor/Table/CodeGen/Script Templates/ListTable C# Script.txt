@@ -11,15 +11,15 @@ using System.Collections.Generic;
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME# : Table, ITable
+    public partial class #SCRIPTNAME# : Table<#TABLERECORD#>
     {
-        [SerializeField] private List<#TABLERECORD#> datas;
-
         public IReadOnlyList<#TABLERECORD#> Datas => datas;
 
-        void ITable.Initialize()
+        public override sealed void Initialize()
         {
             OnInitialized();
         }
+
+        public static #SCRIPTNAME# FromBytes(byte[] bytes) => CreateInstance<#SCRIPTNAME#>().Load(bytes) as #SCRIPTNAME#;
     }
 }

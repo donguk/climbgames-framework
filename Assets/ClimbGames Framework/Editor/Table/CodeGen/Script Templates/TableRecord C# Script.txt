@@ -7,14 +7,25 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME#
+    public partial class #SCRIPTNAME# : TableRecord
     {
         #FIELDS#
 
         #PROPERTIES#
+
+        public override TableRecord Read(BinaryReader br)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(BinaryWriter bw)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
