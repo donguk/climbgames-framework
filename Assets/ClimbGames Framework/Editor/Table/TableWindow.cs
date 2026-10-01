@@ -9,8 +9,10 @@ namespace ClimbGames.Editor.Table
     {
         private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.3f, 100f, 20f);
         private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal);
+        private Vector2 scrollPosition;
+
+        private FileTreeView assetViewer;
         private SearchableTextArea jsonViewer;
-        private Vector2 _settingsPosition;
 
         private ClimbGames.Table selectedTable;
         private string tableJsonText;
@@ -26,7 +28,14 @@ namespace ClimbGames.Editor.Table
 
         void OnEnable()
         {
-            InitTableFileTree(TableEditorSettings.DataPath);
+            if (assetViewer == null)
+                assetViewer = new FileTreeView();
+
+            assetViewer.Title = "Asset Files";
+            assetViewer.SetPath(TableEditorSettings.DataPath, "*.asset");
+
+            assetViewer.onSelected -= OnTableSelected;
+            assetViewer.onSelected += OnTableSelected;
 
             if (jsonViewer == null)
                 jsonViewer = new SearchableTextArea(this);
@@ -41,7 +50,7 @@ namespace ClimbGames.Editor.Table
             DrawSettings(settingsRect);
 
             viewResizer.Resize(viewRect, out var fileViewRect, out var jsonViewRect);
-            DrawFileView(fileViewRect);
+            assetViewer.Draw(fileViewRect);
 
             // save
             var jsonText = jsonViewer.Text;
@@ -80,7 +89,7 @@ namespace ClimbGames.Editor.Table
         void DrawSettings(Rect rect)
         {
             GUILayout.BeginArea(rect);
-            _settingsPosition = EditorGUILayout.BeginScrollView(_settingsPosition);
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             GUILayout.Space(10);
 
             GUILayout.Label("Settings", EditorStyles.boldLabel);
@@ -92,7 +101,7 @@ namespace ClimbGames.Editor.Table
             if (SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
             {
                 TableEditorSettings.DataPath = selectedPath;
-                RefreshFileView(selectedPath);
+                assetViewer.SetPath(selectedPath, "*.asset");
             }
 
             if (SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))

@@ -223,6 +223,32 @@ namespace ClimbGames.Editor
 			Changed();
 		}
 
+		public void ReplaceElement(TreeElement parent, int index, TreeElement newElement)
+		{
+			if (parent == null)
+				throw new ArgumentNullException("parent", "parent is null");
+
+			if (parent.children == null)
+				parent.children = new List<TreeElement>();
+
+			if (index < 0 || parent.children.Count <= index)
+				return;
+
+			parent.children.RemoveAt(index);
+			if (newElement != null)
+			{
+				newElement.parent = parent;
+				newElement.depth = parent.depth + 1;
+
+				parent.children.Insert(index, newElement);
+
+				TreeElementUtility.UpdateDepthValues(newElement);
+				TreeElementUtility.TreeToList(m_Root, m_Data);
+			}
+
+			Changed();
+		}
+
 		void Changed()
 		{
 			if (modelChanged != null)
