@@ -28,7 +28,7 @@ namespace ClimbGames.Editor.Table
             if (fileTreeView == null)
             {
                 fileTreeView = new TableAssetTreeView(treeViewState, fileTreeModel);
-                fileTreeView.onSelected += SelectTableAsset;
+                fileTreeView.onSelected += OnTableSelected;
             }
 
             RefreshFileView(path);

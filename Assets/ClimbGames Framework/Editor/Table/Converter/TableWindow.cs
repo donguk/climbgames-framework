@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.IO;
+using System;
 
 namespace ClimbGames.Editor.Table
 {
@@ -7,8 +9,12 @@ namespace ClimbGames.Editor.Table
     {
         private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.3f, 100f, 20f);
         private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal);
-
+        private SearchableTextArea jsonViewer;
         private Vector2 _settingsPosition;
+
+        private ClimbGames.Table selectedTable;
+        private string tableJsonText;
+        private int tableHashCode;
 
         [MenuItem("Tools/ClimbGames/Table Converter")]
         public static void ShowWindow()
@@ -21,7 +27,9 @@ namespace ClimbGames.Editor.Table
         void OnEnable()
         {
             InitTableFileTree(TableEditorSettings.DataPath);
-            InitTableContent();
+
+            if (jsonViewer == null)
+                jsonViewer = new SearchableTextArea(this);
         }
 
         void OnGUI()
@@ -32,9 +40,23 @@ namespace ClimbGames.Editor.Table
             settingsResizer.Resize(rect, out var settingsRect, out var viewRect);
             DrawSettings(settingsRect);
 
-            viewResizer.Resize(viewRect, out var fileViewRect, out var contentViewRect);
+            viewResizer.Resize(viewRect, out var fileViewRect, out var jsonViewRect);
             DrawFileView(fileViewRect);
-            DrawAssetContent(contentViewRect);
+
+            // save
+            var jsonText = jsonViewer.Text;
+            bool isTableChanged = string.IsNullOrEmpty(jsonText) == false && string.IsNullOrEmpty(tableJsonText) == false &&
+                (jsonText.Length != tableJsonText.Length || jsonText.GetHashCode() != tableHashCode);
+
+            Rect saveRect = new Rect(rect.width - 60f, rect.height - 50f, 32f, 32f);
+            if (isTableChanged)
+                HandleSave(saveRect);
+
+            // 
+            jsonViewer.Draw(jsonViewRect);
+
+            if (isTableChanged)
+                GUI.Button(saveRect, GUIContentUtility.SaveAs_2x);
         }
 
         bool SelectPathField(string title, string path, out string selectedPath)
@@ -85,6 +107,60 @@ namespace ClimbGames.Editor.Table
             EditorGUILayout.Space(10);
             EditorGUILayout.EndScrollView();
             GUILayout.EndArea();
+        }
+
+        void HandleSave(Rect rect)
+        {
+            Event e = Event.current;
+            if (e != null && e.button == 0 && rect.Contains(e.mousePosition))
+            {
+                if (e.type == EventType.MouseDown)
+                {
+                    e.Use();
+                }
+                else if (e.type == EventType.MouseUp)
+                {
+                    SaveTable();
+                    e.Use();
+                }
+            }
+        }
+
+        void OnTableSelected(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(filePath);
+            if (asset != null && selectedTable != asset)
+            {
+                selectedTable = asset;
+                tableJsonText = JsonUtility.ToJson(asset, true);
+                tableHashCode = tableJsonText.GetHashCode();
+
+                jsonViewer.Title = selectedTable.name;
+                jsonViewer.SetText(tableJsonText);
+            }
+        }
+
+        void SaveTable()
+        {
+            try
+            {
+                JsonUtility.FromJsonOverwrite(jsonViewer.Text, selectedTable);
+                EditorUtility.SetDirty(selectedTable);
+                AssetDatabase.SaveAssetIfDirty(selectedTable);
+
+                tableJsonText = JsonUtility.ToJson(selectedTable, true);
+                tableHashCode = tableJsonText.GetHashCode();
+
+                jsonViewer.Title = selectedTable.name;
+                jsonViewer.SetText(tableJsonText);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[Tables] {ex.Message}");
+            }
         }
 
         public void OnConvertFinished()
