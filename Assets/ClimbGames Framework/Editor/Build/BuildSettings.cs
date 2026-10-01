@@ -132,7 +132,7 @@ namespace ClimbGames.Editor
             string defatulRootPath = Path.Combine(Directory.GetCurrentDirectory(), "Build");
             rootPath = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", defatulRootPath);
 
-            if (System.Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", $"{BuildType.Dev}"), out var result))
+            if (Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", $"{BuildType.Dev}"), out var result))
                 buildType = (BuildType)result;
 
             bundleVersion = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", "0.1.0");
@@ -145,6 +145,11 @@ namespace ClimbGames.Editor
             keystorePass = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keystorePass)}", string.Empty);
             keyaliasName = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasName)}", string.Empty);
             keyaliasPass = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasPass)}", string.Empty);
+        }
+
+        public static void Reset()
+        {
+            RootPath = Path.Combine(Directory.GetCurrentDirectory(), "Build");
         }
 
         public static void ApplySettings()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ClimbGames.Editor
 {
-    public static class GUIContentUtility
+    public static class GUIContents
     {
         public static readonly GUIContent Folder_Icon = EditorGUIUtility.IconContent("Folder Icon");
         public static readonly GUIContent FolderOpened_Icon = EditorGUIUtility.IconContent("FolderOpened Icon");
@@ -15,6 +15,8 @@ namespace ClimbGames.Editor
         public static readonly GUIContent HoverBar_Up = EditorGUIUtility.IconContent("HoverBar_Up");
         public static readonly GUIContent SaveAs_2x = EditorGUIUtility.IconContent("SaveAs@2x");
 
-        // https://github.com/rythwh/unity-editor-icons
+
+
+        // ref: https://github.com/rythwh/unity-editor-icons
     }
 }

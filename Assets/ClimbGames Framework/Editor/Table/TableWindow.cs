@@ -65,25 +65,7 @@ namespace ClimbGames.Editor.Table
             jsonViewer.Draw(jsonViewRect);
 
             if (isTableChanged)
-                GUI.Button(saveRect, GUIContentUtility.SaveAs_2x);
-        }
-
-        bool SelectPathField(string title, string path, out string selectedPath)
-        {
-            selectedPath = string.Empty;
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(title, path);
-            if (GUILayout.Button("Browse", GUILayout.Width(70)))
-            {
-                // 폴더 선택 창 오픈
-                selectedPath = EditorUtility.OpenFolderPanel("Select Directory", TableEditorSettings.ExcelPath, "");
-                if (string.IsNullOrEmpty(selectedPath) == false)
-                {
-                    GUI.FocusControl(null); // 입력 포커스 해제
-                }
-            }
-            GUILayout.EndHorizontal();
-            return string.IsNullOrEmpty(selectedPath) == false;
+                GUI.Button(saveRect, GUIContents.SaveAs_2x);
         }
 
         void DrawSettings(Rect rect)
@@ -95,17 +77,17 @@ namespace ClimbGames.Editor.Table
             GUILayout.Label("Settings", EditorStyles.boldLabel);
             EditorGUILayout.Space();
 
-            if (SelectPathField("Excel Path", TableEditorSettings.ExcelPath, out var selectedPath))
+            if (EditorGUIs.SelectPathField("Excel Path", TableEditorSettings.ExcelPath, out var selectedPath)) //
                 TableEditorSettings.ExcelPath = selectedPath;
 
-            if (SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
+            if (EditorGUIs.SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
             {
-                TableEditorSettings.DataPath = selectedPath;
+                TableEditorSettings.DataPath = selectedPath.ToUnityRelativePath();
                 assetViewer.SetPath(selectedPath, "*.asset");
             }
 
-            if (SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
-                TableEditorSettings.CodeGenPath = selectedPath;
+            if (EditorGUIs.SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
+                TableEditorSettings.CodeGenPath = selectedPath.ToUnityRelativePath();
 
             EditorGUILayout.Space(5);
             if (GUILayout.Button($"Convert", GUILayout.Height(35)))
@@ -140,10 +122,7 @@ namespace ClimbGames.Editor.Table
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "../"));
-            string relativePath = Path.GetRelativePath(projectRoot, filePath).Replace("\\", "/");
-
-            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(relativePath);
+            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(filePath.ToUnityRelativePath());
             if (asset != null && selectedTable != asset)
             {
                 selectedTable = asset;

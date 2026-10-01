@@ -27,10 +27,10 @@ namespace ClimbGames.Editor
             if (EditorGUI.EndChangeCheck())
                 ResetState();
 
-            if (GUILayout.Button(GUIContentUtility.HoverBar_Down, EditorStyles.toolbarButton, GUILayout.Width(28f)))
+            if (GUILayout.Button(GUIContents.HoverBar_Down, EditorStyles.toolbarButton, GUILayout.Width(28f)))
                 MoveMatchCursor(true);
 
-            if (GUILayout.Button(GUIContentUtility.HoverBar_Up, EditorStyles.toolbarButton, GUILayout.Width(28f)))
+            if (GUILayout.Button(GUIContents.HoverBar_Up, EditorStyles.toolbarButton, GUILayout.Width(28f)))
                 MoveMatchCursor(false);
 
             EditorGUILayout.EndHorizontal();

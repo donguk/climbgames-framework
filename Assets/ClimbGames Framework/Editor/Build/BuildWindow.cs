@@ -67,24 +67,13 @@ namespace ClimbGames.Editor
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Target Platform", $"{BuildSettings.TargetPlatform}", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
+            if (EditorGUIs.SelectPathField("Root Path", BuildSettings.RootPath, out var selectedPath))
             {
-                EditorGUILayout.LabelField("Root Path", BuildSettings.RootPath);
-                if (GUILayout.Button("Browse", GUILayout.Width(70)))
-                {
-                    // 폴더 선택 창 오픈
-                    string selectedPath = EditorUtility.OpenFolderPanel("Select Root Directory", BuildSettings.RootPath, "");
-                    if (!string.IsNullOrEmpty(selectedPath))
-                    {
-                        BuildSettings.RootPath = selectedPath;
-                        GUI.FocusControl(null); // 입력 포커스 해제
+                BuildSettings.RootPath = selectedPath;
 
-                        RefreshBinFileList();
-                        RefreshEnvFileList();
-                    }
-                }
+                RefreshBinFileList();
+                RefreshEnvFileList();
             }
-            EditorGUILayout.EndHorizontal();
 
             EditorGUI.BeginChangeCheck();
             BuildSettings.BuildType = (BuildType)EditorGUILayout.EnumPopup("Build Type", BuildSettings.BuildType);
@@ -104,23 +93,9 @@ namespace ClimbGames.Editor
                 case BuildTargetGroup.Android:
                     {
                         EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("KeystoreName", BuildSettings.KeystoreName);
-                        if (GUILayout.Button("Browse", GUILayout.Width(70)))
-                        {
-                            string selectedPath = EditorUtility.OpenFilePanel("Select Keystore File", Application.dataPath, "keystore,jks");
-                            if (!string.IsNullOrEmpty(selectedPath))
-                            {
-                                // 절대 경로를 유니티 상대 경로(Assets/...)로 변환 시도
-                                if (selectedPath.StartsWith(Application.dataPath))
-                                {
-                                    BuildSettings.KeystoreName = "Assets" + selectedPath.Substring(Application.dataPath.Length);
-                                }
-                                else
-                                {
-                                    BuildSettings.KeystoreName = selectedPath;
-                                }
-                            }
-                        }
+
+                        if (EditorGUIs.SelectFileField("KeystoreName", BuildSettings.KeystoreName, "keystore,jks", out var selectedPatha))
+                            BuildSettings.KeystoreName = selectedPatha.ToUnityRelativePath();
 
                         GUIContent clearIcon = EditorGUIUtility.IconContent("TreeEditor.Trash");
                         clearIcon.tooltip = "Clear Keystore Settings";

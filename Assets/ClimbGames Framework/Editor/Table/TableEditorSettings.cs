@@ -34,8 +34,15 @@ namespace ClimbGames.Editor.Table
         {
             string defatulExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
             excelPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
-            dataPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets\\Tables");
-            codeGenPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets\\Tables\\CodeGen");
+            dataPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
+            codeGenPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets/Tables/CodeGe");
+        }
+
+        public static void Reset()
+        {
+            ExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
+            DataPath = "Assets/Tables";
+            CodeGenPath = "Assets/Tables/CodeGen";
         }
     }
 }

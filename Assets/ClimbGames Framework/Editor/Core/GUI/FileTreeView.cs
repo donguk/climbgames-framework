@@ -252,11 +252,11 @@ namespace ClimbGames.Editor
 
                     if (element.isDirectory)
                     {
-                        GUI.DrawTexture(iconRect, IsExpanded(element.id) ? GUIContentUtility.FolderOpened_Icon?.image : GUIContentUtility.Folder_Icon?.image, ScaleMode.ScaleToFit);
+                        GUI.DrawTexture(iconRect, IsExpanded(element.id) ? GUIContents.FolderOpened_Icon?.image : GUIContents.Folder_Icon?.image, ScaleMode.ScaleToFit);
                     }
                     else
                     {
-                        GUI.DrawTexture(iconRect, GUIContentUtility.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit);
+                        GUI.DrawTexture(iconRect, GUIContents.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit);
                     }
 
                     rect.x += iconRect.width + 2f;
