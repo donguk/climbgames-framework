@@ -16,26 +16,26 @@ namespace ClimbGames.Editor.Table
         public static string ExcelPath
         {
             get => excelPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", value);
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", excelPath = value);
         }
         public static string DataPath
         {
             get => dataPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", value);
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", dataPath = value);
         }
 
         public static string CodeGenPath
         {
             get => codeGenPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", value);
+            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", codeGenPath = value);
         }
 
         static TableEditorSettings()
         {
             string defatulExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
-            excelPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
-            dataPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets\\Tables");
-            codeGenPath = PlayerPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets\\Tables\\CodeGen");
+            excelPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
+            dataPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets\\Tables");
+            codeGenPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets\\Tables\\CodeGen");
         }
     }
 }

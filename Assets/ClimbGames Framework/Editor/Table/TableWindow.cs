@@ -140,7 +140,10 @@ namespace ClimbGames.Editor.Table
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(filePath);
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "../"));
+            string relativePath = Path.GetRelativePath(projectRoot, filePath).Replace("\\", "/");
+
+            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(relativePath);
             if (asset != null && selectedTable != asset)
             {
                 selectedTable = asset;
