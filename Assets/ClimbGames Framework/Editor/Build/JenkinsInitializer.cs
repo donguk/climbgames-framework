@@ -12,7 +12,7 @@ namespace ClimbGames
         private const string JenkinsfileGUID = "c318bb60c53c5b74dbaeb3ef40bcb015";
         private const string JenkinsScriptsGUID = "707ccc579e3a01c47a7752f000ab767c";
 
-        [MenuItem("Tools/ClimbGames/Import Jenkinsfile")]
+        [MenuItem("Tools/ClimbGames/Build/Import Jenkinsfile")]
         public static void ImportJenkinsfile()
         {
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));

@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace ClimbGames.Editor.Table
 {
     public enum SchemaType
@@ -8,11 +10,6 @@ namespace ClimbGames.Editor.Table
         DictionaryTable,
         KeyValueTable,
         TableEnum,
-    }
-
-    public interface ISchema
-    {
-        SchemaType SchemaType { get; }
     }
 
     public abstract class Schema
@@ -28,9 +25,15 @@ namespace ClimbGames.Editor.Table
 
         public string Namespace { get; private set; }
 
+        public string TableName { get; protected set; }
+        public SchemaType SchemaType { get; protected set; }
+
         public Schema()
         {
             Namespace = GetNamesapce();
         }
+
+        public virtual TableHeader GetTableHeader() => null;
+        public virtual EnumSchema GetEnumSchema() => null;
     }
 }

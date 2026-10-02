@@ -10,11 +10,8 @@ namespace ClimbGames.Editor.Table
 {
     public class KeyValueTableData : TableData
     {
-        private TableSchema schema;
-
-        public KeyValueTableData(TableSchema schema)
+        public KeyValueTableData(TableSchema schema) : base(schema)
         {
-            this.schema = schema;
         }
 
         public override ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)
@@ -24,7 +21,7 @@ namespace ClimbGames.Editor.Table
             var methodInfo = listInfo.FieldType.GetMethod("Add");
 
             var list = Activator.CreateInstance(listInfo.FieldType);
-            var columns = schema.Header.Columns;
+            var columns = schema.GetTableHeader().Columns;
             if (columns.Count > 1)
             {
                 var keyColumn = columns[0];

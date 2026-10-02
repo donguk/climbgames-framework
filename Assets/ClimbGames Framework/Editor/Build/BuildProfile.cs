@@ -15,7 +15,7 @@ namespace ClimbGames.Editor
         public int versionCode = 1;
         public string patchUrl;
 
-        [MenuItem("Tools/ClimbGames/Create BuildProfile")]
+        [MenuItem("Tools/ClimbGames/Build/Create Profile")]
         public static void CreateProfile()
         {
             if (!Directory.Exists(TargetPath))

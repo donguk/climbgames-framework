@@ -7,11 +7,8 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string ListTableScriptGUID = "81581d2875974034d809155ef69fc97c";
 
-        protected TableSchema schema;
-
-        public ListTableGenerator(ISchema schema)
+        public ListTableGenerator(Schema schema) : base(schema)
         {
-            this.schema = (TableSchema)schema;
         }
 
         public override bool Write(string path)

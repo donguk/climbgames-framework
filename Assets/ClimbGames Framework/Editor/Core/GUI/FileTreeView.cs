@@ -75,6 +75,11 @@ namespace ClimbGames.Editor
             treeView.ExpandAll();
         }
 
+        public void Refresh()
+        {
+            SetPath(rootPath, searchPattern);
+        }
+
         void BuildTreeData(string path, ref List<Element> list)
         {
             list.Add(new Element("root", -1, -1));

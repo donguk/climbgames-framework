@@ -12,6 +12,8 @@ namespace ClimbGames.Editor.Table
         private static readonly Regex ListRegex = new Regex(@"^(?i:list)(?:<([^>]+)>)?$");
         private static readonly Regex EnumRegex = new Regex(@"^(?i:enum):([A-Za-z_][A-Za-z0-9_]*)$");
 
+        private EnumSchema enumSchema;
+
         public int Index { get; private set; }
         public string FieldName { get; private set; }
         public string PropertyName { get; private set; }
@@ -40,7 +42,11 @@ namespace ClimbGames.Editor.Table
             if (match.Success)
             {
                 string fieldName = match.Groups[1].Value;
-                var column = new ColumnInfo(columnIndex, fieldName);
+                var column = new ColumnInfo(columnIndex, fieldName)
+                {
+                    // enum 스키마 저장
+                    enumSchema = schema.GetEnumSchema()
+                };
 
                 if (match.Groups[2].Success)
                 {
@@ -55,7 +61,7 @@ namespace ClimbGames.Editor.Table
 
                     if (string.IsNullOrEmpty(typeName) == false)
                     {
-                        if (column.ParseType(typeName.Trim(), schema) == false)
+                        if (column.ParseType(typeName.Trim()) == false)
                             Debug.LogError($"[TableHeader] {schema.TableName}: invalid column({column.FieldName})/ type({typeName})");
                     }
                 }
@@ -66,7 +72,7 @@ namespace ClimbGames.Editor.Table
             return null;
         }
 
-        bool ParseType(string value, TableSchema schema)
+        bool ParseType(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return false;
@@ -94,7 +100,7 @@ namespace ClimbGames.Editor.Table
                         if (match.Success)
                         {
                             IsList = true;
-                            if (ParseType(match.Groups[1].Value, schema) == false)
+                            if (ParseType(match.Groups[1].Value) == false)
                                 TypeName = "string";
                         }
                         else
@@ -105,8 +111,8 @@ namespace ClimbGames.Editor.Table
                                 IsEnum = true;
                                 TypeName = match.Groups[1].Value;
 
-                                // enum 추가
-                                schema.EnumSchema.AddHeader(TypeName, Index);
+                                // 테이블 헤더 enum 추가
+                                enumSchema.AddTableHeader(TypeName, Index);
                             }
                         }
                         break;
@@ -121,14 +127,10 @@ namespace ClimbGames.Editor.Table
             TypeName = Type.GetTypeCode(type) switch
             {
                 TypeCode.Boolean => "bool",
-                TypeCode.Byte => "byte",
-                TypeCode.Char => "char",
-                TypeCode.Decimal => "decimal",
                 TypeCode.Double => "double",
                 TypeCode.Int16 => "short",
                 TypeCode.Int32 => "int",
                 TypeCode.Int64 => "long",
-                TypeCode.SByte => "sbyte",
                 TypeCode.Single => "float",
                 TypeCode.String => "string",
                 TypeCode.UInt16 => "ushort",
@@ -136,61 +138,6 @@ namespace ClimbGames.Editor.Table
                 TypeCode.UInt64 => "ulong",
                 _ => "string"
             };
-        }
-
-        public string GetTypeCodeName(TableSchema schema)
-        {
-            if (string.IsNullOrEmpty(TypeName))
-                return "string";
-
-            if (IsList)
-                return $"List<{(IsEnum ? schema.EnumSchema.GetCodeName(TypeName) : TypeName)}>";
-
-            if (IsEnum)
-                return schema.EnumSchema.GetCodeName(TypeName);
-
-            return TypeName;
-        }
-
-        public string GetWriteCastingCodeText()
-        {
-            if (IsEnum)
-                return "(int)";
-
-            return string.Empty;
-        }
-
-        public string GetWriteCodeText()
-        {
-            string text = GetWriteCastingCodeText();
-
-            text += FieldName;
-
-            if (IsList)
-                text += "[i]";
-
-            switch (TypeName)
-            {
-                case "string": text += " ?? string.Empty"; break;
-            }
-
-            return text;
-        }
-
-        public string GetReadCastingCodeText(TableSchema schema)
-        {
-            if (IsEnum)
-                return $"({schema.EnumSchema.GetCodeName(TypeName)})";
-
-            return string.Empty;
-        }
-
-        public string GetReadTypeCodeText()
-        {
-            if (IsEnum)
-                return TypeCode.Int32.ToString();
-
-            return GetTypeCode().ToString();
         }
 
         public TypeCode GetTypeCode()
@@ -209,6 +156,51 @@ namespace ClimbGames.Editor.Table
                 "double" => TypeCode.Double,
                 _ => TypeCode.String
             };
+        }
+
+        public string GetTypeCodeName()
+        {
+            if (string.IsNullOrEmpty(TypeName))
+                return "string";
+
+            if (IsList)
+                return $"List<{(IsEnum ? enumSchema.GetTypeCodeName(TypeName) : TypeName)}>";
+
+            if (IsEnum)
+                return enumSchema.GetTypeCodeName(TypeName);
+
+            return TypeName;
+        }
+
+        public string GetCastingText(bool assignTo)
+        {
+            if (IsEnum)
+                return assignTo ? "(int)" : $"({enumSchema.GetTypeCodeName(TypeName)})";
+
+            return string.Empty;
+        }
+
+        public string GetWriteText()
+        {
+            string text = FieldName;
+
+            if (IsList)
+                text += "[i]";
+
+            switch (TypeName)
+            {
+                case "string": text += " ?? string.Empty"; break;
+            }
+
+            return text;
+        }
+
+        public string GetReadText()
+        {
+            if (IsEnum)
+                return TypeCode.Int32.ToString();
+
+            return GetTypeCode().ToString();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ClimbGames.Editor
 
         private Vector2 _scrollPosition;
 
-        [MenuItem("Tools/ClimbGames/Build Window")]
+        [MenuItem("Tools/ClimbGames/Build/Settings", false, 99)]
         public static void ShowWindow()
         {
             var window = GetWindow<BuildWindow>("ClimbGames Build");

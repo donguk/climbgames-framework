@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 
@@ -17,7 +18,7 @@ namespace ClimbGames.Editor.Table
         private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
         private static readonly string TablesScriptGUID = "24e9f7f1262fe3d49a67b68f69950d9e";
 
-        public static ICodeGenerator Get(ISchema schema)
+        public static ICodeGenerator Get(Schema schema)
         {
             switch (schema.SchemaType)
             {
@@ -27,10 +28,10 @@ namespace ClimbGames.Editor.Table
                 case SchemaType.TableEnum: return new TableEnumGenerator(schema);
             }
 
-            return new TableCodeGenerator();
+            return new TableCodeGenerator(schema);
         }
 
-        public static bool Write(string path, List<ISchema> schemas)
+        public static bool Write(string path, List<Schema> schemas)
         {
             bool isChanged = false;
             foreach (var schema in schemas)
@@ -38,6 +39,13 @@ namespace ClimbGames.Editor.Table
 
             isChanged |= WriteTables(path, schemas);
             return isChanged;
+        }
+
+        protected Schema schema;
+
+        public TableCodeGenerator(Schema schema)
+        {
+            this.schema = schema;
         }
 
         public virtual bool Write(string path) { return false; }
@@ -56,7 +64,7 @@ namespace ClimbGames.Editor.Table
             UTF8Encoding encoding = new UTF8Encoding(true);
             File.WriteAllText(filePath, text, encoding);
 
-            // 동일한 파일이라도 호출시 컴파일
+            // 동일한 파일이라도 호출시 컴파일 발생
             AssetDatabase.ImportAsset(filePath);
             return true;
         }
@@ -77,7 +85,7 @@ namespace ClimbGames.Editor.Table
             return scriptText;
         }
 
-        protected static bool WriteRecord(TableSchema schema, string path)
+        protected static bool WriteRecord(Schema schema, string path)
         {
             string scriptName = schema.TableName + "TableRecord";
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
@@ -87,30 +95,30 @@ namespace ClimbGames.Editor.Table
             StringBuilder writeBuilder = new StringBuilder();
             StringBuilder readBuilder = new StringBuilder();
 
-            var columns = schema.Header.Columns;
+            var columns = schema.GetTableHeader().Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
 
-                fieldBuilder.AppendLine($"        [SerializeField] private {column.GetTypeCodeName(schema)} {column.FieldName};");
-                propertyBuilder.AppendLine($"        public {column.GetTypeCodeName(schema)} {column.PropertyName} => {column.FieldName};");
+                fieldBuilder.AppendLine($"        [SerializeField] private {column.GetTypeCodeName()} {column.FieldName};");
+                propertyBuilder.AppendLine($"        public {column.GetTypeCodeName()} {column.PropertyName} => {column.FieldName};");
 
                 if (column.IsList)
                 {
                     writeBuilder.AppendLine($"            int {column.FieldName}Count = {column.FieldName} != null ? {column.FieldName}.Count : 0;");
                     writeBuilder.AppendLine($"            bw.Write({column.FieldName}Count);");
                     writeBuilder.AppendLine($"            for (int i = 0; i < {column.FieldName}Count; ++i)");
-                    writeBuilder.AppendLine($"                bw.Write({column.GetWriteCodeText()});");
+                    writeBuilder.AppendLine($"                bw.Write({column.GetCastingText(true)}{column.GetWriteText()});");
 
                     readBuilder.AppendLine($"            {column.FieldName} = new();");
                     readBuilder.AppendLine($"            int {column.FieldName}Count = br.ReadInt32();");
                     readBuilder.AppendLine($"            for (int i = 0; i < {column.FieldName}Count; ++i)");
-                    readBuilder.AppendLine($"                {column.FieldName}.Add({column.GetReadCastingCodeText(schema)}br.Read{column.GetReadTypeCodeText()}());");
+                    readBuilder.AppendLine($"                {column.FieldName}.Add({column.GetCastingText(false)}br.Read{column.GetReadText()}());");
                 }
                 else
                 {
-                    writeBuilder.AppendLine($"            bw.Write({column.GetWriteCodeText()});");
-                    readBuilder.AppendLine($"            {column.FieldName} = {column.GetReadCastingCodeText(schema)}br.Read{column.GetReadTypeCodeText()}();");
+                    writeBuilder.AppendLine($"            bw.Write({column.GetCastingText(true)}{column.GetWriteText()});");
+                    readBuilder.AppendLine($"            {column.FieldName} = {column.GetCastingText(false)}br.Read{column.GetReadText()}();");
                 }
             }
 
@@ -132,7 +140,7 @@ namespace ClimbGames.Editor.Table
             return Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
         }
 
-        protected static bool WriteTables(string path, List<ISchema> schemas)
+        protected static bool WriteTables(string path, List<Schema> schemas)
         {
             if (schemas.Count > 0)
             {
@@ -144,12 +152,12 @@ namespace ClimbGames.Editor.Table
 
                 foreach (var schema in schemas)
                 {
-                    if (schema is TableSchema tableSchema)
-                    {
-                        propertyBuilder.AppendLine($"        public static {tableSchema.TableName}Table {tableSchema.TableName} {{ get; private set; }}");
-                        caseTableBuilder.AppendLine($"                    case {tableSchema.TableName}Table value: {tableSchema.TableName} = value; break;");
-                        caseAssetBuilder.AppendLine($"                    case \"{tableSchema.TableName}\": {tableSchema.TableName} = {tableSchema.TableName}Table.FromBytes(asset.bytes); break;");
-                    }
+                    if (schema.SchemaType == SchemaType.TableEnum)
+                        continue;
+
+                    propertyBuilder.AppendLine($"        public static {schema.TableName}Table {schema.TableName} {{ get; private set; }}");
+                    caseTableBuilder.AppendLine($"                    case {schema.TableName}Table value: {schema.TableName} = value; break;");
+                    caseAssetBuilder.AppendLine($"                    case \"{schema.TableName}\": {schema.TableName} = {schema.TableName}Table.FromBytes(asset.bytes); break;");
                 }
 
                 if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;

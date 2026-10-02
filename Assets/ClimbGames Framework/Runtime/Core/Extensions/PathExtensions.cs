@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace ClimbGames
@@ -15,6 +16,16 @@ namespace ClimbGames
 
             return relativePath;
         }
+
+        public static string[] GetFiles(string path, params string[] extensions)
+        {
+            string[] files = new string[] { };
+
+            foreach (var extension in extensions)
+                files = files.Concat(Directory.GetFiles(path, $"*.{extension}", SearchOption.AllDirectories)).ToArray();
+
+            return files;
+        }
     }
 
     public static class PathExtensions
@@ -22,6 +33,20 @@ namespace ClimbGames
         public static string ToUnityRelativePath(this string path)
         {
             return Paths.GetUnityRelativePath(path);
+        }
+
+        public static string TrimEnd(this string path, params string[] suffix)
+        {
+            if (suffix == null)
+                return path;
+
+            foreach (var value in suffix)
+            {
+                if (path.EndsWith(value))
+                    return path.Substring(0, path.Length - value.Length);
+            }
+
+            return path;
         }
     }
 }

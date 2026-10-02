@@ -6,6 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.Compilation;
 using System;
+using System.Drawing;
+using NUnit.Framework;
 
 namespace ClimbGames.Editor.Table
 {
@@ -13,77 +15,92 @@ namespace ClimbGames.Editor.Table
     public static class TableConverter
     {
         private const string ReloadFlagKey = "CodeGen_IsWaitingForReload";
+        private const string ConvertExcelFileKey = "Convert_ExcelFiles";
+
         private static bool compilationFailed;
 
         static TableConverter()
         {
             compilationFailed = false;
+
             CompilationPipeline.compilationFinished -= OnCompilationFinished;
             CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
 
             if (SessionState.GetBool(ReloadFlagKey, false))
             {
                 SessionState.SetBool(ReloadFlagKey, false);
-
                 // 리로드 직후 내부 상태가 완전히 안정될 때까지 한 프레임 지연 후 실행
-                EditorApplication.delayCall += OnGenerateCodeCompleted;
+                EditorApplication.delayCall += () =>
+                {
+                    string value = SessionState.GetString(ConvertExcelFileKey, string.Empty);
+                    if (string.IsNullOrEmpty(value) == false)
+                        CreateTables(value.Split(';', StringSplitOptions.RemoveEmptyEntries));
+                };
             }
         }
 
-        public static void StartConvert()
+        public static void StartProcess(string[] excelFiles)
         {
             compilationFailed = false;
 
-            if (GenerateTableCodes())
+            if (GenerateTableCode(excelFiles))
             {
-                AssetDatabase.Refresh();
+                SessionState.SetString(ConvertExcelFileKey, string.Join(";", excelFiles));
 
                 CompilationPipeline.compilationFinished -= OnCompilationFinished;
-                CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
-
                 CompilationPipeline.compilationFinished += OnCompilationFinished;
+
+                CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
                 CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
             }
             else
             {
-                OnGenerateCodeCompleted();
+                CreateTables(excelFiles);
             }
         }
 
-        static void OnGenerateCodeCompleted()
+        public static bool DeleteUnusedFiles(string[] excelFiles)
         {
-            try
+            var schemas = new List<Schema>();
+            foreach (var path in excelFiles)
             {
-                CreateTableAssets();
-
-                AssetDatabase.Refresh();
-                Debug.Log("[Tables] convert success.");
-
-                if (EditorWindow.HasOpenInstances<TableWindow>())
+                using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
                 {
-                    var window = EditorWindow.GetWindow<TableWindow>();
-                    window?.OnConvertFinished();
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        do
+                        {
+                            var schema = new TableSchema(reader.Name);
+                            schemas.Add(schema);
+                        }
+                        while (reader.NextResult());
+                    }
                 }
             }
-            catch (Exception ex)
+
+            bool isChanged = false;
+            string[] filePath = Paths.GetFiles(TableEditorSettings.DataPath, "cs", "asset", "bytes");
+            foreach (var path in filePath)
             {
-                Debug.LogError($"[Tables] convert fail: {ex}");
+                string fileName = Path.GetFileNameWithoutExtension(path);
+                if (fileName == "TableEnum" || fileName == "Tables") continue;
+
+                fileName = fileName.TrimEnd("Table", "TableRecord");
+                if (schemas.Any(x => x.TableName == fileName) == false)
+                    isChanged |= AssetDatabase.DeleteAsset(path.ToUnityRelativePath());
             }
+
+            return isChanged;
         }
 
-        static string[] FindExcelFiles(string path)
+        static bool GenerateTableCode(string[] excelFiles)
         {
-            string[] files = Directory.GetFiles(path, "*.xlsx");
-            return files.Concat(Directory.GetFiles(path, "*.xls")).ToArray();
-        }
-
-        static bool GenerateTableCodes()
-        {
-            var schemas = new List<ISchema>();
+            var schemas = new List<Schema>();
             var enumSchema = new EnumSchema();
+
+            enumSchema.ReadDeclaredEnum(TableEditorSettings.CodeGenPath);
             schemas.Add(enumSchema);
 
-            string[] excelFiles = FindExcelFiles(TableEditorSettings.ExcelPath);
             foreach (var filePath in excelFiles)
             {
                 using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
@@ -107,7 +124,10 @@ namespace ClimbGames.Editor.Table
                 }
             }
 
-            return TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
+            bool isChanged = TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
+            AssetDatabase.Refresh();
+
+            return isChanged;
         }
 
         static void OnCompilationFinished(object context)
@@ -141,9 +161,9 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        static void CreateTableAssets()
+        static List<ClimbGames.Table> CreateTables(string[] excelFiles)
         {
-            string[] excelFiles = FindExcelFiles(TableEditorSettings.ExcelPath);
+            List<ClimbGames.Table> tables = new List<ClimbGames.Table>();
             foreach (var filePath in excelFiles)
             {
                 using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
@@ -155,14 +175,15 @@ namespace ClimbGames.Editor.Table
                             var schema = new TableSchema(reader.Name);
                             if (schema.Read(reader))
                             {
-                                ClimbGames.Table table = TableData.Get(schema).CreateAsset(reader, TableEditorSettings.DataPath);
-                                if (TableEditorSettings.SaveToBytes)
+                                try
                                 {
-                                    string directoryPath = Path.Combine(TableEditorSettings.DataPath, "Bytes");
-                                    Directory.CreateDirectory(directoryPath);
-
-                                    string savePath = Path.Combine(directoryPath, $"{schema.TableName}.bytes");
-                                    File.WriteAllBytes(savePath, table.ToBytes());
+                                    string dataPath = TableEditorSettings.DataPath;
+                                    ClimbGames.Table table = TableData.Get(schema).CreateAsset(reader, dataPath);
+                                    tables.Add(table);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.Log($"[Tables] fail create table({schema.TableName}): {ex}");
                                 }
                             }
                         }
@@ -170,6 +191,31 @@ namespace ClimbGames.Editor.Table
                     }
                 }
             }
+
+            AssetDatabase.Refresh();
+            Debug.Log("[Tables] convert success.");
+
+            if (EditorWindow.HasOpenInstances<TableWindow>())
+            {
+                var window = EditorWindow.GetWindow<TableWindow>();
+                window?.OnConvertFinished(tables);
+            }
+
+            return tables;
+        }
+
+        public static void SaveToBytes(List<ClimbGames.Table> tables, string path)
+        {
+            string directoryPath = Path.Combine(path, "Bytes");
+            Directory.CreateDirectory(directoryPath);
+
+            foreach (var table in tables)
+            {
+                string filePath = Path.Combine(directoryPath, $"{table.name}.bytes");
+                File.WriteAllBytes(filePath, table.ToBytes());
+            }
+
+            AssetDatabase.Refresh();
         }
     }
 }

@@ -2,13 +2,14 @@
 using UnityEditor;
 using System.IO;
 using System;
+using System.Collections.Generic;
 
 namespace ClimbGames.Editor.Table
 {
     public partial class TableWindow : EditorWindow
     {
         private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.3f, 100f, 20f);
-        private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal);
+        private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal, 0.3f);
         private Vector2 scrollPosition;
 
         private FileTreeView assetViewer;
@@ -92,9 +93,9 @@ namespace ClimbGames.Editor.Table
             TableEditorSettings.SaveToBytes = EditorGUILayout.Toggle("Save To Bytes", TableEditorSettings.SaveToBytes);
 
             EditorGUILayout.Space(5);
-            if (GUILayout.Button($"Convert", GUILayout.Height(35)))
+            if (GUILayout.Button($"Clear And Convert All", GUILayout.Height(35)))
             {
-                TableConverter.StartConvert();
+                ClearAndConvertAll();
             }
 
             EditorGUILayout.Space(10);
@@ -156,9 +157,20 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        public void OnConvertFinished()
+        void ClearAndConvertAll()
         {
-            assetViewer.SetPath(TableEditorSettings.DataPath, "*.asset");
+            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "xlsx", "xls");
+
+            TableConverter.DeleteUnusedFiles(filePath);
+            TableConverter.StartProcess(filePath);
+        }
+
+        public void OnConvertFinished(List<ClimbGames.Table> tables)
+        {
+            assetViewer.Refresh();
+
+            if (TableEditorSettings.SaveToBytes)
+                TableConverter.SaveToBytes(tables, TableEditorSettings.DataPath);
         }
     }
 }

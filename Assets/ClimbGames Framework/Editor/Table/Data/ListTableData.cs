@@ -10,11 +10,8 @@ namespace ClimbGames.Editor.Table
 {
     public class ListTableData : TableData
     {
-        private TableSchema schema;
-
-        public ListTableData(TableSchema schema)
+        public ListTableData(TableSchema schema) : base(schema)
         {
-            this.schema = schema;
         }
 
         public override ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)

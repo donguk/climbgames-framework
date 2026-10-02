@@ -10,11 +10,8 @@ namespace ClimbGames.Editor.Table
 {
     public class DictionaryTableData : TableData
     {
-        private TableSchema schema;
-
-        public DictionaryTableData(TableSchema schema)
+        public DictionaryTableData(TableSchema schema) : base(schema)
         {
-            this.schema = schema;
         }
 
         public override ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)
@@ -24,7 +21,7 @@ namespace ClimbGames.Editor.Table
             var methodInfo = listInfo.FieldType.GetMethod("Add");
 
             var list = Activator.CreateInstance(listInfo.FieldType);
-            var keyColumn = schema.Header.KeyColumn;
+            var keyColumn = schema.GetTableHeader().KeyColumn;
             if (keyColumn != null)
             {
                 var dictionaryInfo = tableType.GetField("dictionary", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);

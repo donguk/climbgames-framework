@@ -25,10 +25,16 @@ namespace ClimbGames.Editor.Table
                 case SchemaType.KeyValueTable: return new KeyValueTableData(schema);
             }
 
-            return new TableData();
+            return new TableData(schema);
         }
 
-        private Dictionary<string, FieldInfo> fieldInfos;
+        protected TableSchema schema;
+        protected Dictionary<string, FieldInfo> fieldInfos;
+
+        public TableData(TableSchema schema)
+        {
+            this.schema = schema;
+        }
 
         public virtual ClimbGames.Table CreateAsset(IExcelDataReader reader, string path)
         {
@@ -43,7 +49,7 @@ namespace ClimbGames.Editor.Table
             var recordType = Type.GetType($"{schema.Namespace}.{schema.TableName}TableRecord, Assembly-CSharp");
             var data = Activator.CreateInstance(recordType);
 
-            var columns = schema.Header.Columns;
+            var columns = schema.GetTableHeader().Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var value = reader.GetValue(columns[i].Index);

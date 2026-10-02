@@ -8,22 +8,8 @@ using ExcelDataReader;
 
 namespace ClimbGames.Editor.Table
 {
-    public class DeclaredEnum
+    public class EnumSchema : Schema
     {
-        public Type EnumType { get; private set; }
-        public bool IsTableEnum { get; private set; }
-
-        public DeclaredEnum(Type enumType, bool isTableEnum)
-        {
-            EnumType = enumType;
-            IsTableEnum = isTableEnum;
-        }
-    }
-
-    public class EnumSchema : Schema, ISchema
-    {
-        private static readonly Regex DeclaredRegex = new Regex(@"\benum\s+([A-Za-z_][A-Za-z0-9_]*)\b");
-
         class HeaderPosition
         {
             public EnumDefinition Definition { get; set; }
@@ -32,24 +18,30 @@ namespace ClimbGames.Editor.Table
 
         private Dictionary<string, EnumDefinition> definitions;
         private Dictionary<int, EnumDefinition> readPositions;
-        private Dictionary<string, DeclaredEnum> declaredEnums;
-        private List<HeaderPosition> headerPositions;
+        private List<HeaderPosition> tableHeaders;
 
-        public string ScriptName => nameof(SchemaType.TableEnum);
-        public SchemaType SchemaType => SchemaType.TableEnum;
-        public IReadOnlyList<EnumDefinition> Definitions => definitions.Values.ToList();
-        public int HeaderCount => headerPositions.Count;
+        private Dictionary<string, DeclaredEnum> declaredEnums;
+        private Dictionary<string, DeclaredEnum> assemblyEnums;
 
         public EnumSchema()
         {
+            SchemaType = SchemaType.TableEnum;
+            TableName = nameof(SchemaType.TableEnum);
+
             definitions = new Dictionary<string, EnumDefinition>();
             readPositions = new Dictionary<int, EnumDefinition>();
-            headerPositions = new List<HeaderPosition>();
+            tableHeaders = new List<HeaderPosition>();
+
+            declaredEnums = new Dictionary<string, DeclaredEnum>();
+            assemblyEnums = new Dictionary<string, DeclaredEnum>();
         }
 
-        public bool Read(IExcelDataReader reader)
+        public override EnumSchema GetEnumSchema() => this;
+
+        public bool ReadDefinition(IExcelDataReader reader)
         {
-            headerPositions.Clear();
+            // 이전 header 삭제
+            tableHeaders.Clear();
 
             for (int i = 0; i < reader.FieldCount; ++i)
             {
@@ -83,22 +75,20 @@ namespace ClimbGames.Editor.Table
             return readPositions.Count <= 0;
         }
 
-        public void AddHeader(string enumName, int columnIndex)
+        public void AddTableHeader(string enumName, int columnIndex)
         {
             if (definitions.TryGetValue(enumName, out var definition) == false)
                 definitions[enumName] = definition = new EnumDefinition(enumName);
 
-            //
-            headerPositions.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
+            tableHeaders.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
         }
 
         // row 에서 사용하고있는 enum value 수집
-        public void ReadHeaderValues(IExcelDataReader reader)
+        public void ReadTableValue(IExcelDataReader reader)
         {
-            for (int i = 0; i < headerPositions.Count; ++i)
+            for (int i = 0; i < tableHeaders.Count; ++i)
             {
-                var position = headerPositions[i];
-
+                var position = tableHeaders[i];
                 if (reader.GetFieldType(position.ColumnIndex) == typeof(string))
                 {
                     string text = reader.GetString(position.ColumnIndex);
@@ -118,14 +108,15 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        public string GetCodeName(string enumName)
+        public string GetTypeCodeName(string enumName)
         {
             if (string.IsNullOrEmpty(enumName))
                 return "string";
 
-            if (TryGetDeclaredEnum(enumName, out var declared) && declared.IsTableEnum == false)
+            // 외부에 선언된 enum 일 경우
+            if (assemblyEnums.TryGetValue(enumName, out var declaredEnum))
             {
-                string fullName = declared.EnumType.FullName;
+                string fullName = declaredEnum.enumType.FullName;
                 if (fullName.StartsWith($"{Namespace}."))
                     fullName = fullName.Substring(Namespace.Length + 1);
 
@@ -135,35 +126,61 @@ namespace ClimbGames.Editor.Table
             return enumName;
         }
 
-        public bool TryGetDeclaredEnum(string enumName, out DeclaredEnum declared)
+        // 스크립트에 선언 할 enum
+        public IReadOnlyList<EnumDefinition> GetDeclareEnums()
         {
-            if (declaredEnums == null)
+            var list = declaredEnums.Values.Select(x => x.definition).ToList();
+            foreach (var pair in definitions)
             {
-                // table enums 필터
-                HashSet<string> tableEnums = new HashSet<string>();
-                string tableEnumFilePath = Path.Combine(TableEditorSettings.CodeGenPath, $"{ScriptName}.cs");
-                if (File.Exists(tableEnumFilePath))
-                {
-                    string text = File.ReadAllText(tableEnumFilePath);
-                    foreach (Match match in DeclaredRegex.Matches(text))
-                        tableEnums.Add(match.Groups[1].Value);
-                }
+                // 이미 선언된 enum
+                if (declaredEnums.ContainsKey(pair.Value.Name))
+                    continue;
 
-                declaredEnums = new Dictionary<string, DeclaredEnum>();
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    foreach (var type in assembly.GetTypes())
-                    {
-                        if (type.IsEnum == false)
-                            continue;
+                // 스크립트 외부에 선언된 enum 
+                if (assemblyEnums.ContainsKey(pair.Value.Name))
+                    continue;
 
-                        if (string.IsNullOrEmpty(type.Namespace) || type.Namespace.StartsWith(Namespace))
-                            declaredEnums[type.Name] = new DeclaredEnum(type, tableEnums.Contains(type.Name));
-                    }
+                list.Add(pair.Value);
+            }
+
+            return list;
+        }
+
+        public void ReadDeclaredEnum(string codeGenPath)
+        {
+            // TableEnum 이미 선언된 enum 수집
+            string scriptpPath = $"{codeGenPath}/{TableName}.cs";
+            if (File.Exists(scriptpPath))
+            {
+                string text = File.ReadAllText(scriptpPath);
+                var matches = DeclaredEnum.EnumRegex.Matches(text);
+
+                foreach (Match match in matches)
+                {
+                    // asmdef 가 따로 존재한느 경우 체크 필요
+                    //
+                    //
+                    Type enumType = Type.GetType($"{Namespace}.{match.Groups[1].Value}, Assembly-CSharp");
+                    declaredEnums[enumType.Name] = new DeclaredEnum(enumType);
                 }
             }
 
-            return declaredEnums.TryGetValue(enumName, out declared);
+            // TableEnum 외부에 선언된 enum 수집
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsEnum == false)
+                        continue;
+
+                    // table enum 인 경우 
+                    if (declaredEnums.ContainsKey(type.Name))
+                        continue;
+
+                    if (string.IsNullOrEmpty(type.Namespace) || type.FullName.StartsWith($"{Namespace}."))
+                        assemblyEnums[type.Name] = new DeclaredEnum(type);
+                }
+            }
         }
     }
 }

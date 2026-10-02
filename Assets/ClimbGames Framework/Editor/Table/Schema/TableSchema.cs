@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using ExcelDataReader;
 
 namespace ClimbGames.Editor.Table
 {
-    public class TableSchema : Schema, ISchema
+    public class TableSchema : Schema
     {
         private static readonly Dictionary<string, SchemaType> TableTypes = new Dictionary<string, SchemaType>(StringComparer.OrdinalIgnoreCase)
         {
@@ -18,24 +17,25 @@ namespace ClimbGames.Editor.Table
             ["@keyvalue"] = SchemaType.KeyValueTable,
         };
 
-        public SchemaType SchemaType { get; private set; }
-        public string TableName { get; private set; }
-        public TableHeader Header { get; private set; }
-        public EnumSchema EnumSchema { get; private set; }
+        private TableHeader tableHeader;
+        private EnumSchema enumSchema;
 
         public TableSchema(string name)
         {
             SchemaType = SchemaType.None;
             TableName = Regex.Replace(name, @"\s+", "").ToPascalCaseName();
 
-            Header = new TableHeader(this);
-            EnumSchema = new EnumSchema();
+            tableHeader = new TableHeader(this);
+            enumSchema = new EnumSchema();
         }
 
         public TableSchema(string name, EnumSchema enumSchema) : this(name)
         {
-            EnumSchema = enumSchema;
+            this.enumSchema = enumSchema;
         }
+
+        public override EnumSchema GetEnumSchema() => enumSchema;
+        public override TableHeader GetTableHeader() => tableHeader;
 
         public bool Resolve(IExcelDataReader reader)
         {
@@ -43,17 +43,17 @@ namespace ClimbGames.Editor.Table
             {
                 while (reader.Read())
                 {
-                    if (Header.Resolve(reader))
+                    if (tableHeader.Resolve(reader))
                     {
                         if (TableEditorSettings.ReadHeaderEnumValues == false)
                             break;
                     }
 
-                    EnumSchema.ReadHeaderValues(reader);
+                    enumSchema.ReadTableValue(reader);
                 }
             }
 
-            return Header.IsValid;
+            return tableHeader.IsValid;
         }
 
         public bool Read(IExcelDataReader reader)
@@ -63,17 +63,17 @@ namespace ClimbGames.Editor.Table
                 if (SchemaType == SchemaType.None)
                     ReadSchemaType(reader);
 
-                if (EnumSchema.Read(reader) == false)
+                if (enumSchema.ReadDefinition(reader) == false)
                     continue;
 
-                if (Header.Read(reader))
+                if (tableHeader.Read(reader))
                     break;
             }
 
             if (SchemaType == SchemaType.None)
-                SchemaType = Header.SchemaType;
+                SchemaType = tableHeader.SchemaType;
 
-            return Header.IsValid;
+            return tableHeader.IsValid;
         }
 
         void ReadSchemaType(IExcelDataReader reader)

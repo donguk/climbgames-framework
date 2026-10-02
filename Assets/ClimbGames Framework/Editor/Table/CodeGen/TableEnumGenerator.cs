@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Text;
-using log4net.Layout;
 
 namespace ClimbGames.Editor.Table
 {
@@ -11,40 +10,31 @@ namespace ClimbGames.Editor.Table
         private static readonly string EnumScriptGUID = "5bebd521bc3a8604ebff8c5cae46af57";
         private static readonly string TableEnumScriptGUID = "bb5bd9a6232dc52488460c4b8589b1b3";
 
-        private EnumSchema schema;
         private StringBuilder enumBuilder = new StringBuilder();
 
-        public TableEnumGenerator(ISchema schema)
+        public TableEnumGenerator(Schema schema) : base(schema)
         {
-            this.schema = (EnumSchema)schema;
         }
 
         public override bool Write(string path)
         {
-            string scriptName = schema.ScriptName;
+            string scriptName = schema.TableName;
             string scriptText = CreateScript(TableEnumScriptGUID, schema.Namespace, scriptName);
 
             StringBuilder builder = new StringBuilder();
-            var definistions = schema.Definitions;
+            var enumSchema = schema.GetEnumSchema();
+
+            var definistions = enumSchema.GetDeclareEnums();
             for (int i = 0; i < definistions.Count; ++i)
             {
                 var definition = definistions[i];
-                if (schema.TryGetDeclaredEnum(definition.Name, out var declared) == false || declared.IsTableEnum)
-                {
-                    if (builder.Length > 0)
-                    {
-                        builder.AppendLine();
-                        builder.AppendLine();
-                    }
+                if (builder.Length > 0)
+                    builder.AppendLine();
 
-                    builder.Append(CreateEnumText(definition));
-                }
-                else
-                {
-                    if (definition.IsDeclaration && declared.IsTableEnum == false)
-                        Debug.LogError($"[TableEnum] {definition.Name} is already declared in {declared.EnumType.Namespace}");
-                }
+                builder.AppendLine(CreateEnumText(definition));
             }
+
+            if (builder.Length > 0) builder.Length -= Environment.NewLine.Length;
 
             scriptText = scriptText.Replace("#ENUMS#", builder.ToString());
             builder.Clear();
@@ -55,29 +45,24 @@ namespace ClimbGames.Editor.Table
         string CreateEnumText(EnumDefinition definition)
         {
             string scriptText = CreateScript(EnumScriptGUID, definition.Name);
-
             enumBuilder.Clear();
+
             var values = definition.Values;
             for (int i = 0; i < values.Count; ++i)
             {
-                if (EnumDefinition.NameRegex.Match(values[i]).Success)
-                {
-                    if (enumBuilder.Length > 0)
-                    {
-                        enumBuilder.AppendLine();
-                        enumBuilder.Append("        ");
-                    }
-
-                    enumBuilder.Append($"{values[i]},");
-                }
-                else
+                if (EnumDefinition.NameRegex.Match(values[i]).Success == false)
                 {
                     Debug.Log($"[EnumType] {definition.Name}: invalid value({values[i]})");
+                    continue;
                 }
+                enumBuilder.AppendLine($"        {values[i]},");
             }
-            scriptText = scriptText.Replace("#VALUES#", enumBuilder.ToString());
 
+            if (enumBuilder.Length > 0) enumBuilder.Length -= Environment.NewLine.Length;
+
+            scriptText = scriptText.Replace("#VALUES#", enumBuilder.ToString());
             enumBuilder.Clear();
+
             return scriptText;
         }
     }
