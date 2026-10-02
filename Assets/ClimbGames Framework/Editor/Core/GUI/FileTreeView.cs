@@ -12,7 +12,7 @@ namespace ClimbGames.Editor
     {
         private string _title;
         private string rootPath;
-        private string searchPattern;
+        private string[] searchPatterns;
 
         private int treeItemId = 0;
         private TreeModel<Element> treeModel;
@@ -53,13 +53,13 @@ namespace ClimbGames.Editor
             GUILayout.EndArea();
         }
 
-        public void SetPath(string path, string searchPattern = default)
+        public void SetPath(string path, params string[] searchPatterns)
         {
             if (Directory.Exists(path) == false)
                 return;
 
             rootPath = path;
-            this.searchPattern = searchPattern;
+            this.searchPatterns = searchPatterns;
             treeItemId = 0;
             datas.Clear();
 
@@ -77,7 +77,7 @@ namespace ClimbGames.Editor
 
         public void Refresh()
         {
-            SetPath(rootPath, searchPattern);
+            SetPath(rootPath, searchPatterns);
         }
 
         void BuildTreeData(string path, ref List<Element> list)
@@ -87,7 +87,7 @@ namespace ClimbGames.Editor
             if (Directory.Exists(path) == false)
                 return;
 
-            string[] files = Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories)
+            string[] files = Paths.GetFiles(path, searchPatterns)
                                         .Select(x => x.Replace("\\", "/"))
                                         .OrderByDescending(x => x.Split('/').Length)
                                         .ThenBy(x => x)
@@ -212,7 +212,7 @@ namespace ClimbGames.Editor
 
         class Element : TreeElement
         {
-            public string path;
+            public string path, extension;
             public bool isDirectory;
 
             public Element(string path, int depth, int id)
@@ -231,6 +231,7 @@ namespace ClimbGames.Editor
                     else
                     {
                         name = Path.GetFileNameWithoutExtension(path);
+                        extension = Path.GetExtension(path);
                     }
                 }
             }
@@ -261,7 +262,13 @@ namespace ClimbGames.Editor
                     }
                     else
                     {
-                        GUI.DrawTexture(iconRect, GUIContents.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit);
+                        switch (element.extension)
+                        {
+                            case ".asset": GUI.DrawTexture(iconRect, GUIContents.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit); break;
+                            case ".xlsx":
+                            case ".xls": GUI.DrawTexture(iconRect, GUIContents.UxmlScript_Icon?.image, ScaleMode.ScaleToFit); break;
+                            default: GUI.DrawTexture(iconRect, GUIContents.DefaultAsset_Icon?.image, ScaleMode.ScaleToFit); break;
+                        }
                     }
 
                     rect.x += iconRect.width + 2f;

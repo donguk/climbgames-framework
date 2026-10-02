@@ -79,7 +79,7 @@ namespace ClimbGames.Editor.Table
             }
 
             bool isChanged = false;
-            string[] filePath = Paths.GetFiles(TableEditorSettings.DataPath, "cs", "asset", "bytes");
+            string[] filePath = Paths.GetFiles(TableEditorSettings.DataPath, "*.cs", "*.asset", "*.bytes");
             foreach (var path in filePath)
             {
                 string fileName = Path.GetFileNameWithoutExtension(path);

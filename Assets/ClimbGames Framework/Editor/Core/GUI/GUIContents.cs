@@ -14,7 +14,9 @@ namespace ClimbGames.Editor
         public static readonly GUIContent HoverBar_Down = EditorGUIUtility.IconContent("HoverBar_Down");
         public static readonly GUIContent HoverBar_Up = EditorGUIUtility.IconContent("HoverBar_Up");
         public static readonly GUIContent SaveAs_2x = EditorGUIUtility.IconContent("SaveAs@2x");
-
+        public static readonly GUIContent d_TextAsset_Icon = EditorGUIUtility.IconContent("d_TextAsset Icon");
+        public static readonly GUIContent UxmlScript_Icon = EditorGUIUtility.IconContent("UxmlScript Icon");
+        public static readonly GUIContent DefaultAsset_Icon = EditorGUIUtility.IconContent("DefaultAsset Icon");
 
 
         // ref: https://github.com/rythwh/unity-editor-icons

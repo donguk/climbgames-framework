@@ -8,16 +8,27 @@ namespace ClimbGames.Editor.Table
 {
     public partial class TableWindow : EditorWindow
     {
-        private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.3f, 100f, 20f);
-        private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal, 0.3f);
-        private Vector2 scrollPosition;
+        private EditorResizer settingsResizer = new EditorResizer(EditorResizer.Direction.Vertical, 0.5f, 24f, 24f);
+        private EditorResizer viewResizer = new EditorResizer(EditorResizer.Direction.Horizontal, 0.3f, 100f, 100f);
+        private Rect settingsLastRect;
 
-        private FileTreeView assetViewer;
+        private FileTreeView excelViewer;
+        private FileTreeView tableViewer;
         private SearchableTextArea jsonViewer;
 
         private ClimbGames.Table selectedTable;
-        private string tableJsonText;
-        private int tableHashCode;
+        private string rawJson;
+        private int jsonHashCode;
+
+        public bool IsJsonChanged
+        {
+            get
+            {
+                var json = jsonViewer.Text;
+                return string.IsNullOrEmpty(json) == false && string.IsNullOrEmpty(rawJson) == false &&
+                        (json.Length != rawJson.Length || json.GetHashCode() != jsonHashCode);
+            }
+        }
 
         [MenuItem("Tools/ClimbGames/Table Converter")]
         public static void ShowWindow()
@@ -29,14 +40,20 @@ namespace ClimbGames.Editor.Table
 
         void OnEnable()
         {
-            if (assetViewer == null)
-                assetViewer = new FileTreeView();
+            if (excelViewer == null)
+                excelViewer = new FileTreeView();
 
-            assetViewer.Title = "Asset Files";
-            assetViewer.SetPath(TableEditorSettings.DataPath, "*.asset");
+            excelViewer.Title = "Excel Files";
+            excelViewer.SetPath(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
 
-            assetViewer.onSelected -= OnTableSelected;
-            assetViewer.onSelected += OnTableSelected;
+            if (tableViewer == null)
+                tableViewer = new FileTreeView();
+
+            tableViewer.Title = "Asset Files";
+            tableViewer.SetPath(TableEditorSettings.DataPath, "*.asset");
+
+            tableViewer.onSelected -= OnTableSelected;
+            tableViewer.onSelected += OnTableSelected;
 
             if (jsonViewer == null)
                 jsonViewer = new SearchableTextArea(this);
@@ -50,60 +67,63 @@ namespace ClimbGames.Editor.Table
             settingsResizer.Resize(rect, out var settingsRect, out var viewRect);
             DrawSettings(settingsRect);
 
-            viewResizer.Resize(viewRect, out var fileViewRect, out var jsonViewRect);
-            assetViewer.Draw(fileViewRect);
+            float settingsHeight = settingsRect.y + settingsLastRect.height;
+            var excelViewRect = new Rect(settingsRect.x, settingsHeight, settingsRect.width, settingsRect.height - settingsHeight);
+            excelViewer.Draw(excelViewRect);
 
-            // save
-            var jsonText = jsonViewer.Text;
-            bool isTableChanged = string.IsNullOrEmpty(jsonText) == false && string.IsNullOrEmpty(tableJsonText) == false &&
-                (jsonText.Length != tableJsonText.Length || jsonText.GetHashCode() != tableHashCode);
+            viewResizer.Resize(viewRect, out var tableViewRect, out var jsonViewRect);
+            tableViewer.Draw(tableViewRect);
 
-            Rect saveRect = new Rect(rect.width - 60f, rect.height - 50f, 32f, 32f);
-            if (isTableChanged)
-                HandleSave(saveRect);
+            bool isChanged = IsJsonChanged;
+            Rect saveBtnRect = new Rect(rect.width - 60f, rect.height - 50f, 32f, 32f);
+            if (isChanged)
+                HandleSaveTable(saveBtnRect);
 
-            // 
             jsonViewer.Draw(jsonViewRect);
-
-            if (isTableChanged)
-                GUI.Button(saveRect, GUIContents.SaveAs_2x);
+            if (isChanged)
+                GUI.Button(saveBtnRect, GUIContents.SaveAs_2x);
         }
 
         void DrawSettings(Rect rect)
         {
             GUILayout.BeginArea(rect);
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            GUILayout.Space(10);
-
-            GUILayout.Label("Settings", EditorStyles.boldLabel);
-            EditorGUILayout.Space();
-
-            if (EditorGUIs.SelectPathField("Excel Path", TableEditorSettings.ExcelPath, out var selectedPath)) //
-                TableEditorSettings.ExcelPath = selectedPath;
-
-            if (EditorGUIs.SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
+            EditorGUILayout.BeginVertical();
             {
-                TableEditorSettings.DataPath = selectedPath.ToUnityRelativePath();
-                assetViewer.SetPath(selectedPath, "*.asset");
+                GUILayout.Space(10);
+
+                EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
+                EditorGUILayout.Space();
+
+                if (EditorGUIs.SelectPathField("Excel Path", TableEditorSettings.ExcelPath, out var selectedPath)) //
+                    TableEditorSettings.ExcelPath = selectedPath;
+
+                if (EditorGUIs.SelectPathField("Data Path", TableEditorSettings.DataPath, out selectedPath))
+                {
+                    TableEditorSettings.DataPath = selectedPath.ToUnityRelativePath();
+                    tableViewer.SetPath(selectedPath, "*.asset");
+                }
+
+                if (EditorGUIs.SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
+                    TableEditorSettings.CodeGenPath = selectedPath.ToUnityRelativePath();
+
+                TableEditorSettings.SaveToBytes = EditorGUILayout.Toggle("Save To Bytes", TableEditorSettings.SaveToBytes);
+
+                EditorGUILayout.Space(5);
+                if (GUILayout.Button($"Clear And Convert All", GUILayout.Height(35)))
+                    ClearAndConvertAll();
+
+                EditorGUILayout.Space(20);
             }
+            EditorGUILayout.EndVertical();
 
-            if (EditorGUIs.SelectPathField("CodeGen Path", TableEditorSettings.CodeGenPath, out selectedPath))
-                TableEditorSettings.CodeGenPath = selectedPath.ToUnityRelativePath();
+            // Repaint 시점에 정확한 lastRect 저장
+            if (Event.current.type == EventType.Repaint)
+                settingsLastRect = GUILayoutUtility.GetLastRect();
 
-            TableEditorSettings.SaveToBytes = EditorGUILayout.Toggle("Save To Bytes", TableEditorSettings.SaveToBytes);
-
-            EditorGUILayout.Space(5);
-            if (GUILayout.Button($"Clear And Convert All", GUILayout.Height(35)))
-            {
-                ClearAndConvertAll();
-            }
-
-            EditorGUILayout.Space(10);
-            EditorGUILayout.EndScrollView();
             GUILayout.EndArea();
         }
 
-        void HandleSave(Rect rect)
+        void HandleSaveTable(Rect rect)
         {
             Event e = Event.current;
             if (e != null && e.button == 0 && rect.Contains(e.mousePosition))
@@ -114,7 +134,7 @@ namespace ClimbGames.Editor.Table
                 }
                 else if (e.type == EventType.MouseUp)
                 {
-                    SaveTable();
+                    SaveChangedTable();
                     e.Use();
                 }
             }
@@ -129,37 +149,31 @@ namespace ClimbGames.Editor.Table
             if (asset != null && selectedTable != asset)
             {
                 selectedTable = asset;
-                tableJsonText = JsonUtility.ToJson(asset, true);
-                tableHashCode = tableJsonText.GetHashCode();
+                rawJson = JsonUtility.ToJson(asset, true);
+                jsonHashCode = rawJson.GetHashCode();
 
                 jsonViewer.Title = selectedTable.name;
-                jsonViewer.SetText(tableJsonText);
+                jsonViewer.SetText(rawJson);
             }
         }
 
-        void SaveTable()
+        void SaveChangedTable()
         {
-            try
-            {
-                JsonUtility.FromJsonOverwrite(jsonViewer.Text, selectedTable);
-                EditorUtility.SetDirty(selectedTable);
-                AssetDatabase.SaveAssetIfDirty(selectedTable);
+            JsonUtility.FromJsonOverwrite(jsonViewer.Text, selectedTable);
+            EditorUtility.SetDirty(selectedTable);
+            AssetDatabase.SaveAssetIfDirty(selectedTable);
+            AssetDatabase.Refresh();
 
-                tableJsonText = JsonUtility.ToJson(selectedTable, true);
-                tableHashCode = tableJsonText.GetHashCode();
+            rawJson = JsonUtility.ToJson(selectedTable, true);
+            jsonHashCode = rawJson.GetHashCode();
 
-                jsonViewer.Title = selectedTable.name;
-                jsonViewer.SetText(tableJsonText);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[Tables] {ex}");
-            }
+            jsonViewer.Title = selectedTable.name;
+            jsonViewer.SetText(rawJson);
         }
 
         void ClearAndConvertAll()
         {
-            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "xlsx", "xls");
+            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
 
             TableConverter.DeleteUnusedFiles(filePath);
             TableConverter.StartProcess(filePath);
@@ -167,7 +181,7 @@ namespace ClimbGames.Editor.Table
 
         public void OnConvertFinished(List<ClimbGames.Table> tables)
         {
-            assetViewer.Refresh();
+            tableViewer.Refresh();
 
             if (TableEditorSettings.SaveToBytes)
                 TableConverter.SaveToBytes(tables, TableEditorSettings.DataPath);

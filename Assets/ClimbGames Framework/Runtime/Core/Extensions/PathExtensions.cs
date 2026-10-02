@@ -17,12 +17,15 @@ namespace ClimbGames
             return relativePath;
         }
 
-        public static string[] GetFiles(string path, params string[] extensions)
+        public static string[] GetFiles(string path, params string[] searchPatterns)
         {
             string[] files = new string[] { };
 
-            foreach (var extension in extensions)
-                files = files.Concat(Directory.GetFiles(path, $"*.{extension}", SearchOption.AllDirectories)).ToArray();
+            if (searchPatterns == null || searchPatterns.Length <= 0)
+                return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+
+            foreach (var pattern in searchPatterns)
+                files = files.Concat(Directory.GetFiles(path, pattern, SearchOption.AllDirectories)).ToArray();
 
             return files;
         }
