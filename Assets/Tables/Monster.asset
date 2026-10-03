@@ -1,0 +1,6015 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eb0480bf4e1b94458b9beeec8197e78, type: 3}
+  m_Name: Monster
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbGames.MonsterTable
+  datas:
+  - id: 1
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 1
+    items: 00000000
+  - id: 2
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 5
+    items: 0100000002000000
+  - id: 3
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 5
+    items: 01000000
+  - id: 4
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 2
+    items: 00000000
+  - id: 5
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 6
+    items: 0100000002000000
+  - id: 6
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 6
+    items: 01000000
+  - id: 7
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 3
+    items: 00000000
+  - id: 8
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 7
+    items: 0100000002000000
+  - id: 9
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 7
+    items: 01000000
+  - id: 10
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 4
+    items: 00000000
+  - id: 11
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 8
+    items: 0100000002000000
+  - id: 12
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 8
+    items: 01000000
+  - id: 13
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 5
+    items: 00000000
+  - id: 14
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 9
+    items: 0100000002000000
+  - id: 15
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 9
+    items: 01000000
+  - id: 16
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 17
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 2
+    items: 00000000
+  - id: 18
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 6
+    items: 0100000002000000
+  - id: 19
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 6
+    items: 01000000
+  - id: 20
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 3
+    items: 00000000
+  - id: 21
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 7
+    items: 0100000002000000
+  - id: 22
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 7
+    items: 01000000
+  - id: 23
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 4
+    items: 00000000
+  - id: 24
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 8
+    items: 0100000002000000
+  - id: 25
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 8
+    items: 01000000
+  - id: 26
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 5
+    items: 00000000
+  - id: 27
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 9
+    items: 0100000002000000
+  - id: 28
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 9
+    items: 01000000
+  - id: 29
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 30
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 10
+    items: 0100000002000000
+  - id: 31
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 10
+    items: 01000000
+  - id: 32
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 33
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 3
+    items: 00000000
+  - id: 34
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 7
+    items: 0100000002000000
+  - id: 35
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 7
+    items: 01000000
+  - id: 36
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 4
+    items: 00000000
+  - id: 37
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 8
+    items: 0100000002000000
+  - id: 38
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 8
+    items: 01000000
+  - id: 39
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 5
+    items: 00000000
+  - id: 40
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 9
+    items: 0100000002000000
+  - id: 41
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 9
+    items: 01000000
+  - id: 42
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 43
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 10
+    items: 0100000002000000
+  - id: 44
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 10
+    items: 01000000
+  - id: 45
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 46
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 11
+    items: 0100000002000000
+  - id: 47
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 11
+    items: 01000000
+  - id: 48
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 49
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 4
+    items: 00000000
+  - id: 50
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 8
+    items: 0100000002000000
+  - id: 51
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 8
+    items: 01000000
+  - id: 52
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 5
+    items: 00000000
+  - id: 53
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 9
+    items: 0100000002000000
+  - id: 54
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 9
+    items: 01000000
+  - id: 55
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 56
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 10
+    items: 0100000002000000
+  - id: 57
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 10
+    items: 01000000
+  - id: 58
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 59
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 11
+    items: 0100000002000000
+  - id: 60
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 11
+    items: 01000000
+  - id: 61
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 62
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 12
+    items: 0100000002000000
+  - id: 63
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 12
+    items: 01000000
+  - id: 64
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 65
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 5
+    items: 00000000
+  - id: 66
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 9
+    items: 0100000002000000
+  - id: 67
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 9
+    items: 01000000
+  - id: 68
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 69
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 10
+    items: 0100000002000000
+  - id: 70
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 10
+    items: 01000000
+  - id: 71
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 72
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 11
+    items: 0100000002000000
+  - id: 73
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 11
+    items: 01000000
+  - id: 74
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 75
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 12
+    items: 0100000002000000
+  - id: 76
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 12
+    items: 01000000
+  - id: 77
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 78
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 13
+    items: 0100000002000000
+  - id: 79
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 13
+    items: 01000000
+  - id: 80
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 81
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 6
+    items: 00000000
+  - id: 82
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 10
+    items: 0100000002000000
+  - id: 83
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 10
+    items: 01000000
+  - id: 84
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 85
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 11
+    items: 0100000002000000
+  - id: 86
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 11
+    items: 01000000
+  - id: 87
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 88
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 12
+    items: 0100000002000000
+  - id: 89
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 12
+    items: 01000000
+  - id: 90
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 91
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 13
+    items: 0100000002000000
+  - id: 92
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 13
+    items: 01000000
+  - id: 93
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 94
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 14
+    items: 0100000002000000
+  - id: 95
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 14
+    items: 01000000
+  - id: 96
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 97
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 7
+    items: 00000000
+  - id: 98
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 11
+    items: 0100000002000000
+  - id: 99
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 11
+    items: 01000000
+  - id: 100
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 101
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 12
+    items: 0100000002000000
+  - id: 102
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 12
+    items: 01000000
+  - id: 103
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 104
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 13
+    items: 0100000002000000
+  - id: 105
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 13
+    items: 01000000
+  - id: 106
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 107
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 14
+    items: 0100000002000000
+  - id: 108
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 14
+    items: 01000000
+  - id: 109
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 110
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 15
+    items: 0100000002000000
+  - id: 111
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 15
+    items: 01000000
+  - id: 112
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 113
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 8
+    items: 00000000
+  - id: 114
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 12
+    items: 0100000002000000
+  - id: 115
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 12
+    items: 01000000
+  - id: 116
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 117
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 13
+    items: 0100000002000000
+  - id: 118
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 13
+    items: 01000000
+  - id: 119
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 120
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 14
+    items: 0100000002000000
+  - id: 121
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 14
+    items: 01000000
+  - id: 122
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 123
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 15
+    items: 0100000002000000
+  - id: 124
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 15
+    items: 01000000
+  - id: 125
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 126
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 16
+    items: 0100000002000000
+  - id: 127
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 16
+    items: 01000000
+  - id: 128
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 129
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 9
+    items: 00000000
+  - id: 130
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 13
+    items: 0100000002000000
+  - id: 131
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 13
+    items: 01000000
+  - id: 132
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 133
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 14
+    items: 0100000002000000
+  - id: 134
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 14
+    items: 01000000
+  - id: 135
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 136
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 15
+    items: 0100000002000000
+  - id: 137
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 15
+    items: 01000000
+  - id: 138
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 139
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 16
+    items: 0100000002000000
+  - id: 140
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 16
+    items: 01000000
+  - id: 141
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 142
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 17
+    items: 0100000002000000
+  - id: 143
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 17
+    items: 01000000
+  - id: 144
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 145
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 10
+    items: 00000000
+  - id: 146
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 14
+    items: 0100000002000000
+  - id: 147
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 14
+    items: 01000000
+  - id: 148
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 149
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 15
+    items: 0100000002000000
+  - id: 150
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 15
+    items: 01000000
+  - id: 151
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 152
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 16
+    items: 0100000002000000
+  - id: 153
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 16
+    items: 01000000
+  - id: 154
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 155
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 17
+    items: 0100000002000000
+  - id: 156
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 17
+    items: 01000000
+  - id: 157
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 158
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 18
+    items: 0100000002000000
+  - id: 159
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 18
+    items: 01000000
+  - id: 160
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 161
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 11
+    items: 00000000
+  - id: 162
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 15
+    items: 0100000002000000
+  - id: 163
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 15
+    items: 01000000
+  - id: 164
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 165
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 16
+    items: 0100000002000000
+  - id: 166
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 16
+    items: 01000000
+  - id: 167
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 168
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 17
+    items: 0100000002000000
+  - id: 169
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 17
+    items: 01000000
+  - id: 170
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 171
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 18
+    items: 0100000002000000
+  - id: 172
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 18
+    items: 01000000
+  - id: 173
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 174
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 19
+    items: 0100000002000000
+  - id: 175
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 19
+    items: 01000000
+  - id: 176
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 177
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 12
+    items: 00000000
+  - id: 178
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 16
+    items: 0100000002000000
+  - id: 179
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 16
+    items: 01000000
+  - id: 180
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 181
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 17
+    items: 0100000002000000
+  - id: 182
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 17
+    items: 01000000
+  - id: 183
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 184
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 18
+    items: 0100000002000000
+  - id: 185
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 18
+    items: 01000000
+  - id: 186
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 187
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 19
+    items: 0100000002000000
+  - id: 188
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 19
+    items: 01000000
+  - id: 189
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 190
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 20
+    items: 0100000002000000
+  - id: 191
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 20
+    items: 01000000
+  - id: 192
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 193
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 13
+    items: 00000000
+  - id: 194
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 17
+    items: 0100000002000000
+  - id: 195
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 17
+    items: 01000000
+  - id: 196
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 197
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 18
+    items: 0100000002000000
+  - id: 198
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 18
+    items: 01000000
+  - id: 199
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 200
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 19
+    items: 0100000002000000
+  - id: 201
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 19
+    items: 01000000
+  - id: 202
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 203
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 20
+    items: 0100000002000000
+  - id: 204
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 20
+    items: 01000000
+  - id: 205
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 206
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 21
+    items: 0100000002000000
+  - id: 207
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 21
+    items: 01000000
+  - id: 208
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 209
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 14
+    items: 00000000
+  - id: 210
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 18
+    items: 0100000002000000
+  - id: 211
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 18
+    items: 01000000
+  - id: 212
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 213
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 19
+    items: 0100000002000000
+  - id: 214
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 19
+    items: 01000000
+  - id: 215
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 216
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 20
+    items: 0100000002000000
+  - id: 217
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 20
+    items: 01000000
+  - id: 218
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 219
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 21
+    items: 0100000002000000
+  - id: 220
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 21
+    items: 01000000
+  - id: 221
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 222
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 22
+    items: 0100000002000000
+  - id: 223
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 22
+    items: 01000000
+  - id: 224
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 225
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 15
+    items: 00000000
+  - id: 226
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 19
+    items: 0100000002000000
+  - id: 227
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 19
+    items: 01000000
+  - id: 228
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 229
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 20
+    items: 0100000002000000
+  - id: 230
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 20
+    items: 01000000
+  - id: 231
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 232
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 21
+    items: 0100000002000000
+  - id: 233
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 21
+    items: 01000000
+  - id: 234
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 235
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 22
+    items: 0100000002000000
+  - id: 236
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 22
+    items: 01000000
+  - id: 237
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 238
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 23
+    items: 0100000002000000
+  - id: 239
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 23
+    items: 01000000
+  - id: 240
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 241
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 16
+    items: 00000000
+  - id: 242
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 20
+    items: 0100000002000000
+  - id: 243
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 20
+    items: 01000000
+  - id: 244
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 245
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 21
+    items: 0100000002000000
+  - id: 246
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 21
+    items: 01000000
+  - id: 247
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 248
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 22
+    items: 0100000002000000
+  - id: 249
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 22
+    items: 01000000
+  - id: 250
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 251
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 23
+    items: 0100000002000000
+  - id: 252
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 23
+    items: 01000000
+  - id: 253
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 254
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 24
+    items: 0100000002000000
+  - id: 255
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 24
+    items: 01000000
+  - id: 256
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 257
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 17
+    items: 00000000
+  - id: 258
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 21
+    items: 0100000002000000
+  - id: 259
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 21
+    items: 01000000
+  - id: 260
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 261
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 22
+    items: 0100000002000000
+  - id: 262
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 22
+    items: 01000000
+  - id: 263
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 264
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 23
+    items: 0100000002000000
+  - id: 265
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 23
+    items: 01000000
+  - id: 266
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 267
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 24
+    items: 0100000002000000
+  - id: 268
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 24
+    items: 01000000
+  - id: 269
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 270
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 25
+    items: 0100000002000000
+  - id: 271
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 25
+    items: 01000000
+  - id: 272
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 273
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 18
+    items: 00000000
+  - id: 274
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 22
+    items: 0100000002000000
+  - id: 275
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 22
+    items: 01000000
+  - id: 276
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 277
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 23
+    items: 0100000002000000
+  - id: 278
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 23
+    items: 01000000
+  - id: 279
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 280
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 24
+    items: 0100000002000000
+  - id: 281
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 24
+    items: 01000000
+  - id: 282
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 283
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 25
+    items: 0100000002000000
+  - id: 284
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 25
+    items: 01000000
+  - id: 285
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 286
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 26
+    items: 0100000002000000
+  - id: 287
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 26
+    items: 01000000
+  - id: 288
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 289
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 19
+    items: 00000000
+  - id: 290
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 23
+    items: 0100000002000000
+  - id: 291
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 23
+    items: 01000000
+  - id: 292
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 293
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 24
+    items: 0100000002000000
+  - id: 294
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 24
+    items: 01000000
+  - id: 295
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 296
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 25
+    items: 0100000002000000
+  - id: 297
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 25
+    items: 01000000
+  - id: 298
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 299
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 26
+    items: 0100000002000000
+  - id: 300
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 26
+    items: 01000000
+  - id: 301
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 302
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 27
+    items: 0100000002000000
+  - id: 303
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 27
+    items: 01000000
+  - id: 304
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 305
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 20
+    items: 00000000
+  - id: 306
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 24
+    items: 0100000002000000
+  - id: 307
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 24
+    items: 01000000
+  - id: 308
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 309
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 25
+    items: 0100000002000000
+  - id: 310
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 25
+    items: 01000000
+  - id: 311
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 312
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 26
+    items: 0100000002000000
+  - id: 313
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 26
+    items: 01000000
+  - id: 314
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 315
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 27
+    items: 0100000002000000
+  - id: 316
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 27
+    items: 01000000
+  - id: 317
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 318
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 28
+    items: 0100000002000000
+  - id: 319
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 28
+    items: 01000000
+  - id: 320
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 321
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 21
+    items: 00000000
+  - id: 322
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 25
+    items: 0100000002000000
+  - id: 323
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 25
+    items: 01000000
+  - id: 324
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 325
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 26
+    items: 0100000002000000
+  - id: 326
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 26
+    items: 01000000
+  - id: 327
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 328
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 27
+    items: 0100000002000000
+  - id: 329
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 27
+    items: 01000000
+  - id: 330
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 331
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 28
+    items: 0100000002000000
+  - id: 332
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 28
+    items: 01000000
+  - id: 333
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 334
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 29
+    items: 0100000002000000
+  - id: 335
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 29
+    items: 01000000
+  - id: 336
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 337
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 22
+    items: 00000000
+  - id: 338
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 26
+    items: 0100000002000000
+  - id: 339
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 26
+    items: 01000000
+  - id: 340
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 341
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 27
+    items: 0100000002000000
+  - id: 342
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 27
+    items: 01000000
+  - id: 343
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 344
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 28
+    items: 0100000002000000
+  - id: 345
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 28
+    items: 01000000
+  - id: 346
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 347
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 29
+    items: 0100000002000000
+  - id: 348
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 29
+    items: 01000000
+  - id: 349
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 350
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 30
+    items: 0100000002000000
+  - id: 351
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 30
+    items: 01000000
+  - id: 352
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 353
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 23
+    items: 00000000
+  - id: 354
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 27
+    items: 0100000002000000
+  - id: 355
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 27
+    items: 01000000
+  - id: 356
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 357
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 28
+    items: 0100000002000000
+  - id: 358
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 28
+    items: 01000000
+  - id: 359
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 360
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 29
+    items: 0100000002000000
+  - id: 361
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 29
+    items: 01000000
+  - id: 362
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 363
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 30
+    items: 0100000002000000
+  - id: 364
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 30
+    items: 01000000
+  - id: 365
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 366
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 31
+    items: 0100000002000000
+  - id: 367
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 31
+    items: 01000000
+  - id: 368
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 369
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 24
+    items: 00000000
+  - id: 370
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 28
+    items: 0100000002000000
+  - id: 371
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 28
+    items: 01000000
+  - id: 372
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 373
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 29
+    items: 0100000002000000
+  - id: 374
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 29
+    items: 01000000
+  - id: 375
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 376
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 30
+    items: 0100000002000000
+  - id: 377
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 30
+    items: 01000000
+  - id: 378
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 379
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 31
+    items: 0100000002000000
+  - id: 380
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 31
+    items: 01000000
+  - id: 381
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 382
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 32
+    items: 0100000002000000
+  - id: 383
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 32
+    items: 01000000
+  - id: 384
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 385
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 25
+    items: 00000000
+  - id: 386
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 29
+    items: 0100000002000000
+  - id: 387
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 29
+    items: 01000000
+  - id: 388
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 389
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 30
+    items: 0100000002000000
+  - id: 390
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 30
+    items: 01000000
+  - id: 391
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 392
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 31
+    items: 0100000002000000
+  - id: 393
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 31
+    items: 01000000
+  - id: 394
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 395
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 32
+    items: 0100000002000000
+  - id: 396
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 32
+    items: 01000000
+  - id: 397
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 398
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 33
+    items: 0100000002000000
+  - id: 399
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 33
+    items: 01000000
+  - id: 400
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 401
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 26
+    items: 00000000
+  - id: 402
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 30
+    items: 0100000002000000
+  - id: 403
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 30
+    items: 01000000
+  - id: 404
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 405
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 31
+    items: 0100000002000000
+  - id: 406
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 31
+    items: 01000000
+  - id: 407
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 408
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 32
+    items: 0100000002000000
+  - id: 409
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 32
+    items: 01000000
+  - id: 410
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 411
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 33
+    items: 0100000002000000
+  - id: 412
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 33
+    items: 01000000
+  - id: 413
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 414
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 34
+    items: 0100000002000000
+  - id: 415
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 34
+    items: 01000000
+  - id: 416
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 417
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 27
+    items: 00000000
+  - id: 418
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 31
+    items: 0100000002000000
+  - id: 419
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 31
+    items: 01000000
+  - id: 420
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 421
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 32
+    items: 0100000002000000
+  - id: 422
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 32
+    items: 01000000
+  - id: 423
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 424
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 33
+    items: 0100000002000000
+  - id: 425
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 33
+    items: 01000000
+  - id: 426
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 427
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 34
+    items: 0100000002000000
+  - id: 428
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 34
+    items: 01000000
+  - id: 429
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 430
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 35
+    items: 0100000002000000
+  - id: 431
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 35
+    items: 01000000
+  - id: 432
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 433
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 28
+    items: 00000000
+  - id: 434
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 32
+    items: 0100000002000000
+  - id: 435
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 32
+    items: 01000000
+  - id: 436
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 437
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 33
+    items: 0100000002000000
+  - id: 438
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 33
+    items: 01000000
+  - id: 439
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 440
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 34
+    items: 0100000002000000
+  - id: 441
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 34
+    items: 01000000
+  - id: 442
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 443
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 35
+    items: 0100000002000000
+  - id: 444
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 35
+    items: 01000000
+  - id: 445
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 446
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 36
+    items: 0100000002000000
+  - id: 447
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 36
+    items: 01000000
+  - id: 448
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 449
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 29
+    items: 00000000
+  - id: 450
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 33
+    items: 0100000002000000
+  - id: 451
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 33
+    items: 01000000
+  - id: 452
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 453
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 34
+    items: 0100000002000000
+  - id: 454
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 34
+    items: 01000000
+  - id: 455
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 456
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 35
+    items: 0100000002000000
+  - id: 457
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 35
+    items: 01000000
+  - id: 458
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 459
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 36
+    items: 0100000002000000
+  - id: 460
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 36
+    items: 01000000
+  - id: 461
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 462
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 37
+    items: 0100000002000000
+  - id: 463
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 37
+    items: 01000000
+  - id: 464
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 465
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 30
+    items: 00000000
+  - id: 466
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 34
+    items: 0100000002000000
+  - id: 467
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 34
+    items: 01000000
+  - id: 468
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 469
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 35
+    items: 0100000002000000
+  - id: 470
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 35
+    items: 01000000
+  - id: 471
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 472
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 36
+    items: 0100000002000000
+  - id: 473
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 36
+    items: 01000000
+  - id: 474
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 475
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 37
+    items: 0100000002000000
+  - id: 476
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 37
+    items: 01000000
+  - id: 477
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 478
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 38
+    items: 0100000002000000
+  - id: 479
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 38
+    items: 01000000
+  - id: 480
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 481
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 31
+    items: 00000000
+  - id: 482
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 35
+    items: 0100000002000000
+  - id: 483
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 35
+    items: 01000000
+  - id: 484
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 485
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 36
+    items: 0100000002000000
+  - id: 486
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 36
+    items: 01000000
+  - id: 487
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 488
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 37
+    items: 0100000002000000
+  - id: 489
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 37
+    items: 01000000
+  - id: 490
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 491
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 38
+    items: 0100000002000000
+  - id: 492
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 38
+    items: 01000000
+  - id: 493
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 494
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 39
+    items: 0100000002000000
+  - id: 495
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 39
+    items: 01000000
+  - id: 496
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 497
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 32
+    items: 00000000
+  - id: 498
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 36
+    items: 0100000002000000
+  - id: 499
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 36
+    items: 01000000
+  - id: 500
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 501
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 37
+    items: 0100000002000000
+  - id: 502
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 37
+    items: 01000000
+  - id: 503
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 504
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 38
+    items: 0100000002000000
+  - id: 505
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 38
+    items: 01000000
+  - id: 506
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 507
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 39
+    items: 0100000002000000
+  - id: 508
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 39
+    items: 01000000
+  - id: 509
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 510
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 40
+    items: 0100000002000000
+  - id: 511
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 40
+    items: 01000000
+  - id: 512
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 513
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 33
+    items: 00000000
+  - id: 514
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 37
+    items: 0100000002000000
+  - id: 515
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 37
+    items: 01000000
+  - id: 516
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 517
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 38
+    items: 0100000002000000
+  - id: 518
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 38
+    items: 01000000
+  - id: 519
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 520
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 39
+    items: 0100000002000000
+  - id: 521
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 39
+    items: 01000000
+  - id: 522
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 523
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 40
+    items: 0100000002000000
+  - id: 524
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 40
+    items: 01000000
+  - id: 525
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 526
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 41
+    items: 0100000002000000
+  - id: 527
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 41
+    items: 01000000
+  - id: 528
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 529
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 34
+    items: 00000000
+  - id: 530
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 38
+    items: 0100000002000000
+  - id: 531
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 38
+    items: 01000000
+  - id: 532
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 533
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 39
+    items: 0100000002000000
+  - id: 534
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 39
+    items: 01000000
+  - id: 535
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 536
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 40
+    items: 0100000002000000
+  - id: 537
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 40
+    items: 01000000
+  - id: 538
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 539
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 41
+    items: 0100000002000000
+  - id: 540
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 41
+    items: 01000000
+  - id: 541
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 542
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 42
+    items: 0100000002000000
+  - id: 543
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 42
+    items: 01000000
+  - id: 544
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 545
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 35
+    items: 00000000
+  - id: 546
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 39
+    items: 0100000002000000
+  - id: 547
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 39
+    items: 01000000
+  - id: 548
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 549
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 40
+    items: 0100000002000000
+  - id: 550
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 40
+    items: 01000000
+  - id: 551
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 552
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 41
+    items: 0100000002000000
+  - id: 553
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 41
+    items: 01000000
+  - id: 554
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 555
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 42
+    items: 0100000002000000
+  - id: 556
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 42
+    items: 01000000
+  - id: 557
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 558
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 43
+    items: 0100000002000000
+  - id: 559
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 43
+    items: 01000000
+  - id: 560
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 561
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 36
+    items: 00000000
+  - id: 562
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 40
+    items: 0100000002000000
+  - id: 563
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 40
+    items: 01000000
+  - id: 564
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 565
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 41
+    items: 0100000002000000
+  - id: 566
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 41
+    items: 01000000
+  - id: 567
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 568
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 42
+    items: 0100000002000000
+  - id: 569
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 42
+    items: 01000000
+  - id: 570
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 571
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 43
+    items: 0100000002000000
+  - id: 572
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 43
+    items: 01000000
+  - id: 573
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 574
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 44
+    items: 0100000002000000
+  - id: 575
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 44
+    items: 01000000
+  - id: 576
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 577
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 37
+    items: 00000000
+  - id: 578
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 41
+    items: 0100000002000000
+  - id: 579
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 41
+    items: 01000000
+  - id: 580
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 581
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 42
+    items: 0100000002000000
+  - id: 582
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 42
+    items: 01000000
+  - id: 583
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 584
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 43
+    items: 0100000002000000
+  - id: 585
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 43
+    items: 01000000
+  - id: 586
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 587
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 44
+    items: 0100000002000000
+  - id: 588
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 44
+    items: 01000000
+  - id: 589
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 590
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 45
+    items: 0100000002000000
+  - id: 591
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 45
+    items: 01000000
+  - id: 592
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 593
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 38
+    items: 00000000
+  - id: 594
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 42
+    items: 0100000002000000
+  - id: 595
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 42
+    items: 01000000
+  - id: 596
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 597
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 43
+    items: 0100000002000000
+  - id: 598
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 43
+    items: 01000000
+  - id: 599
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 600
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 44
+    items: 0100000002000000
+  - id: 601
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 44
+    items: 01000000
+  - id: 602
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 603
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 45
+    items: 0100000002000000
+  - id: 604
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 45
+    items: 01000000
+  - id: 605
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 606
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 46
+    items: 0100000002000000
+  - id: 607
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 46
+    items: 01000000
+  - id: 608
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 609
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 39
+    items: 00000000
+  - id: 610
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 43
+    items: 0100000002000000
+  - id: 611
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 43
+    items: 01000000
+  - id: 612
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 613
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 44
+    items: 0100000002000000
+  - id: 614
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 44
+    items: 01000000
+  - id: 615
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 616
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 45
+    items: 0100000002000000
+  - id: 617
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 45
+    items: 01000000
+  - id: 618
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 619
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 46
+    items: 0100000002000000
+  - id: 620
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 46
+    items: 01000000
+  - id: 621
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 622
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 47
+    items: 0100000002000000
+  - id: 623
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 47
+    items: 01000000
+  - id: 624
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 625
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 40
+    items: 00000000
+  - id: 626
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 44
+    items: 0100000002000000
+  - id: 627
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 44
+    items: 01000000
+  - id: 628
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 629
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 45
+    items: 0100000002000000
+  - id: 630
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 45
+    items: 01000000
+  - id: 631
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 632
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 46
+    items: 0100000002000000
+  - id: 633
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 46
+    items: 01000000
+  - id: 634
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 635
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 47
+    items: 0100000002000000
+  - id: 636
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 47
+    items: 01000000
+  - id: 637
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 638
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 48
+    items: 0100000002000000
+  - id: 639
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 48
+    items: 01000000
+  - id: 640
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 641
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 41
+    items: 00000000
+  - id: 642
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 45
+    items: 0100000002000000
+  - id: 643
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 45
+    items: 01000000
+  - id: 644
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 645
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 46
+    items: 0100000002000000
+  - id: 646
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 46
+    items: 01000000
+  - id: 647
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 648
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 47
+    items: 0100000002000000
+  - id: 649
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 47
+    items: 01000000
+  - id: 650
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 651
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 48
+    items: 0100000002000000
+  - id: 652
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 48
+    items: 01000000
+  - id: 653
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 654
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 49
+    items: 0100000002000000
+  - id: 655
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 49
+    items: 01000000
+  - id: 656
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 657
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 42
+    items: 00000000
+  - id: 658
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 46
+    items: 0100000002000000
+  - id: 659
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 46
+    items: 01000000
+  - id: 660
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 661
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 47
+    items: 0100000002000000
+  - id: 662
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 47
+    items: 01000000
+  - id: 663
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 664
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 48
+    items: 0100000002000000
+  - id: 665
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 48
+    items: 01000000
+  - id: 666
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 667
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 49
+    items: 0100000002000000
+  - id: 668
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 49
+    items: 01000000
+  - id: 669
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 670
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 50
+    items: 0100000002000000
+  - id: 671
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 50
+    items: 01000000
+  - id: 672
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 673
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 43
+    items: 00000000
+  - id: 674
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 47
+    items: 0100000002000000
+  - id: 675
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 47
+    items: 01000000
+  - id: 676
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 677
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 48
+    items: 0100000002000000
+  - id: 678
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 48
+    items: 01000000
+  - id: 679
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 680
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 49
+    items: 0100000002000000
+  - id: 681
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 49
+    items: 01000000
+  - id: 682
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 683
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 50
+    items: 0100000002000000
+  - id: 684
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 50
+    items: 01000000
+  - id: 685
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 686
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 51
+    items: 0100000002000000
+  - id: 687
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 51
+    items: 01000000
+  - id: 688
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 689
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 44
+    items: 00000000
+  - id: 690
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 48
+    items: 0100000002000000
+  - id: 691
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 48
+    items: 01000000
+  - id: 692
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 693
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 49
+    items: 0100000002000000
+  - id: 694
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 49
+    items: 01000000
+  - id: 695
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 696
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 50
+    items: 0100000002000000
+  - id: 697
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 50
+    items: 01000000
+  - id: 698
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 699
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 51
+    items: 0100000002000000
+  - id: 700
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 51
+    items: 01000000
+  - id: 701
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 702
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 52
+    items: 0100000002000000
+  - id: 703
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 52
+    items: 01000000
+  - id: 704
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 705
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 45
+    items: 00000000
+  - id: 706
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 49
+    items: 0100000002000000
+  - id: 707
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 49
+    items: 01000000
+  - id: 708
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 709
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 50
+    items: 0100000002000000
+  - id: 710
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 50
+    items: 01000000
+  - id: 711
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 712
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 51
+    items: 0100000002000000
+  - id: 713
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 51
+    items: 01000000
+  - id: 714
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 715
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 52
+    items: 0100000002000000
+  - id: 716
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 52
+    items: 01000000
+  - id: 717
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 718
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 53
+    items: 0100000002000000
+  - id: 719
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 53
+    items: 01000000
+  - id: 720
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 721
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 46
+    items: 00000000
+  - id: 722
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 50
+    items: 0100000002000000
+  - id: 723
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 50
+    items: 01000000
+  - id: 724
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 725
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 51
+    items: 0100000002000000
+  - id: 726
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 51
+    items: 01000000
+  - id: 727
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 728
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 52
+    items: 0100000002000000
+  - id: 729
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 52
+    items: 01000000
+  - id: 730
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 731
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 53
+    items: 0100000002000000
+  - id: 732
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 53
+    items: 01000000
+  - id: 733
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 734
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 54
+    items: 0100000002000000
+  - id: 735
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 54
+    items: 01000000
+  - id: 736
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 737
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 47
+    items: 00000000
+  - id: 738
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 51
+    items: 0100000002000000
+  - id: 739
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 51
+    items: 01000000
+  - id: 740
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 741
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 52
+    items: 0100000002000000
+  - id: 742
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 52
+    items: 01000000
+  - id: 743
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 744
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 53
+    items: 0100000002000000
+  - id: 745
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 53
+    items: 01000000
+  - id: 746
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 747
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 54
+    items: 0100000002000000
+  - id: 748
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 54
+    items: 01000000
+  - id: 749
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 750
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 55
+    items: 0100000002000000
+  - id: 751
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 55
+    items: 01000000
+  - id: 752
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 753
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 48
+    items: 00000000
+  - id: 754
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 52
+    items: 0100000002000000
+  - id: 755
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 52
+    items: 01000000
+  - id: 756
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 757
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 53
+    items: 0100000002000000
+  - id: 758
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 53
+    items: 01000000
+  - id: 759
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 760
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 54
+    items: 0100000002000000
+  - id: 761
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 54
+    items: 01000000
+  - id: 762
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 763
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 55
+    items: 0100000002000000
+  - id: 764
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 55
+    items: 01000000
+  - id: 765
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 766
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 56
+    items: 0100000002000000
+  - id: 767
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 56
+    items: 01000000
+  - id: 768
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 769
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 49
+    items: 00000000
+  - id: 770
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 53
+    items: 0100000002000000
+  - id: 771
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 53
+    items: 01000000
+  - id: 772
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 773
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 54
+    items: 0100000002000000
+  - id: 774
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 54
+    items: 01000000
+  - id: 775
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 776
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 55
+    items: 0100000002000000
+  - id: 777
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 55
+    items: 01000000
+  - id: 778
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 779
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 56
+    items: 0100000002000000
+  - id: 780
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 56
+    items: 01000000
+  - id: 781
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 782
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 57
+    items: 0100000002000000
+  - id: 783
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 57
+    items: 01000000
+  - id: 784
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 785
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 50
+    items: 00000000
+  - id: 786
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 54
+    items: 0100000002000000
+  - id: 787
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 54
+    items: 01000000
+  - id: 788
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 789
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 55
+    items: 0100000002000000
+  - id: 790
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 55
+    items: 01000000
+  - id: 791
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 792
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 56
+    items: 0100000002000000
+  - id: 793
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 56
+    items: 01000000
+  - id: 794
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 795
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 57
+    items: 0100000002000000
+  - id: 796
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 57
+    items: 01000000
+  - id: 797
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 798
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 58
+    items: 0100000002000000
+  - id: 799
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 58
+    items: 01000000
+  - id: 800
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 801
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 51
+    items: 00000000
+  - id: 802
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 55
+    items: 0100000002000000
+  - id: 803
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 55
+    items: 01000000
+  - id: 804
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 805
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 56
+    items: 0100000002000000
+  - id: 806
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 56
+    items: 01000000
+  - id: 807
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 808
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 57
+    items: 0100000002000000
+  - id: 809
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 57
+    items: 01000000
+  - id: 810
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 811
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 58
+    items: 0100000002000000
+  - id: 812
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 58
+    items: 01000000
+  - id: 813
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 814
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 59
+    items: 0100000002000000
+  - id: 815
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 59
+    items: 01000000
+  - id: 816
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 817
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 52
+    items: 00000000
+  - id: 818
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 56
+    items: 0100000002000000
+  - id: 819
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 56
+    items: 01000000
+  - id: 820
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 821
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 57
+    items: 0100000002000000
+  - id: 822
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 57
+    items: 01000000
+  - id: 823
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 824
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 58
+    items: 0100000002000000
+  - id: 825
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 58
+    items: 01000000
+  - id: 826
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 827
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 59
+    items: 0100000002000000
+  - id: 828
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 59
+    items: 01000000
+  - id: 829
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 830
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 60
+    items: 0100000002000000
+  - id: 831
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 60
+    items: 01000000
+  - id: 832
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 833
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 53
+    items: 00000000
+  - id: 834
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 57
+    items: 0100000002000000
+  - id: 835
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 57
+    items: 01000000
+  - id: 836
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 837
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 58
+    items: 0100000002000000
+  - id: 838
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 58
+    items: 01000000
+  - id: 839
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 840
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 59
+    items: 0100000002000000
+  - id: 841
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 59
+    items: 01000000
+  - id: 842
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 843
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 60
+    items: 0100000002000000
+  - id: 844
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 60
+    items: 01000000
+  - id: 845
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 846
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 61
+    items: 0100000002000000
+  - id: 847
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 61
+    items: 01000000
+  - id: 848
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 849
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 54
+    items: 00000000
+  - id: 850
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 58
+    items: 0100000002000000
+  - id: 851
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 58
+    items: 01000000
+  - id: 852
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 853
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 59
+    items: 0100000002000000
+  - id: 854
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 59
+    items: 01000000
+  - id: 855
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 856
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 60
+    items: 0100000002000000
+  - id: 857
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 60
+    items: 01000000
+  - id: 858
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 859
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 61
+    items: 0100000002000000
+  - id: 860
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 61
+    items: 01000000
+  - id: 861
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 862
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 62
+    items: 0100000002000000
+  - id: 863
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 62
+    items: 01000000
+  - id: 864
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 865
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 55
+    items: 00000000
+  - id: 866
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 59
+    items: 0100000002000000
+  - id: 867
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 59
+    items: 01000000
+  - id: 868
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 869
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 60
+    items: 0100000002000000
+  - id: 870
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 60
+    items: 01000000
+  - id: 871
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 872
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 61
+    items: 0100000002000000
+  - id: 873
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 61
+    items: 01000000
+  - id: 874
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 875
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 62
+    items: 0100000002000000
+  - id: 876
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 62
+    items: 01000000
+  - id: 877
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 878
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 63
+    items: 0100000002000000
+  - id: 879
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 63
+    items: 01000000
+  - id: 880
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 881
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 56
+    items: 00000000
+  - id: 882
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 60
+    items: 0100000002000000
+  - id: 883
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 60
+    items: 01000000
+  - id: 884
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 885
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 61
+    items: 0100000002000000
+  - id: 886
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 61
+    items: 01000000
+  - id: 887
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 888
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 62
+    items: 0100000002000000
+  - id: 889
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 62
+    items: 01000000
+  - id: 890
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 891
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 63
+    items: 0100000002000000
+  - id: 892
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 63
+    items: 01000000
+  - id: 893
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 894
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 64
+    items: 0100000002000000
+  - id: 895
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 64
+    items: 01000000
+  - id: 896
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 897
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 57
+    items: 00000000
+  - id: 898
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 61
+    items: 0100000002000000
+  - id: 899
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 61
+    items: 01000000
+  - id: 900
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 901
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 62
+    items: 0100000002000000
+  - id: 902
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 62
+    items: 01000000
+  - id: 903
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 904
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 63
+    items: 0100000002000000
+  - id: 905
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 63
+    items: 01000000
+  - id: 906
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 907
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 64
+    items: 0100000002000000
+  - id: 908
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 64
+    items: 01000000
+  - id: 909
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 910
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 65
+    items: 0100000002000000
+  - id: 911
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 65
+    items: 01000000
+  - id: 912
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 913
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 58
+    items: 00000000
+  - id: 914
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 62
+    items: 0100000002000000
+  - id: 915
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 62
+    items: 01000000
+  - id: 916
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 917
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 63
+    items: 0100000002000000
+  - id: 918
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 63
+    items: 01000000
+  - id: 919
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 920
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 64
+    items: 0100000002000000
+  - id: 921
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 64
+    items: 01000000
+  - id: 922
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 923
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 65
+    items: 0100000002000000
+  - id: 924
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 65
+    items: 01000000
+  - id: 925
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 926
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 66
+    items: 0100000002000000
+  - id: 927
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 66
+    items: 01000000
+  - id: 928
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 929
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 59
+    items: 00000000
+  - id: 930
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 63
+    items: 0100000002000000
+  - id: 931
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 63
+    items: 01000000
+  - id: 932
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 933
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 64
+    items: 0100000002000000
+  - id: 934
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 64
+    items: 01000000
+  - id: 935
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 936
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 65
+    items: 0100000002000000
+  - id: 937
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 65
+    items: 01000000
+  - id: 938
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 939
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 66
+    items: 0100000002000000
+  - id: 940
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 66
+    items: 01000000
+  - id: 941
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 942
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 67
+    items: 0100000002000000
+  - id: 943
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 67
+    items: 01000000
+  - id: 944
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 64
+    items: 00000000
+  - id: 945
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 60
+    items: 00000000
+  - id: 946
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 64
+    items: 0100000002000000
+  - id: 947
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 64
+    items: 01000000
+  - id: 948
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 949
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 65
+    items: 0100000002000000
+  - id: 950
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 65
+    items: 01000000
+  - id: 951
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 952
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 66
+    items: 0100000002000000
+  - id: 953
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 66
+    items: 01000000
+  - id: 954
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 955
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 67
+    items: 0100000002000000
+  - id: 956
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 67
+    items: 01000000
+  - id: 957
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 64
+    items: 00000000
+  - id: 958
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 68
+    items: 0100000002000000
+  - id: 959
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 68
+    items: 01000000
+  - id: 960
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 65
+    items: 00000000
+  - id: 961
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 61
+    items: 00000000
+  - id: 962
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 65
+    items: 0100000002000000
+  - id: 963
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 65
+    items: 01000000
+  - id: 964
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 965
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 66
+    items: 0100000002000000
+  - id: 966
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 66
+    items: 01000000
+  - id: 967
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 968
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 67
+    items: 0100000002000000
+  - id: 969
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 67
+    items: 01000000
+  - id: 970
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 64
+    items: 00000000
+  - id: 971
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 68
+    items: 0100000002000000
+  - id: 972
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 68
+    items: 01000000
+  - id: 973
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 65
+    items: 00000000
+  - id: 974
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 69
+    items: 0100000002000000
+  - id: 975
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 69
+    items: 01000000
+  - id: 976
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 66
+    items: 00000000
+  - id: 977
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 62
+    items: 00000000
+  - id: 978
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 66
+    items: 0100000002000000
+  - id: 979
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 66
+    items: 01000000
+  - id: 980
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 981
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 67
+    items: 0100000002000000
+  - id: 982
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 67
+    items: 01000000
+  - id: 983
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 64
+    items: 00000000
+  - id: 984
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 68
+    items: 0100000002000000
+  - id: 985
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 68
+    items: 01000000
+  - id: 986
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 65
+    items: 00000000
+  - id: 987
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 69
+    items: 0100000002000000
+  - id: 988
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 69
+    items: 01000000
+  - id: 989
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 66
+    items: 00000000
+  - id: 990
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 70
+    items: 0100000002000000
+  - id: 991
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 70
+    items: 01000000
+  - id: 992
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 67
+    items: 00000000
+  - id: 993
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 63
+    items: 00000000
+  - id: 994
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 67
+    items: 0100000002000000
+  - id: 995
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 67
+    items: 01000000
+  - id: 996
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 64
+    items: 00000000
+  - id: 997
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 68
+    items: 0100000002000000
+  - id: 998
+    name: Valerie
+    desc: 'night-themed character. '
+    type: 2
+    level: 68
+    items: 01000000
+  - id: 999
+    name: 'Luna '
+    desc: 'bright and lively character. '
+    type: 0
+    level: 65
+    items: 00000000
+  - id: 1000
+    name: Leo
+    desc: 'highly recommended for a resilient and strong-willed character. '
+    type: 1
+    level: 69
+    items: 0100000002000000

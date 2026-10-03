@@ -31,7 +31,7 @@ namespace ClimbGames.Editor.Table
 
                 propertyBuilder.AppendLine($"        public static {schema.TableName}Table {schema.TableName} {{ get; private set; }}");
                 caseTableBuilder.AppendLine($"                    case {schema.TableName}Table value: {schema.TableName} = value; break;");
-                caseAssetBuilder.AppendLine($"                    case \"{schema.TableName}\": {schema.TableName} = {schema.TableName}Table.FromBytes(asset.bytes); break;");
+                caseAssetBuilder.AppendLine($"                    case \"{schema.TableName}\": {schema.TableName} = Tables<{schema.TableName}Table>.FromBytes(asset.bytes); break;");
             }
 
             if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;

@@ -18,8 +18,6 @@ namespace ClimbGames
         // value: port
         protected Dictionary<string, int> dictionary;
 
-        public IReadOnlyList<ConfigTableRecord> Datas => datas;
-
         public override sealed void Initialize()
         {
             dictionary = datas.ToDictionary(x => x.Ip, x => x.Port);
@@ -28,7 +26,5 @@ namespace ClimbGames
         }
 
         public bool TryGetValue(string key, out int value) => dictionary.TryGetValue(key, out value);
-    
-        public static ConfigTable FromBytes(byte[] bytes) => CreateInstance<ConfigTable>().Load(bytes) as ConfigTable;
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Plastic.Newtonsoft.Json;
 
 namespace ClimbGames.Editor.Table
 {
@@ -81,14 +82,7 @@ namespace ClimbGames.Editor.Table
             viewResizer.Resize(viewRect, out var tableViewRect, out var jsonViewRect);
             tableViewer.OnGUI(tableViewRect);
 
-            bool isChanged = IsJsonChanged;
-            Rect saveBtnRect = new Rect(rect.width - 60f, rect.height - 50f, 32f, 32f);
-            if (isChanged)
-                HandleSaveTable(saveBtnRect);
-
             jsonViewer.Draw(jsonViewRect);
-            if (isChanged)
-                GUI.Button(saveBtnRect, GUIContents.SaveAs_2x);
         }
 
         void DrawSettings(Rect rect)
@@ -160,20 +154,40 @@ namespace ClimbGames.Editor.Table
             }
         }
 
+        [Serializable]
+        class ArrayWrapper
+        {
+            public List<TableRecord> datas;
+        }
+
         void OnTableSelected(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            ClimbGames.Table asset = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(filePath.ToUnityRelativePath());
-            if (asset != null && selectedTable != asset)
+            ClimbGames.Table table = AssetDatabase.LoadAssetAtPath<ClimbGames.Table>(filePath.ToUnityRelativePath());
+            if (table != null && selectedTable != table)
             {
-                selectedTable = asset;
-                rawJson = JsonUtility.ToJson(asset, true);
-                jsonHashCode = rawJson.GetHashCode();
+                selectedTable = table;
 
-                jsonViewer.Title = selectedTable.name;
+                int maxCount = 40;
+                var list = table.Records.Take(maxCount).ToList();
+
+                rawJson = JsonConvert.SerializeObject(new ArrayWrapper() { datas = list }, Formatting.Indented);
+                if (table.Records.Count > maxCount)
+                {
+                    int lastIndex = rawJson.LastIndexOf(']');
+                    if (lastIndex != -1)
+                    {
+                        string warningText = $"\n\n    ... \n    <...etc...> \n\n  ";
+                        rawJson = rawJson.Insert(lastIndex, warningText);
+                    }
+                }
+
+                jsonViewer.Title = $"{selectedTable.name} Table Preview";
                 jsonViewer.SetText(rawJson);
+
+                ProjectWindowUtil.ShowCreatedAsset(table);
             }
         }
 

@@ -15,16 +15,17 @@ namespace ClimbGames
     {
         public static CharacterTable Character { get; private set; }
         public static ConfigTable Config { get; private set; }
+        public static MonsterTable Monster { get; private set; }
 
         public static void Load(string label)
         {
-            var tables = AssetManager.LoadAssets<ITable>(label);
+            var tables = AssetManager.LoadAssets<Table>(label);
             Load(tables);
         }
 
         public static async UniTask LoadAsync(string label)
         {
-            var tables = await AssetManager.LoadAssetsAsync<ITable>(label);
+            var tables = await AssetManager.LoadAssetsAsync<Table>(label);
             Load(tables);
         }
 
@@ -40,7 +41,7 @@ namespace ClimbGames
             Load(tables);
         }
 
-        public static void Load(IList<ITable> tables)
+        public static void Load(IList<Table> tables)
         {
             foreach (var table in tables)
             {
@@ -49,6 +50,7 @@ namespace ClimbGames
                 {
                     case CharacterTable value: Character = value; break;
                     case ConfigTable value: Config = value; break;
+                    case MonsterTable value: Monster = value; break;
                 }
             }
         }
@@ -59,8 +61,9 @@ namespace ClimbGames
             {
                 switch (asset.name)
                 {
-                    case "Character": Character = CharacterTable.FromBytes(asset.bytes); break;
-                    case "Config": Config = ConfigTable.FromBytes(asset.bytes); break;
+                    case "Character": Character = Tables<CharacterTable>.FromBytes(asset.bytes); break;
+                    case "Config": Config = Tables<ConfigTable>.FromBytes(asset.bytes); break;
+                    case "Monster": Monster = Tables<MonsterTable>.FromBytes(asset.bytes); break;
                 }
             }
         }

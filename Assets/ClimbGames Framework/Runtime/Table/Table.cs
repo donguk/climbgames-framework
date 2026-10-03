@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using System;
 
 namespace ClimbGames
 {
@@ -12,13 +11,19 @@ namespace ClimbGames
 
     public abstract class Table : ScriptableObject, ITable
     {
+        public abstract IReadOnlyList<TableRecord> Records { get; }
+
         public abstract void Initialize();
         public abstract byte[] ToBytes();
+        public abstract void Load(byte[] bytes);
     }
 
     public abstract class Table<TRecord> : Table where TRecord : TableRecord, new()
     {
         [SerializeField] protected List<TRecord> datas;
+
+        public IReadOnlyList<TRecord> Datas => datas;
+        public override IReadOnlyList<TableRecord> Records => datas;
 
         protected virtual void OnInitialized() { }
 
@@ -40,7 +45,7 @@ namespace ClimbGames
             }
         }
 
-        public Table<TRecord> Load(byte[] bytes)
+        public override void Load(byte[] bytes)
         {
             using (MemoryStream ms = new MemoryStream(bytes))
             {
@@ -64,7 +69,16 @@ namespace ClimbGames
             }
 
             Initialize();
-            return this;
+        }
+    }
+
+    public static class Tables<T> where T : Table
+    {
+        public static T FromBytes(byte[] bytes)
+        {
+            Table table = ScriptableObject.CreateInstance<T>();
+            table.Load(bytes);
+            return table as T;
         }
     }
 }

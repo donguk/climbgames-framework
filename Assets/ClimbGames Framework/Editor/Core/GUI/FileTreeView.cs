@@ -81,6 +81,7 @@ namespace ClimbGames.Editor
             datas = new List<FileTreeElement>() { new FileTreeElement("root", -1, -1) };
             var treeModel = new TreeModel<FileTreeElement>(datas);
             Init(treeModel);
+            Reload();
 
             defaultMenuItems = new FileTreeMenuItem[]
             {

@@ -106,7 +106,7 @@ namespace ClimbGames.Editor.Table
             schemas.Add(enumSchema);
             schemas.Add(loadSchema);
 
-            var nameHash = excelFiles.Select(x => Path.GetFileName(x)).ToHashSet();
+            var fileNameHash = excelFiles.Select(x => Path.GetFileName(x)).ToHashSet();
             var allFiles = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
             foreach (var filePath in allFiles)
             {
@@ -118,7 +118,9 @@ namespace ClimbGames.Editor.Table
                         {
                             bool result = false;
                             var schema = new TableSchema(reader.Name, enumSchema);
-                            if (nameHash.Contains(Path.GetFileName(filePath)))
+                            // 동일 테이블 네임 체크 필요
+
+                            if (fileNameHash.Contains(Path.GetFileName(filePath)))
                             {
                                 if (result = schema.Resolve(reader))
                                     schemas.Add(schema);
@@ -193,6 +195,8 @@ namespace ClimbGames.Editor.Table
                         do
                         {
                             var schema = new TableSchema(reader.Name);
+                            // 동일 테이블 네임 체크 필요
+
                             if (schema.Read(reader))
                             {
                                 try

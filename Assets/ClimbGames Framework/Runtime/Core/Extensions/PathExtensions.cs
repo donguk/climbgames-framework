@@ -21,11 +21,14 @@ namespace ClimbGames
         {
             string[] files = new string[] { };
 
-            if (searchPatterns == null || searchPatterns.Length <= 0)
-                return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+            if (Directory.Exists(path))
+            {
+                if (searchPatterns == null || searchPatterns.Length <= 0)
+                    return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 
-            foreach (var pattern in searchPatterns)
-                files = files.Concat(Directory.GetFiles(path, pattern, SearchOption.AllDirectories)).ToArray();
+                foreach (var pattern in searchPatterns)
+                    files = files.Concat(Directory.GetFiles(path, pattern, SearchOption.AllDirectories)).ToArray();
+            }
 
             return files;
         }

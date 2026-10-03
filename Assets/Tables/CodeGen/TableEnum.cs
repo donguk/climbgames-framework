@@ -27,4 +27,11 @@ namespace ClimbGames
         Weapon,
         Equip,
     }
+
+    public enum MonsterType
+    {
+        A,
+        B,
+        C,
+    }
 }

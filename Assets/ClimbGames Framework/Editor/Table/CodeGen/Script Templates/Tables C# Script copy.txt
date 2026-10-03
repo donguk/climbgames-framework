@@ -17,13 +17,13 @@ namespace #NAMESPACE#
 
         public static void Load(string label)
         {
-            var tables = AssetManager.LoadAssets<ITable>(label);
+            var tables = AssetManager.LoadAssets<Table>(label);
             Load(tables);
         }
 
         public static async UniTask LoadAsync(string label)
         {
-            var tables = await AssetManager.LoadAssetsAsync<ITable>(label);
+            var tables = await AssetManager.LoadAssetsAsync<Table>(label);
             Load(tables);
         }
 
@@ -39,7 +39,7 @@ namespace #NAMESPACE#
             Load(tables);
         }
 
-        public static void Load(IList<ITable> tables)
+        public static void Load(IList<Table> tables)
         {
             foreach (var table in tables)
             {

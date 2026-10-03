@@ -12,6 +12,8 @@ namespace ClimbGames
 
             await Tables.LoadAsync<TextAsset>("tables");
 
+            var data = Tables.Character.Datas;
+
             await UIManager.Instance.ShowUI<UIPanelTitle>("UIPanelTitle", UILayer.View);
         }
     }

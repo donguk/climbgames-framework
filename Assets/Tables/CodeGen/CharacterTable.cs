@@ -17,8 +17,6 @@ namespace ClimbGames
         // key: id
         protected Dictionary<uint, CharacterTableRecord> dictionary;
 
-        public IReadOnlyList<CharacterTableRecord> Datas => datas;
-
         public override sealed void Initialize()
         {
             dictionary = datas.ToDictionary(x => x.Id);
@@ -27,7 +25,5 @@ namespace ClimbGames
         }
 
         public bool TryGetValue(uint key, out CharacterTableRecord value) => dictionary.TryGetValue(key, out value);
-    
-        public static CharacterTable FromBytes(byte[] bytes) => CreateInstance<CharacterTable>().Load(bytes) as CharacterTable;
     }
 }
