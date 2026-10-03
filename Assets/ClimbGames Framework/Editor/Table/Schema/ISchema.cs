@@ -10,6 +10,7 @@ namespace ClimbGames.Editor.Table
         DictionaryTable,
         KeyValueTable,
         TableEnum,
+        TableLoad,
     }
 
     public abstract class Schema
@@ -26,7 +27,7 @@ namespace ClimbGames.Editor.Table
         public string Namespace { get; private set; }
 
         public string TableName { get; protected set; }
-        public SchemaType SchemaType { get; protected set; }
+        public abstract SchemaType SchemaType { get; }
 
         public Schema()
         {

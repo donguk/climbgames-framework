@@ -8,39 +8,99 @@ using UnityEngine;
 
 namespace ClimbGames.Editor
 {
-    public class FileTreeView
+    public class FileTreeElement : TreeElement
     {
-        private string _title;
+        public string path, extension;
+        public bool isDirectory;
+
+        public FileTreeElement(string path, int depth, int id)
+        {
+            this.path = path;
+            this.id = id;
+            this.depth = depth;
+
+            if (string.IsNullOrEmpty(path) == false)
+            {
+                isDirectory = Path.HasExtension(path) == false;
+                if (isDirectory)
+                {
+                    name = Path.GetFileName(path);
+                }
+                else
+                {
+                    name = Path.GetFileNameWithoutExtension(path);
+                    extension = Path.GetExtension(path);
+                }
+            }
+        }
+    }
+
+    [Flags]
+    public enum FileTreeMenuFlag
+    {
+        Folder = 1 << 0,
+        File = 1 << 1,
+        Common = Folder | File,
+    }
+
+    public class FileTreeMenuItem
+    {
+        public GUIContent content;
+        public FileTreeMenuFlag flag;
+        public string name, action;
+
+        public FileTreeMenuItem(string name, FileTreeMenuFlag flag = FileTreeMenuFlag.Common, string action = default)
+        {
+            this.name = name;
+            content = new GUIContent(name);
+            this.flag = flag;
+            this.action = action;
+        }
+    }
+
+    public class FileTreeView : TreeView<FileTreeElement>
+    {
         private string rootPath;
         private string[] searchPatterns;
 
         private int treeItemId = 0;
-        private TreeModel<Element> treeModel;
-        private TreeView treeView;
-        private List<Element> datas, cachedBuildDatas;
-        private TreeViewState<int> treeViewState = new TreeViewState<int>();
+        private List<FileTreeElement> datas;
+        private FileTreeMenuItem[] defaultMenuItems, customMenuItems;
+        private List<FileTreeMenuItem> contextMenuItems;
 
+        public bool MultiSelect { get; set; }
+        public string Title { get; set; }
         public event Action<string> onSelected;
-        public string Title { get => _title; set => _title = value; }
+        public event Action<FileTreeMenuItem, string[]> onContextClicked;
 
-        public FileTreeView()
+        public FileTreeView() : base(new TreeViewState<int>())
         {
-            datas = new List<Element>() { new Element("root", -1, -1) };
-            cachedBuildDatas = new List<Element>();
+            rowHeight = 20f;
+            showAlternatingRowBackgrounds = true;
 
-            treeModel = new TreeModel<Element>(datas);
-            treeView = new TreeView(treeViewState, treeModel);
+            datas = new List<FileTreeElement>() { new FileTreeElement("root", -1, -1) };
+            var treeModel = new TreeModel<FileTreeElement>(datas);
+            Init(treeModel);
 
-            treeView.onSelected += (element) => onSelected?.Invoke(element.path);
-            treeView.onContextClicked += ContextClicked;
+            defaultMenuItems = new FileTreeMenuItem[]
+            {
+                new FileTreeMenuItem("Refresh", FileTreeMenuFlag.Folder, "refresh_folder")
+            };
+            customMenuItems = new FileTreeMenuItem[] { };
+            contextMenuItems = new List<FileTreeMenuItem>();
         }
 
-        public void Draw(Rect rect)
+        public void SetCustomMenuItem(FileTreeMenuItem[] menuItems)
+        {
+            customMenuItems = menuItems;
+        }
+
+        public override void OnGUI(Rect rect)
         {
             GUILayout.BeginArea(rect);
 
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField(_title, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Title, EditorStyles.boldLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.EndVertical();
@@ -49,7 +109,7 @@ namespace ClimbGames.Editor
             float headerHeight = lastRect.y + lastRect.height;
             var treeViewRect = new Rect(0f, headerHeight, rect.width, rect.height - headerHeight);
 
-            treeView.OnGUI(treeViewRect);
+            base.OnGUI(treeViewRect);
             GUILayout.EndArea();
         }
 
@@ -61,18 +121,9 @@ namespace ClimbGames.Editor
             rootPath = path;
             this.searchPatterns = searchPatterns;
             treeItemId = 0;
-            datas.Clear();
 
-            using (new ListPoolScope<Element>(out var list))
-            {
-                BuildTreeData(path, ref list);
-
-                datas.AddRange(list);
-                treeModel.SetData(datas);
-            }
-
-            treeView.Reload();
-            treeView.ExpandAll();
+            RefreshFolder(rootPath);
+            ExpandAll();
         }
 
         public void Refresh()
@@ -80,9 +131,9 @@ namespace ClimbGames.Editor
             SetPath(rootPath, searchPatterns);
         }
 
-        void BuildTreeData(string path, ref List<Element> list)
+        void BuildTreeData(string path, ref List<FileTreeElement> list)
         {
-            list.Add(new Element("root", -1, -1));
+            list.Add(new FileTreeElement("root", -1, -1));
 
             if (Directory.Exists(path) == false)
                 return;
@@ -119,11 +170,11 @@ namespace ClimbGames.Editor
                             directoryPath += directoryName;
 
                             if (folders[depth].Add(directoryName))
-                                list.Add(new Element(directoryPath, depth, treeItemId++));
+                                list.Add(new FileTreeElement(directoryPath, depth, treeItemId++));
                         }
                         else
                         {
-                            list.Add(new Element(files[i], depth, treeItemId++));
+                            list.Add(new FileTreeElement(files[i], depth, treeItemId++));
                         }
                     }
                 }
@@ -132,24 +183,27 @@ namespace ClimbGames.Editor
 
         void RefreshFolder(string path)
         {
-            Element element = FindItemByPath(treeModel.root, path);
-            if (element == null)
-                return;
+            TreeElement parent = datas[0]; // root
+            TreeElement element = FindItemByPath(treeModel.root, path);
+            if (element != null)
+                parent = element.parent;
 
-            int index = element.parent.children.FindIndex(x => (x as Element).path == path);
-            if (index > -1)
+            if (parent.children == null)
+                parent.children = new List<TreeElement>();
+
+            int index = parent.children.FindIndex(x => (x as FileTreeElement).path == path);
+            index = Mathf.Max(index, 0);
+
+            using (new ListPoolScope<FileTreeElement>(out var list))
             {
-                using (new ListPoolScope<Element>(out var list))
-                {
-                    BuildTreeData(path, ref list);
+                BuildTreeData(path, ref list);
 
-                    var root = TreeElementUtility.ListToTree(list);
-                    treeModel.ReplaceElement(element.parent, index, root.hasChildren ? root.children[0] : null);
-                }
+                var newRoot = TreeElementUtility.ListToTree(list);
+                treeModel.ReplaceElement(parent, index, newRoot.hasChildren ? newRoot.children[0] : null);
             }
         }
 
-        private Element FindItemByPath(Element parent, string path)
+        private FileTreeElement FindItemByPath(FileTreeElement parent, string path)
         {
             if (parent.path == path)
                 return parent;
@@ -158,7 +212,7 @@ namespace ClimbGames.Editor
             {
                 foreach (var child in parent.children)
                 {
-                    var found = FindItemByPath(child as Element, path);
+                    var found = FindItemByPath(child as FileTreeElement, path);
                     if (found != null)
                         return found;
                 }
@@ -166,140 +220,101 @@ namespace ClimbGames.Editor
             return null;
         }
 
-        void ContextClicked()
+        protected override void OnRowGUI(Rect rect, TreeViewItem item, FileTreeElement element, ref RowGUIArgs args)
         {
-            IList<int> ids = treeView.GetSelection();
-            if (ids.Count <= 0)
-                return;
-
-            var element = treeModel.Find(ids[0]);
-            if (element == null)
-                return;
-
-            if (element.isDirectory)
+            if (element != null)
             {
-                Vector2 position = Event.current.mousePosition;
-                EditorUtility.DisplayCustomMenu(new Rect(position.x, position.y, 0, 0), new GUIContent[]
+                Rect iconRect = rect;
+                iconRect.x += GetContentIndent(item);
+                iconRect.width = 20f;
+
+                if (element.isDirectory)
                 {
-                    new GUIContent("Refresh"),
-                }, -1, OnSelectContextMenu, element);
+                    GUI.DrawTexture(iconRect, IsExpanded(element.id) ? GUIContents.FolderOpened_Icon?.image : GUIContents.Folder_Icon?.image, ScaleMode.ScaleToFit);
+                }
+                else
+                {
+                    switch (element.extension)
+                    {
+                        case ".asset": GUI.DrawTexture(iconRect, GUIContents.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit); break;
+                        case ".xlsx":
+                        case ".xls": GUI.DrawTexture(iconRect, GUIContents.UxmlScript_Icon?.image, ScaleMode.ScaleToFit); break;
+                        default: GUI.DrawTexture(iconRect, GUIContents.DefaultAsset_Icon?.image, ScaleMode.ScaleToFit); break;
+                    }
+                }
+
+                rect.x += iconRect.width + 2f;
+            }
+
+            float lineHeight = EditorGUIUtility.singleLineHeight;
+
+            Rect labelRect = rect;
+            labelRect.height = lineHeight;
+            labelRect.y += (rect.height - lineHeight) * 0.5f;
+
+            args.rowRect = labelRect;
+            base.OnRowGUI(rect, item, element, ref args);
+        }
+
+        protected override void SingleClickedItem(int id)
+        {
+            var element = treeModel.Find(id);
+            if (element != null)
+                onSelected?.Invoke(element.path);
+        }
+
+        protected override bool CanMultiSelect(TreeViewItem<int> item)
+        {
+            return MultiSelect;
+        }
+
+        protected override void ContextClicked()
+        {
+            IList<int> ids = GetSelection();
+            var elements = ids.Select(x => treeModel.Find(x))
+                            .Where(x => x != null)
+                            .ToArray();
+
+            if (elements.Length > 0)
+            {
+                FileTreeMenuFlag flag = 0;
+                foreach (var element in elements)
+                {
+                    if (element.isDirectory) flag |= FileTreeMenuFlag.Folder;
+                    else flag |= FileTreeMenuFlag.File;
+                }
+
+                contextMenuItems.Clear();
+                contextMenuItems.AddRange(defaultMenuItems.Where(x => (x.flag & flag) != 0));
+                contextMenuItems.AddRange(customMenuItems.Where(x => (x.flag & flag) != 0));
+
+                if (contextMenuItems.Count > 0)
+                {
+                    Vector2 position = Event.current.mousePosition;
+                    EditorUtility.DisplayCustomMenu(new Rect(position.x, position.y, 0, 0), contextMenuItems.Select(x => x.content).ToArray(), -1, OnContextMenuSelected, elements);
+                }
             }
         }
 
-        void OnSelectContextMenu(object userData, string[] options, int selected)
+        void OnContextMenuSelected(object userData, string[] options, int selected)
         {
-            switch (selected)
+            var elements = userData as FileTreeElement[];
+            var selectedMenuItem = contextMenuItems[selected];
+
+            switch (selectedMenuItem.action)
             {
-                case 0:
+                case "refresh_folder":
                     {
-                        Element element = userData as Element;
-                        RefreshFolder(element.path);
+                        foreach (var element in elements)
+                        {
+                            if (element.isDirectory)
+                                RefreshFolder(element.path);
+                        }
                         break;
                     }
             }
-        }
 
-
-
-
-
-
-
-
-
-
-
-
-        class Element : TreeElement
-        {
-            public string path, extension;
-            public bool isDirectory;
-
-            public Element(string path, int depth, int id)
-            {
-                this.path = path;
-                this.id = id;
-                this.depth = depth;
-
-                if (string.IsNullOrEmpty(path) == false)
-                {
-                    isDirectory = Path.HasExtension(path) == false;
-                    if (isDirectory)
-                    {
-                        name = Path.GetFileName(path);
-                    }
-                    else
-                    {
-                        name = Path.GetFileNameWithoutExtension(path);
-                        extension = Path.GetExtension(path);
-                    }
-                }
-            }
-        }
-
-        class TreeView : TreeView<Element>
-        {
-            public event Action<Element> onSelected;
-            public event Action onContextClicked;
-
-            public TreeView(TreeViewState<int> state, TreeModel<Element> model) : base(state, model)
-            {
-                rowHeight = 20f;
-                showAlternatingRowBackgrounds = true;
-            }
-
-            protected override void OnRowGUI(Rect rect, TreeViewItem item, Element element, ref RowGUIArgs args)
-            {
-                if (element != null)
-                {
-                    Rect iconRect = rect;
-                    iconRect.x += GetContentIndent(item);
-                    iconRect.width = 20f;
-
-                    if (element.isDirectory)
-                    {
-                        GUI.DrawTexture(iconRect, IsExpanded(element.id) ? GUIContents.FolderOpened_Icon?.image : GUIContents.Folder_Icon?.image, ScaleMode.ScaleToFit);
-                    }
-                    else
-                    {
-                        switch (element.extension)
-                        {
-                            case ".asset": GUI.DrawTexture(iconRect, GUIContents.ScriptableObject_Icon?.image, ScaleMode.ScaleToFit); break;
-                            case ".xlsx":
-                            case ".xls": GUI.DrawTexture(iconRect, GUIContents.UxmlScript_Icon?.image, ScaleMode.ScaleToFit); break;
-                            default: GUI.DrawTexture(iconRect, GUIContents.DefaultAsset_Icon?.image, ScaleMode.ScaleToFit); break;
-                        }
-                    }
-
-                    rect.x += iconRect.width + 2f;
-                }
-
-                float lineHeight = EditorGUIUtility.singleLineHeight;
-
-                Rect labelRect = rect;
-                labelRect.height = lineHeight;
-                labelRect.y += (rect.height - lineHeight) * 0.5f;
-
-                args.rowRect = labelRect;
-                base.OnRowGUI(rect, item, element, ref args);
-            }
-
-            protected override void SingleClickedItem(int id)
-            {
-                var element = treeModel.Find(id);
-                if (element != null)
-                    onSelected?.Invoke(element);
-            }
-
-            protected override bool CanMultiSelect(TreeViewItem<int> item)
-            {
-                return false;
-            }
-
-            protected override void ContextClicked()
-            {
-                onContextClicked?.Invoke();
-            }
+            onContextClicked?.Invoke(selectedMenuItem, elements.Select(x => x.path).ToArray());
         }
     }
 }

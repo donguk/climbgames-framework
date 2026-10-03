@@ -231,11 +231,10 @@ namespace ClimbGames.Editor
 			if (parent.children == null)
 				parent.children = new List<TreeElement>();
 
-			if (index < 0 || parent.children.Count <= index)
-				return;
+			if (index >= 0 && index < parent.children.Count)
+				parent.children.RemoveAt(index);
 
-			parent.children.RemoveAt(index);
-			if (newElement != null)
+			if (newElement != null && index >= 0 && index <= parent.children.Count)
 			{
 				newElement.parent = parent;
 				newElement.depth = parent.depth + 1;

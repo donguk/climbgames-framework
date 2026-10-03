@@ -23,9 +23,10 @@ namespace ClimbGames.Editor.Table
         private Dictionary<string, DeclaredEnum> declaredEnums;
         private Dictionary<string, DeclaredEnum> assemblyEnums;
 
+        public override SchemaType SchemaType => SchemaType.TableEnum;
+
         public EnumSchema()
         {
-            SchemaType = SchemaType.TableEnum;
             TableName = nameof(SchemaType.TableEnum);
 
             definitions = new Dictionary<string, EnumDefinition>();

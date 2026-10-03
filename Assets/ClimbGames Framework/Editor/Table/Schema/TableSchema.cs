@@ -17,12 +17,15 @@ namespace ClimbGames.Editor.Table
             ["@keyvalue"] = SchemaType.KeyValueTable,
         };
 
+        private SchemaType schemaType;
         private TableHeader tableHeader;
         private EnumSchema enumSchema;
 
+        public override SchemaType SchemaType => schemaType;
+
         public TableSchema(string name)
         {
-            SchemaType = SchemaType.None;
+            schemaType = SchemaType.None;
             TableName = Regex.Replace(name, @"\s+", "").ToPascalCaseName();
 
             tableHeader = new TableHeader(this);
@@ -71,7 +74,7 @@ namespace ClimbGames.Editor.Table
             }
 
             if (SchemaType == SchemaType.None)
-                SchemaType = tableHeader.SchemaType;
+                schemaType = tableHeader.SchemaType;
 
             return tableHeader.IsValid;
         }
@@ -86,7 +89,7 @@ namespace ClimbGames.Editor.Table
                     string columnName = reader.GetString(i);
                     if (columnName.StartsWith("@") && TableTypes.TryGetValue(columnName, out var schemaType))
                     {
-                        SchemaType = schemaType;
+                        this.schemaType = schemaType;
                         break;
                     }
                 }

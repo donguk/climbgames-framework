@@ -27,6 +27,11 @@ namespace ClimbGames.Editor
 		public TreeModel<T> treeModel { get { return m_TreeModel; } }
 		public event Action<IList<TreeViewItem<int>>> beforeDroppingDraggedItems;
 
+		public TreeView(TreeViewState<int> state) : base(state)
+		{
+
+		}
+
 		public TreeView(TreeViewState<int> state, TreeModel<T> model, bool canDrag = false, bool canRename = false) : base(state)
 		{
 			this.canDrag = canDrag;
@@ -45,7 +50,7 @@ namespace ClimbGames.Editor
 			Reload();
 		}
 
-		void Init(TreeModel<T> model)
+		protected void Init(TreeModel<T> model)
 		{
 			m_TreeModel = model;
 			m_TreeModel.modelChanged += ModelChanged;

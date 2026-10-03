@@ -3,6 +3,7 @@ using UnityEditor;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ClimbGames.Editor.Table
 {
@@ -44,7 +45,13 @@ namespace ClimbGames.Editor.Table
                 excelViewer = new FileTreeView();
 
             excelViewer.Title = "Excel Files";
+            excelViewer.MultiSelect = true;
             excelViewer.SetPath(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
+            excelViewer.SetCustomMenuItem(new FileTreeMenuItem[]
+            {
+                new FileTreeMenuItem("Convert", FileTreeMenuFlag.File, "convert"),
+            });
+            excelViewer.onContextClicked += OnExcelContextClicked;
 
             if (tableViewer == null)
                 tableViewer = new FileTreeView();
@@ -69,10 +76,10 @@ namespace ClimbGames.Editor.Table
 
             float settingsHeight = settingsRect.y + settingsLastRect.height;
             var excelViewRect = new Rect(settingsRect.x, settingsHeight, settingsRect.width, settingsRect.height - settingsHeight);
-            excelViewer.Draw(excelViewRect);
+            excelViewer.OnGUI(excelViewRect);
 
             viewResizer.Resize(viewRect, out var tableViewRect, out var jsonViewRect);
-            tableViewer.Draw(tableViewRect);
+            tableViewer.OnGUI(tableViewRect);
 
             bool isChanged = IsJsonChanged;
             Rect saveBtnRect = new Rect(rect.width - 60f, rect.height - 50f, 32f, 32f);
@@ -121,6 +128,19 @@ namespace ClimbGames.Editor.Table
                 settingsLastRect = GUILayoutUtility.GetLastRect();
 
             GUILayout.EndArea();
+        }
+
+        void OnExcelContextClicked(FileTreeMenuItem selectedMenuItem, string[] selections)
+        {
+            switch (selectedMenuItem.action)
+            {
+                case "convert":
+                    {
+                        var filePath = selections.Where(x => Path.HasExtension(x)).ToArray();
+                        TableConverter.StartProcess(filePath);
+                        break;
+                    }
+            }
         }
 
         void HandleSaveTable(Rect rect)
@@ -173,9 +193,9 @@ namespace ClimbGames.Editor.Table
 
         void ClearAndConvertAll()
         {
-            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
+            TableConverter.DeleteUnusedFiles();
 
-            TableConverter.DeleteUnusedFiles(filePath);
+            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
             TableConverter.StartProcess(filePath);
         }
 

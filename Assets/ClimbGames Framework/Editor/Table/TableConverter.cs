@@ -8,6 +8,7 @@ using UnityEditor.Compilation;
 using System;
 using System.Drawing;
 using NUnit.Framework;
+using GluonGui.Dialog;
 
 namespace ClimbGames.Editor.Table
 {
@@ -59,10 +60,12 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        public static bool DeleteUnusedFiles(string[] excelFiles)
+        public static bool DeleteUnusedFiles()
         {
             var schemas = new List<Schema>();
-            foreach (var path in excelFiles)
+
+            var allFiles = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
+            foreach (var path in allFiles)
             {
                 using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
                 {
@@ -79,8 +82,8 @@ namespace ClimbGames.Editor.Table
             }
 
             bool isChanged = false;
-            string[] filePath = Paths.GetFiles(TableEditorSettings.DataPath, "*.cs", "*.asset", "*.bytes");
-            foreach (var path in filePath)
+            string[] tableFiles = Paths.GetFiles(TableEditorSettings.DataPath, "*.cs", "*.asset", "*.bytes");
+            foreach (var path in tableFiles)
             {
                 string fileName = Path.GetFileNameWithoutExtension(path);
                 if (fileName == "TableEnum" || fileName == "Tables") continue;
@@ -97,11 +100,15 @@ namespace ClimbGames.Editor.Table
         {
             var schemas = new List<Schema>();
             var enumSchema = new EnumSchema();
+            var loadSchema = new LoadSchema();
 
             enumSchema.ReadDeclaredEnum(TableEditorSettings.CodeGenPath);
             schemas.Add(enumSchema);
+            schemas.Add(loadSchema);
 
-            foreach (var filePath in excelFiles)
+            var nameHash = excelFiles.Select(x => Path.GetFileName(x)).ToHashSet();
+            var allFiles = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
+            foreach (var filePath in allFiles)
             {
                 using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
                 {
@@ -109,14 +116,24 @@ namespace ClimbGames.Editor.Table
                     {
                         do
                         {
+                            bool result = false;
                             var schema = new TableSchema(reader.Name, enumSchema);
-                            if (schema.Resolve(reader))
+                            if (nameHash.Contains(Path.GetFileName(filePath)))
                             {
-                                schemas.Add(schema);
+                                if (result = schema.Resolve(reader))
+                                    schemas.Add(schema);
                             }
                             else
                             {
-                                Debug.LogError($"[Tables] {schema.TableName} table schema is invalid");
+                                result = schema.Read(reader);
+                            }
+                            if (result)
+                            {
+                                loadSchema.AddTableSchema(schema);
+                            }
+                            else
+                            {
+                                Debug.Log($"[Tables] {schema.TableName} table header is invalid...");
                             }
                         }
                         while (reader.NextResult());
@@ -124,10 +141,13 @@ namespace ClimbGames.Editor.Table
                 }
             }
 
-            bool isChanged = TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas);
-            AssetDatabase.Refresh();
+            if (TableCodeGenerator.Write(TableEditorSettings.CodeGenPath, schemas))
+            {
+                AssetDatabase.Refresh();
+                return true;
+            }
 
-            return isChanged;
+            return false;
         }
 
         static void OnCompilationFinished(object context)

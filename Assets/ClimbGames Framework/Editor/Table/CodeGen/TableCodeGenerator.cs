@@ -16,7 +16,6 @@ namespace ClimbGames.Editor.Table
     public class TableCodeGenerator : ICodeGenerator
     {
         private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
-        private static readonly string TablesScriptGUID = "24e9f7f1262fe3d49a67b68f69950d9e";
 
         public static ICodeGenerator Get(Schema schema)
         {
@@ -26,6 +25,7 @@ namespace ClimbGames.Editor.Table
                 case SchemaType.DictionaryTable: return new DictionaryTableGenerator(schema);
                 case SchemaType.KeyValueTable: return new KeyValueTableGenerator(schema);
                 case SchemaType.TableEnum: return new TableEnumGenerator(schema);
+                case SchemaType.TableLoad: return new TableLoadGenerator(schema);
             }
 
             return new TableCodeGenerator(schema);
@@ -37,7 +37,6 @@ namespace ClimbGames.Editor.Table
             foreach (var schema in schemas)
                 isChanged |= Get(schema).Write(path);
 
-            isChanged |= WriteTables(path, schemas);
             return isChanged;
         }
 
@@ -138,44 +137,6 @@ namespace ClimbGames.Editor.Table
             readBuilder.Clear();
 
             return Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
-        }
-
-        protected static bool WriteTables(string path, List<Schema> schemas)
-        {
-            if (schemas.Count > 0)
-            {
-                string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce(), "Tables");
-
-                StringBuilder propertyBuilder = new StringBuilder();
-                StringBuilder caseTableBuilder = new StringBuilder();
-                StringBuilder caseAssetBuilder = new StringBuilder();
-
-                foreach (var schema in schemas)
-                {
-                    if (schema.SchemaType == SchemaType.TableEnum)
-                        continue;
-
-                    propertyBuilder.AppendLine($"        public static {schema.TableName}Table {schema.TableName} {{ get; private set; }}");
-                    caseTableBuilder.AppendLine($"                    case {schema.TableName}Table value: {schema.TableName} = value; break;");
-                    caseAssetBuilder.AppendLine($"                    case \"{schema.TableName}\": {schema.TableName} = {schema.TableName}Table.FromBytes(asset.bytes); break;");
-                }
-
-                if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;
-                if (caseTableBuilder.Length > 0) caseTableBuilder.Length -= Environment.NewLine.Length;
-                if (caseAssetBuilder.Length > 0) caseAssetBuilder.Length -= Environment.NewLine.Length;
-
-                scriptText = scriptText.Replace("#PROPERTIES#", $"{propertyBuilder.ToString()}");
-                scriptText = scriptText.Replace("#CASE_TABLES#", $"{caseTableBuilder.ToString()}");
-                scriptText = scriptText.Replace("#CASE_ASSETS#", $"{caseAssetBuilder.ToString()}");
-
-                propertyBuilder.Clear();
-                caseTableBuilder.Clear();
-                caseAssetBuilder.Clear();
-
-                return Write(scriptText, Path.Combine(path, $"Tables.cs"));
-            }
-
-            return false;
         }
     }
 }

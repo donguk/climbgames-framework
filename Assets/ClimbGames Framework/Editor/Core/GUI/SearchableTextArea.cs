@@ -7,7 +7,6 @@ namespace ClimbGames.Editor
     public class SearchableTextArea
     {
         private EditorWindow window;
-        private string _title;
         private string _text;
         private bool isTextChanged;
         private Vector2 scrollPosition;
@@ -15,7 +14,7 @@ namespace ClimbGames.Editor
         private bool isSearchClicked;
         private string controlName;
 
-        public string Title { get => _title; set => _title = value; }
+        public string Title { get; set; }
         public string Text => _text;
         public bool IsChanged { get; private set; }
 
@@ -34,7 +33,7 @@ namespace ClimbGames.Editor
         public void Draw(Rect rect)
         {
             GUILayout.BeginArea(rect);
-            EditorGUILayout.LabelField(_title, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Title, EditorStyles.boldLabel);
             searchBar.Draw();
 
             Rect lastRect = GUILayoutUtility.GetLastRect();
