@@ -175,7 +175,7 @@ Unity Editor에서 직접 빌드하거나 Jenkins를 이용한 **원격 빌드 �
 
 **메뉴 위치**
 
-`Tools` > `ClimbGames` > `Build Window`
+`Tools` > `ClimbGames` > `Build` >  `Settings`
 
 ### 주요 기능
 
@@ -185,6 +185,7 @@ Unity Editor에서 직접 빌드하거나 Jenkins를 이용한 **원격 빌드 �
 * `addressables_content_state.bin` 기반 Content Update 지원
 * Addressables Build 결과물 백업
 * `EditorEnv.zip` 생성 및 테스트 지원
+* BuildProfile 생성(`Tools` > `ClimbGames` > `Build` > `Create Profile`) 및 Jenkins 연동
 
 ---
 
@@ -235,6 +236,10 @@ Framework에서 제공하는 기본 Build 기능을 기반으로 프로젝트의
 Excel로 관리하는 게임 데이터를 Unity에서 사용할 수 있는 **C# Table 및 ScriptableObject 기반 데이터로 자동 변환**하는 시스템입니다.
 
 Excel Schema를 기반으로 C# 코드를 자동 생성하기 때문에 별도의 Table 클래스를 직접 작성하지 않고 데이터를 관리할 수 있습니다.
+
+**메뉴 위치**
+
+`Tools` > `ClimbGames` > `Table Converter`
 
 ![테이블 정의](./Images/image_table_excel.png)
 ![테이블 컨버터](./Images/image_table_convert.png)
