@@ -11,8 +11,7 @@ namespace ClimbGames
 
     public abstract class Table : ScriptableObject, ITable
     {
-        public abstract IReadOnlyList<TableRecord> Records { get; }
-
+        public abstract IReadOnlyList<TableRecord> GetDatas();
         public abstract void Initialize();
         public abstract byte[] ToBytes();
         public abstract void Load(byte[] bytes);
@@ -21,10 +20,9 @@ namespace ClimbGames
     public abstract class Table<TRecord> : Table where TRecord : TableRecord, new()
     {
         [SerializeField] protected List<TRecord> datas;
-
         public IReadOnlyList<TRecord> Datas => datas;
-        public override IReadOnlyList<TableRecord> Records => datas;
 
+        public override IReadOnlyList<TableRecord> GetDatas() => datas;
         protected virtual void OnInitialized() { }
 
         public override byte[] ToBytes()

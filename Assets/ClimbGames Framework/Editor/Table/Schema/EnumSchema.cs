@@ -18,7 +18,7 @@ namespace ClimbGames.Editor.Table
 
         private Dictionary<string, EnumDefinition> definitions;
         private Dictionary<int, EnumDefinition> readPositions;
-        private List<HeaderPosition> tableHeaders;
+        private List<HeaderPosition> tableHeaderPositions;
 
         private Dictionary<string, DeclaredEnum> declaredEnums;
         private Dictionary<string, DeclaredEnum> assemblyEnums;
@@ -31,7 +31,7 @@ namespace ClimbGames.Editor.Table
 
             definitions = new Dictionary<string, EnumDefinition>();
             readPositions = new Dictionary<int, EnumDefinition>();
-            tableHeaders = new List<HeaderPosition>();
+            tableHeaderPositions = new List<HeaderPosition>();
 
             declaredEnums = new Dictionary<string, DeclaredEnum>();
             assemblyEnums = new Dictionary<string, DeclaredEnum>();
@@ -42,7 +42,7 @@ namespace ClimbGames.Editor.Table
         public bool ReadDefinition(IExcelDataReader reader)
         {
             // 이전 header 삭제
-            tableHeaders.Clear();
+            tableHeaderPositions.Clear();
 
             for (int i = 0; i < reader.FieldCount; ++i)
             {
@@ -53,6 +53,7 @@ namespace ClimbGames.Editor.Table
 
                     if (EnumDefinition.TryParse(columnName, out var definition))
                     {
+                        // 이미 존재하는 enum 일 경우 merge
                         if (definitions.TryGetValue(columnName, out var previous))
                             definition.Merge(previous);
 
@@ -63,13 +64,20 @@ namespace ClimbGames.Editor.Table
                     else
                     {
                         if (readPositions.TryGetValue(i, out definition))
-                            definition.AddValue(columnName);
+                        {
+                            // end 경우 닫음
+                            if (columnName != "[/enum]")
+                                definition.AddValue(columnName, reader.Name.ToPascalCaseName());
+                            else
+                                readPositions.Remove(i);
+                        }
                     }
                 }
-                else if (readPositions.ContainsKey(i))
+                else
                 {
-                    // close 
-                    readPositions.Remove(i);
+                    // 빈칸 인 경우 닫음
+                    if (readPositions.ContainsKey(i))
+                        readPositions.Remove(i);
                 }
             }
 
@@ -81,20 +89,21 @@ namespace ClimbGames.Editor.Table
             if (definitions.TryGetValue(enumName, out var definition) == false)
                 definitions[enumName] = definition = new EnumDefinition(enumName);
 
-            tableHeaders.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
+            tableHeaderPositions.Add(new HeaderPosition() { ColumnIndex = columnIndex, Definition = definition });
         }
 
         // row 에서 사용하고있는 enum value 수집
         public void ReadTableValue(IExcelDataReader reader)
         {
-            for (int i = 0; i < tableHeaders.Count; ++i)
+            for (int i = 0; i < tableHeaderPositions.Count; ++i)
             {
-                var position = tableHeaders[i];
+                var position = tableHeaderPositions[i];
                 if (reader.GetFieldType(position.ColumnIndex) == typeof(string))
                 {
                     string text = reader.GetString(position.ColumnIndex);
                     if (string.IsNullOrEmpty(text) == false)
                     {
+                        // list<[enum:]> 대비
                         string[] values = text.Split(',', StringSplitOptions.RemoveEmptyEntries);
                         foreach (var value in values)
                         {
@@ -102,7 +111,7 @@ namespace ClimbGames.Editor.Table
                             if (string.IsNullOrEmpty(rawValue))
                                 continue;
 
-                            position.Definition.AddValue(value.Trim());
+                            position.Definition.AddValue(rawValue, reader.Name.ToPascalCaseName());
                         }
                     }
                 }

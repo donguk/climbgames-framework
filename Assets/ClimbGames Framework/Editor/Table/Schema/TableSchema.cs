@@ -40,25 +40,6 @@ namespace ClimbGames.Editor.Table
         public override EnumSchema GetEnumSchema() => enumSchema;
         public override TableHeader GetTableHeader() => tableHeader;
 
-        public bool Resolve(IExcelDataReader reader)
-        {
-            if (Read(reader))
-            {
-                while (reader.Read())
-                {
-                    if (tableHeader.Resolve(reader))
-                    {
-                        if (TableEditorSettings.ReadHeaderEnumValues == false)
-                            break;
-                    }
-
-                    enumSchema.ReadTableValue(reader);
-                }
-            }
-
-            return tableHeader.IsValid;
-        }
-
         public bool Read(IExcelDataReader reader)
         {
             while (reader.Read())
@@ -75,6 +56,25 @@ namespace ClimbGames.Editor.Table
 
             if (SchemaType == SchemaType.None)
                 schemaType = tableHeader.SchemaType;
+
+            return tableHeader.IsValid;
+        }
+
+        public bool Resolve(IExcelDataReader reader)
+        {
+            if (Read(reader))
+            {
+                while (reader.Read())
+                {
+                    if (tableHeader.Resolve(reader))
+                    {
+                        if (TableEditorSettings.ReadHeaderEnumValues == false)
+                            break;
+                    }
+
+                    enumSchema.ReadTableValue(reader);
+                }
+            }
 
             return tableHeader.IsValid;
         }

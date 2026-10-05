@@ -52,7 +52,7 @@ namespace ClimbGames.Editor.Table
             {
                 if (EnumDefinition.NameRegex.Match(values[i]).Success == false)
                 {
-                    Debug.Log($"[EnumType] {definition.Name}: invalid value({values[i]})");
+                    Debug.Log($"[EnumSchema] table({definition.GetTableNames()}) enum({definition.Name}): invalid value({values[i]})");
                     continue;
                 }
                 enumBuilder.AppendLine($"        {values[i]},");

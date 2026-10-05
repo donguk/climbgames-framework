@@ -10,28 +10,43 @@ namespace ClimbGames.Editor.Table
         public static readonly Regex NameRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$");
 
         public string Name { get; private set; }
-        public bool IsDeclaration { get; private set; }
 
-        private HashSet<string> values;
+        private HashSet<string> values, tableNames;
         public IReadOnlyList<string> Values => values.ToList();
 
         public EnumDefinition(string name, bool isDeclaration = false)
         {
             Name = name;
-            IsDeclaration = isDeclaration;
-
             values = new HashSet<string>();
+            tableNames = new HashSet<string>();
         }
 
-        public void AddValue(string value)
+        public void AddValue(string value, string tableName = default)
         {
             values.Add(value);
+
+            if (string.IsNullOrEmpty(tableName) == false)
+                tableNames.Add(tableName);
         }
 
         public void Merge(EnumDefinition other)
         {
             foreach (var value in other.values)
                 values.Add(value);
+        }
+
+        public string GetTableNames()
+        {
+            string text = string.Empty;
+            foreach (var name in tableNames)
+            {
+                if (text.Length > 0)
+                    text += ", ";
+
+                text += tableNames;
+            }
+
+            return text;
         }
 
         public static bool TryParse(string value, out EnumDefinition declaration)

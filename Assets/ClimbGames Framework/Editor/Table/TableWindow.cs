@@ -111,7 +111,10 @@ namespace ClimbGames.Editor.Table
 
                 EditorGUILayout.Space(5);
                 if (GUILayout.Button($"Clear And Convert All", GUILayout.Height(35)))
-                    ClearAndConvertAll();
+                {
+                    string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
+                    ConvertFiles(filePath, true);
+                }
 
                 EditorGUILayout.Space(20);
             }
@@ -131,7 +134,7 @@ namespace ClimbGames.Editor.Table
                 case "convert":
                     {
                         var filePath = selections.Where(x => Path.HasExtension(x)).ToArray();
-                        TableConverter.StartProcess(filePath);
+                        ConvertFiles(filePath);
                         break;
                     }
             }
@@ -171,10 +174,11 @@ namespace ClimbGames.Editor.Table
                 selectedTable = table;
 
                 int maxCount = 40;
-                var list = table.Records.Take(maxCount).ToList();
+                var datas = table.GetDatas();
+                var list = datas.Take(maxCount).ToList();
 
                 rawJson = JsonConvert.SerializeObject(new ArrayWrapper() { datas = list }, Formatting.Indented);
-                if (table.Records.Count > maxCount)
+                if (datas.Count > maxCount)
                 {
                     int lastIndex = rawJson.LastIndexOf(']');
                     if (lastIndex != -1)
@@ -205,12 +209,20 @@ namespace ClimbGames.Editor.Table
             jsonViewer.SetText(rawJson);
         }
 
-        void ClearAndConvertAll()
+        void ConvertFiles(string[] files, bool clearUnused = false)
         {
-            TableConverter.DeleteUnusedFiles();
+            try
+            {
+                if (clearUnused)
+                    TableConverter.DeleteUnusedFiles();
 
-            string[] filePath = Paths.GetFiles(TableEditorSettings.ExcelPath, "*.xlsx", "*.xls");
-            TableConverter.StartProcess(filePath);
+                TableConverter.StartProcess(files);
+            }
+            catch (IOException ex)
+            {
+                EditorUtility.DisplayDialog("Table Convert", "Please close the open Excel file before converting.", "Confirm");
+                Debug.LogError(ex);
+            }
         }
 
         public void OnConvertFinished(List<ClimbGames.Table> tables)
