@@ -1,124 +1,351 @@
-# 🛠 ClimbGames Framework - Key Features
+# ClimbGames Framework
 
-유니티 게임 개발 시 반복되는 핵심 공통 모듈(Scene, Singleton, FSM, UI)을 독립된 패키지로 모듈화하여 제어하는 C# 기반 프레임워크입니다.
+ClimbGames Framework는 Unity 프로젝트에서 반복적으로 사용되는 **Core 시스템, Build Pipeline, Table 데이터 관리 기능**을 하나의 Framework로 제공합니다.
 
----
+## Overview
 
-## 📑 목차
-1. [SceneTransition (비동기 씬 관리)](#1-scenetransition-비동기-씬-관리)
-2. [MonoSingleton (제네릭 싱글톤)](#2-monosingleton-제네릭-싱글톤)
-3. [FSM (유한 상태 머신)](#3-fsm-유한-상태-머신)
-4. [UIManager (UI 및 레이어 관리)](#4-uimanager-ui-및-레이어-관리)
-5. [빌드 및 젠킨스 연동](#5-빌드-및-젠킨스-연동)
+* [**Core**](#1-core) — 게임 실행에 필요한 공통 시스템
 
----
+  * Scene Transition
+  * Singleton
+  * FSM
+  * UI Manager
 
-## 1. SceneTransition (비동기 씬 관리)
-`UniTask` 기반의 비동기 씬 전환 시스템으로, 씬 전환 사이의 생명주기와 전환 연출(Transition Handler)을 정교하게 제어합니다.
+* [**Build**](#2-build) — Unity Editor 및 Jenkins 기반 빌드/배포 시스템
 
-### 🌟 주요 특징
-* **비동기 씬 로딩 흐름 제어:** `MonoScene` 인터페이스를 확장하여 씬의 비활성화(`Deactivate`), 초기화(`InitializeAsync`), 활성화(`ActivateAsync`) 수명주기를 비동기로 제어
-* **EmptyScene 기법 활용:** 메모리 해제 및 안정적인 씬 전환을 위해 선택적으로 중간 거점(`EmptyScene`)을 거쳐 로딩하도록 구현 (`FrameworkSettings` 연동)
-* **커스텀 트랜지션 연출 지원:** `ITransitionHandler` 인터페이스를 통해 씬 로딩 전/후 연출(Fade In/Out, Progress Bar)을 유연하게 주입 가능
-* **이벤트 기반 연동:** `transitionStarted`, `sceneLoaded` 이벤트를 전달하여 UIManager 등 타 시스템과 자동 동기화
+  * Editor Build Tool
+  * Addressables Build
+  * Jenkins Shared Library
+  * Jenkins Custom Scripts
 
-### 💻 사용 예시
-```csharp
-// 씬 파라미터 전달 및 비동기 전환 실행
-var param = new FishingSceneParameter { SpawndId = 101 };
-await SceneTransition.TransitionAsync("FishingScene", param);
-```
+* [**Table**](#3-table) — Excel 기반 게임 데이터 관리 및 코드 생성 시스템
+
+  * Excel → C# Table 변환
+  * Table Code Generation
+  * Enum 자동 생성
+  * Table 통합 접근
+  * Binary 데이터 저장
+  * Table Preview
 
 ---
 
-## 2. MonoSingleton (제네릭 싱글톤)
-Thread-safe 특성을 보장하며, 리소스 프리팹 자동 생성 및 Attribute 기반 설정을 지원하는 강력한 MonoBehaviour 싱글톤입니다.
+# 1. Core
 
-### 🌟 주요 특징
-* **Lock 기반 Thread-Safe 및 Quitting 안전성:** `lock`을 사용하여 멀티스레드 인스턴스 생성 예외를 방지하고, 앱 종료 시점(`_applicationIsQuitting`)의 예외적 오브젝트 생성을 차단
-* **Attribute 기반 경로 및 설정 관리:**
-  * `[AssetPathAttribute]`: Resources 또는 에셋 경로를 지정하여 씬에 오브젝트가 없더라도 자동으로 프리팹을 로드 및 생성
-  * `[SingletonConfigAttribute]`: `DontDestroyOnLoad` 적용 여부를 코드 외부 속성으로 깔끔하게 설정
-* **자동 씬 정리(OnDestroy):** 씬 이동 등으로 싱글톤이 파괴될 경우 내부 정적 참조를 자동으로 해제하여 메모리 누수 방지
+게임에서 공통적으로 사용되는 기본 시스템을 제공합니다.
 
-### 💻 사용 예시
+## Scene Transition
+
+`UniTask` 기반의 비동기 씬 전환 시스템으로, 씬 전환 과정에서 발생하는 **초기화, 활성화, 비활성화 및 Transition 연출**을 일관된 흐름으로 관리합니다.
+
+### 주요 기능
+
+* **비동기 씬 생명주기 관리**
+
+  * `Deactivate`
+  * `InitializeAsync`
+  * `ActivateAsync`
+
+* **Empty Scene 지원**
+
+  * 씬 전환 과정에서 중간 `EmptyScene`을 거쳐 기존 씬의 리소스를 안정적으로 해제
+  * `FrameworkSettings`를 통해 사용 여부 설정
+
+* **Custom Transition 지원**
+
+  * `ITransitionHandler`를 통해 씬 전환 전/후 연출을 자유롭게 구현
+  * Fade, Loading UI, Progress Bar 등의 연출에 활용 가능
+
+* **이벤트 기반 연동**
+
+  * `transitionStarted`
+  * `sceneLoaded`
+  * 등의 이벤트를 통해 UI 및 기타 시스템과 연동
+
+---
+
+## Singleton
+
+Unity의 `MonoBehaviour`를 기반으로 한 Singleton 시스템입니다.
+
+`SingletonConfig`를 이용하여 Singleton 생성 방식과 `DontDestroyOnLoad` 여부를 설정할 수 있습니다.
+
+### 사용 예시
+
 ```csharp
 [SingletonConfig("Resources/UIManager", DontDestroy = true)]
 public class UIManager : MonoSingleton<UIManager>
 {
-    // Instance 호출 시 Resources/UIManager 프리팹을 자동 생성하고 DontDestroyOnLoad 적용
 }
 ```
 
+설정된 Singleton은 `Instance` 접근 시 필요한 경우 `Resources`의 Prefab을 자동으로 생성하고 `DontDestroyOnLoad`를 적용합니다.
+
 ---
 
-## 3. FSM (유한 상태 머신)
-열거형(Enum) 또는 커스텀 타입을 Key로 사용하는 제네릭 기반의 상태 머신 코어입니다.
+## FSM
 
-### 🌟 주요 특징
-* **`FSM<T>` 제네릭 지원:** 상태 구분자를 Enum, int, string 등 사용자 정의 타입으로 유연하게 설정 가능
-* **중복 전환 및 예외 방지:** `isChanging` 플래그를 두어 상태 전환 도중 발생하는 중복 `ChangeState` 요청을 안전하게 차단
-* **파라미터 전달 기능:** `IStateParam` 인터페이스를 통해 상태 진입 시(`Enter`) 필요한 데이터를 동적으로 전달
-* **전역 업데이트 루프 통합:** `FSMUpdater`를 지원하여 개별 FSM의 `Resume()` / `Pause()` 제어 및 메모리 해제(`Dispose`) 시 상태 정리 수명주기 캡슐화
+Enum 또는 Custom Type을 Key로 사용할 수 있는 **제네릭 기반 Finite State Machine**입니다.
 
-### 💻 사용 예시
+상태 등록, 상태 전환 및 상태별 데이터 전달을 지원하며, 게임플레이 로직을 명확한 상태 단위로 분리할 수 있습니다.
+
+### 사용 예시
+
 ```csharp
-// FSM 생성 및 상태 등록
 var fsm = new FSM<PlayerState>("PlayerFSM", showDebug: true);
+
 fsm.Initialize(
     (PlayerState.Idle, new IdleState()),
     (PlayerState.Casting, new CastingState())
 );
 
-// 상태 시작 및 전환
 fsm.Start(PlayerState.Idle);
-fsm.ChangeState(PlayerState.Casting, new CastingParam { Force = 10f });
+
+fsm.ChangeState(
+    PlayerState.Casting,
+    new CastingParam { Force = 10f }
+);
 ```
 
 ---
 
-## 4. UIManager (UI 및 레이어 관리)
-계층형 UI 및 World Space UI 관리 시스템입니다.
+## UI Manager
 
-### 🌟 주요 특징
-* **URP 카메라 스택(Camera Stacking) 자동 구성:** 
-  * MainCamera 뒤에 `WorldUICamera` 및 `UICamera`를 Overlay 타입으로 자동 스택팅
-  * 씬 로딩 및 트랜지션 상황에서도 UI 카메라 렌더링 스택을 동적으로 재구성
-* **레이어(UILayer) 기반 계층 관리:**
-  * `World`, `HUD`, `View`, `Popup`, `Top`, `System`, `Transition`으로 상하 레이어를 엄격히 분리하여 뎁스 꼬임 방지
-* **비동기 UI 생성 및 관리:** `AssetManager`와 연동하여 `ShowUI<T>`를 통한 비동기(`UniTask`) 팝업/뷰 생성 지원
-* **EventSystem 자동 복구:** 씬 로딩 시 EventSystem이 없을 경우 `InputSystemUIInputModule`이 포함된 EventSystem을 자동 생성하여 입력 유실 방지
+게임 내 UI의 생성, 표시, 숨김 및 레이어 관리를 담당하는 UI 관리 시스템입니다.
 
-### 💻 사용 예시
+### 주요 기능
+
+* **Camera Stacking 자동 구성**
+
+  * `MainCamera`
+  * `WorldUICamera`
+  * `UICamera`
+    를 기반으로 UI Camera Stack을 자동 구성
+  * 씬 전환 시 Camera Stack을 동적으로 재구성
+
+* **UILayer 기반 UI 관리**
+
+  UI를 다음과 같은 계층으로 관리합니다.
+
+  ```text
+  Layer
+   └─ World
+   └─ UI
+      └─ HUD
+      └─ View
+      └─ Popup
+      └─ Top
+      └─ System
+      └─ Transition
+  ```
+
+* **비동기 UI 생성**
+
+  * `AssetManager`와 연동하여 UI Prefab을 비동기로 로드
+  * `ShowUI<T>`를 통한 UI 생성 및 표시
+
+* **EventSystem 자동 구성**
+
+  * 씬에 EventSystem이 없는 경우 필요한 EventSystem을 자동 생성
+  * `InputSystemUIInputModule`을 사용하여 Unity Input System 기반 UI 입력 지원
+
+### 사용 예시
+
 ```csharp
-// 비동기로 View 레이어에 UI 생성 및 오픈
 var viewData = new InventoryUIData();
-var invView = await UIManager.Instance.ShowUI<InventoryView>("UI/InventoryView", UILayer.View, viewData);
 
-// 특정 UI 닫기
-UIManager.Instance.Hide(invView);
+var inventoryView =
+    await UIManager.Instance.ShowUI<InventoryView>(
+        "UI/InventoryView",
+        UILayer.View,
+        viewData
+    );
+
+UIManager.Instance.Hide(inventoryView);
 ```
 
 ---
 
-## 5. 빌드 및 젠킨스 연동 
-에디터 상에서 **빌드 툴을 통해 직접 바로 빌드를 수행**하거나, **`Tools` > `ClimbGames` > `Create Profile`** 메뉴에서 빌드 프로파일을 생성한 후 **젠킨스(Jenkins)를 통해 원격 빌드**를 진행할 수 있습니다.
+# 2. Build
 
-### 1. 에디터 빌드 툴 (Editor Build Tool)
+Unity Editor에서 직접 빌드하거나 Jenkins를 이용한 **원격 빌드 및 배포 환경**을 구성할 수 있습니다.
+
+## Editor Build Tool
+
 ![빌드 윈도우 스크린샷](./Images/image_build_window.png)
-* **메뉴 위치**: `Tools` > `ClimbGames` > `Build Window`
-* **주요 기능**:
-  * 앱 빌드 및 Addressables 기본 빌드
-  * `addressables_content_state.bin` 파일을 활용한 콘텐츠 업데이트 빌드 지원
-  * Addressables 빌드 결과물을 `EditorEnv.zip`으로 백업 및 테스트 기능 제공
 
-### 2. 젠킨스 공유 라이브러리 (Jenkins Shared Library)
-* **저장 경로**: `ClimbGames Framework/Editor/Build/Jenkins/SharedLibrary`
-* **설명**: 
-  * 젠킨스 파이프라인에서 공통으로 사용되는 OOP 기반 빌드/배포 프레임워크 라이브러리
-  * `PipelineConfig`, `DefaultSettings`, `DefaultProcess` 등 기반 구조 제공
+**메뉴 위치**
 
-### 3. 젠킨스 스크립트 임포트 (Jenkins Custom Scripts)
-* **저장 경로**: `ClimbGames Framework/Editor/Build/Jenkins/Scripts`
-* **설명**:
-  * 로컬 프로젝트로 임포트하여 프로젝트별 커스텀 젠킨스 빌드 스크립트 확장 및 구현 가능
+`Tools` > `ClimbGames` > `Build Window`
+
+### 주요 기능
+
+* Unity Application Build
+* Addressables 기본 Build
+* Addressables Content Update Build
+* `addressables_content_state.bin` 기반 Content Update 지원
+* Addressables Build 결과물 백업
+* `EditorEnv.zip` 생성 및 테스트 지원
+
+---
+
+## Jenkins Shared Library
+
+**경로**
+
+```text
+ClimbGames Framework/
+└─ Editor/
+   └─ Build/
+      └─ Jenkins/
+         └─ SharedLibrary/
+```
+
+Jenkins Pipeline에서 공통으로 사용할 수 있는 **OOP 기반 Build / Deploy Framework**를 제공합니다.
+
+### 주요 구성
+
+* `PipelineConfig`
+* `DefaultSettings`
+* `DefaultProcess`
+
+프로젝트마다 반복되는 빌드 및 배포 로직을 공통화하고, 프로젝트별 설정과 프로세스를 확장할 수 있도록 구성되어 있습니다.
+
+---
+
+## Jenkins Custom Scripts
+
+**경로**
+
+```text
+ClimbGames Framework/
+└─ Editor/
+   └─ Build/
+      └─ Jenkins/
+         └─ Scripts/
+```
+
+프로젝트별 Jenkins Pipeline을 구현하기 위한 Custom Script 영역입니다.
+
+Framework에서 제공하는 기본 Build 기능을 기반으로 프로젝트의 환경에 맞는 **빌드, 배포 및 후처리 작업을 확장**할 수 있습니다.
+
+---
+
+# 3. Table
+
+Excel로 관리하는 게임 데이터를 Unity에서 사용할 수 있는 **C# Table 및 ScriptableObject 기반 데이터로 자동 변환**하는 시스템입니다.
+
+Excel Schema를 기반으로 C# 코드를 자동 생성하기 때문에 별도의 Table 클래스를 직접 작성하지 않고 데이터를 관리할 수 있습니다.
+
+![테이블 정의](./Images/image_table_excel.png)
+![테이블 컨버터](./Images/image_table_convert.png)
+
+## 주요 기능
+
+### Excel → C# Table 변환
+
+Excel 데이터를 Unity에서 사용할 수 있는 C# Table 데이터로 변환합니다.
+
+다음과 같은 Collection 타입을 지원합니다.
+
+```text
+@list
+@dictionary
+@keyvalue
+```
+
+선언된 타입에 따라 적절한 Table 구조를 자동으로 생성합니다.
+
+TableHeader Column 정의
+
+```
+fieldName // excel 서식에 따라 타입이 정해짐
+fieldName[int]  // 구체적인 타입 정의
+fieldName[enum:ItemType] // enum 타입 정의
+fieldName[List<int>] // 리스트 정의
+fieldName[key<int>] // dictionary 타입의 key column 으로 사용
+```
+
+---
+
+### C# Code Generation
+
+Excel Schema를 기반으로 Table 관련 C# 코드를 자동 생성합니다.
+
+예를 들어 다음과 같은 공통 코드가 자동으로 생성됩니다.
+
+```text
+TableEnum.cs
+Tables.cs
+```
+
+* **`TableEnum.cs`**
+
+  * Table에서 사용하는 Enum을 자동 생성
+
+* **`Tables.cs`**
+
+  * 프로젝트의 모든 Table에 접근할 수 있는 통합 진입점 제공
+
+---
+
+### Binary Data 지원
+
+Table 데이터를 Binary 형태로 저장하고 로드할 수 있습니다.
+
+이를 통해 프로젝트 환경에 따라 ScriptableObject 기반 데이터와 Binary 기반 데이터를 선택하여 사용할 수 있습니다.
+
+---
+
+### Table Preview
+
+Unity Editor에서 변환된 Table 데이터를 직접 확인할 수 있는 **Table Preview 기능**을 제공합니다.
+
+또한 전체 Table을 다시 변환하지 않고 **개별 Table 단위로 Conversion**할 수 있습니다.
+
+---
+
+## 사용 방법
+
+### Asset 기반 Table Load
+
+Unity Asset으로 생성된 Table 데이터를 로드합니다.
+
+```csharp
+await Tables.LoadAsync("tables");
+```
+
+### Binary 기반 Table Load
+
+Binary 데이터가 포함된 `TextAsset`을 이용하여 Table을 로드할 수 있습니다.
+
+```csharp
+await Tables.LoadAsync<TextAsset>("tables");
+```
+
+---
+
+## Table Workflow
+
+전체적인 Table 데이터 작업 흐름은 다음과 같습니다.
+
+```text
+Excel
+  │
+  ▼
+Table Converter
+  │
+  ├─ Delete UnusedFiles
+  |
+  ├─ C# Code Generation
+  │    ├─ TableEnum.cs
+  │    └─ Tables.cs
+  │
+  ├─ Table Asset
+  │
+  └─ Binary Data
+        │
+        ▼
+     Tables.LoadAsync()
+```
+
+Excel 데이터를 수정한 후 Table Converter를 실행하면 **불필요 파일삭제 → 필요한 C# 코드 생성 → Table Asset 생성** 과정이 자동으로 수행됩니다.

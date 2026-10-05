@@ -10,6 +10,10 @@ namespace ClimbGames
         {
             await AssetManager.Initialize();
 
+            // load from asset
+            await Tables.LoadAsync("tables");
+
+            // load from bytes
             await Tables.LoadAsync<TextAsset>("tables");
 
             var data = Tables.Character.Datas;
