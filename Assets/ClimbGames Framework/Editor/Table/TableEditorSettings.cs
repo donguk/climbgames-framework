@@ -6,7 +6,6 @@ namespace ClimbGames.Editor.Table
 {
     public static class TableEditorSettings
     {
-        private static string EditorKey => $"{Application.dataPath.GetHashCode()}";
         private static string excelPath;
         private static string dataPath;
         private static string codeGenPath;
@@ -17,31 +16,31 @@ namespace ClimbGames.Editor.Table
         public static string ExcelPath
         {
             get => excelPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", excelPath = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", excelPath = value);
         }
         public static string DataPath
         {
             get => dataPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", dataPath = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", dataPath = value);
         }
         public static string CodeGenPath
         {
             get => codeGenPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", codeGenPath = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", codeGenPath = value);
         }
         public static bool SaveToBytes
         {
             get => saveToBytes;
-            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", saveToBytes = value);
+            set => EditorPrefs.SetBool($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", saveToBytes = value);
         }
 
         static TableEditorSettings()
         {
             string defatulExcelPath = Path.Combine(Directory.GetCurrentDirectory(), "Excels");
-            excelPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
-            dataPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
-            codeGenPath = EditorPrefs.GetString($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets/Tables/CodeGe");
-            saveToBytes = EditorPrefs.GetBool($"{EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", false);
+            excelPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(excelPath)}", defatulExcelPath);
+            dataPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(dataPath)}", "Assets/Tables");
+            codeGenPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(codeGenPath)}", "Assets/Tables/CodeGen");
+            saveToBytes = EditorPrefs.GetBool($"{FrameworkEditorSettings.EditorKey}_{nameof(TableEditorSettings)}_{nameof(saveToBytes)}", false);
         }
 
         public static void Reset()

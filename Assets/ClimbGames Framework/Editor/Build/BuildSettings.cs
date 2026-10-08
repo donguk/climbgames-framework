@@ -16,8 +16,6 @@ namespace ClimbGames.Editor
 
     public static class BuildSettings
     {
-        private static string EditorKey => $"{Application.dataPath.GetHashCode()}";
-
         // common
         private static string rootPath;
         private static BuildType buildType = BuildType.Dev;
@@ -48,103 +46,103 @@ namespace ClimbGames.Editor
         public static string RootPath
         {
             get => rootPath;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", rootPath = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", rootPath = value);
         }
         public static string BuildPath => Path.Combine(rootPath, $"{TargetPlatform}/{buildType}");
         public static BuildType BuildType
         {
             get => buildType;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", (buildType = value).ToString());
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", (buildType = value).ToString());
         }
         public static string BundleVersion
         {
             get => bundleVersion;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", bundleVersion = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", bundleVersion = value);
         }
         public static int VersionCode
         {
             get => versionCode;
-            set => EditorPrefs.SetInt($"{EditorKey}_{nameof(BuildSettings)}_{nameof(versionCode)}", versionCode = value);
+            set => EditorPrefs.SetInt($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(versionCode)}", versionCode = value);
         }
         public static int BuildNumber
         {
             get => buildNumber;
-            set => EditorPrefs.SetInt($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildNumber)}", buildNumber = value);
+            set => EditorPrefs.SetInt($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(buildNumber)}", buildNumber = value);
         }
         public static string PatchUrl
         {
             get => patchUrl;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(patchUrl)}", patchUrl = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(patchUrl)}", patchUrl = value);
         }
         public static bool DevelopmentBuild
         {
             get => developmentBuild;
-            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(BuildSettings)}_{nameof(developmentBuild)}", developmentBuild = value);
+            set => EditorPrefs.SetBool($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(developmentBuild)}", developmentBuild = value);
         }
         public static string KeystoreName
         {
             get => keystoreName;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keystoreName)}", keystoreName = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keystoreName)}", keystoreName = value);
         }
         public static string KeystorePass
         {
             get => keystorePass;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keystorePass)}", keystorePass = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keystorePass)}", keystorePass = value);
         }
         public static string KeyaliasName
         {
             get => keyaliasName;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasName)}", keyaliasName = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasName)}", keyaliasName = value);
         }
         public static string KeyaliasPass
         {
             get => keyaliasPass;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasPass)}", keyaliasPass = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasPass)}", keyaliasPass = value);
         }
         public static bool BuildAppBundle
         {
             get => buildAppBundle;
-            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildAppBundle)}", buildAppBundle = value);
+            set => EditorPrefs.SetBool($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(buildAppBundle)}", buildAppBundle = value);
         }
         public static bool AppleEnableAutomaticSigning
         {
             get => appleEnableAutomaticSigning;
-            set => EditorPrefs.SetBool($"{EditorKey}_{nameof(BuildSettings)}_{nameof(appleEnableAutomaticSigning)}", appleEnableAutomaticSigning = value);
+            set => EditorPrefs.SetBool($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(appleEnableAutomaticSigning)}", appleEnableAutomaticSigning = value);
         }
         public static string AppleDeveloperTeamID
         {
             get => appleDeveloperTeamID;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(appleDeveloperTeamID)}", appleDeveloperTeamID = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(appleDeveloperTeamID)}", appleDeveloperTeamID = value);
         }
         public static string iOSManualProvisioningProfileID
         {
             get => _iOSManualProvisioningProfileID;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileID)}", _iOSManualProvisioningProfileID = value);
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileID)}", _iOSManualProvisioningProfileID = value);
         }
         public static ProvisioningProfileType iOSManualProvisioningProfileType
         {
             get => _iOSManualProvisioningProfileType;
-            set => EditorPrefs.SetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileType)}", (_iOSManualProvisioningProfileType = value).ToString());
+            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(iOSManualProvisioningProfileType)}", (_iOSManualProvisioningProfileType = value).ToString());
         }
 
         static BuildSettings()
         {
             string defatulRootPath = Path.Combine(Directory.GetCurrentDirectory(), "Build");
-            rootPath = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", defatulRootPath);
+            rootPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(rootPath)}", defatulRootPath);
 
-            if (Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", $"{BuildType.Dev}"), out var result))
+            if (Enum.TryParse(typeof(BuildType), EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(buildType)}", $"{BuildType.Dev}"), out var result))
                 buildType = (BuildType)result;
 
-            bundleVersion = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", "0.1.0");
-            versionCode = EditorPrefs.GetInt($"{EditorKey}_{nameof(BuildSettings)}_{nameof(versionCode)}", 1);
-            buildNumber = EditorPrefs.GetInt($"{EditorKey}_{nameof(BuildSettings)}_{nameof(buildNumber)}", 1);
-            patchUrl = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(patchUrl)}", string.Empty);
+            bundleVersion = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(bundleVersion)}", "0.1.0");
+            versionCode = EditorPrefs.GetInt($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(versionCode)}", 1);
+            buildNumber = EditorPrefs.GetInt($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(buildNumber)}", 1);
+            patchUrl = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(patchUrl)}", string.Empty);
 
             // Android
-            keystoreName = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keystoreName)}", string.Empty);
-            keystorePass = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keystorePass)}", string.Empty);
-            keyaliasName = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasName)}", string.Empty);
-            keyaliasPass = EditorPrefs.GetString($"{EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasPass)}", string.Empty);
+            keystoreName = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keystoreName)}", string.Empty);
+            keystorePass = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keystorePass)}", string.Empty);
+            keyaliasName = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasName)}", string.Empty);
+            keyaliasPass = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(BuildSettings)}_{nameof(keyaliasPass)}", string.Empty);
         }
 
         public static void Reset()

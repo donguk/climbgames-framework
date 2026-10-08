@@ -32,10 +32,10 @@ namespace ClimbGames.Editor.Table
             }
         }
 
-        [MenuItem("Tools/ClimbGames/Table Converter")]
+        [MenuItem("Tools/ClimbGames/Table Convert")]
         public static void ShowWindow()
         {
-            var window = GetWindow<TableWindow>("Tables Converter");
+            var window = GetWindow<TableWindow>("Table Convert");
             window.minSize = new Vector2(400, 300);
             window.Show();
         }

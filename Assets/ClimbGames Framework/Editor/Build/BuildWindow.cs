@@ -30,7 +30,7 @@ namespace ClimbGames.Editor
         [MenuItem("Tools/ClimbGames/Build/Settings", false, 99)]
         public static void ShowWindow()
         {
-            var window = GetWindow<BuildWindow>("ClimbGames Build");
+            var window = GetWindow<BuildWindow>("Build Settings");
             window.minSize = new Vector2(400, 300);
             window.Show();
         }

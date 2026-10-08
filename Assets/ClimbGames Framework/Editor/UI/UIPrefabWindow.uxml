@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="SelectPathField" src="project://database/Assets/ClimbGames%20Framework/Editor/Core/UI%20Toolkit/uxml/SelectPathField.uxml?fileID=9197481963319205126&amp;guid=540b38a4aaffbb74e9d798b18fbef6cb&amp;type=3#SelectPathField"/>
+    <ui:VisualElement name="root" style="flex-grow: 1;">
+        <ui:Label text="Settings" name="settings" style="-unity-font-style: bold; height: 30px; -unity-text-align: middle-left; margin-left: 2px;"/>
+        <ClimbGames.SelectPathField name="prefab_path" title="Prefab Path"/>
+        <ClimbGames.SelectPathField name="source_path" title="Source Path"/>
+        <ClimbGames.SelectPathField name="codegen_path" title="CodeGen Path"/>
+        <ui:MultiColumnTreeView columns="" sort-column-descriptions="" name="prefab_treeview" style="margin-top: 0; padding-top: 0;"/>
+    </ui:VisualElement>
+</ui:UXML>

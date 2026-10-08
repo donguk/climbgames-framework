@@ -6,6 +6,8 @@ namespace ClimbGames.Editor
     [FilePath("ProjectSettings/ClimbGamesSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     public class FrameworkEditorSettings : UnityEditor.ScriptableSingleton<FrameworkEditorSettings>
     {
+        public static string EditorKey => $"{Application.dataPath.GetHashCode()}";
+
         [SerializeField] private bool showSceneName = true;
         [SerializeField] private string projectNamesapce;
 

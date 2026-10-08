@@ -132,7 +132,7 @@ namespace ClimbGames.Editor
             SetPath(rootPath, searchPatterns);
         }
 
-        void BuildTreeData(string path, ref List<FileTreeElement> list)
+        public static void BuildTreeData(string path, string[] searchPatterns, int id, ref List<FileTreeElement> list)
         {
             list.Add(new FileTreeElement("root", -1, -1));
 
@@ -171,11 +171,11 @@ namespace ClimbGames.Editor
                             directoryPath += directoryName;
 
                             if (folders[depth].Add(directoryName))
-                                list.Add(new FileTreeElement(directoryPath, depth, treeItemId++));
+                                list.Add(new FileTreeElement(directoryPath, depth, id++));
                         }
                         else
                         {
-                            list.Add(new FileTreeElement(files[i], depth, treeItemId++));
+                            list.Add(new FileTreeElement(files[i], depth, id++));
                         }
                     }
                 }
@@ -197,7 +197,7 @@ namespace ClimbGames.Editor
 
             using (new ListPoolScope<FileTreeElement>(out var list))
             {
-                BuildTreeData(path, ref list);
+                BuildTreeData(path, searchPatterns, treeItemId, ref list);
 
                 var newRoot = TreeElementUtility.ListToTree(list);
                 treeModel.ReplaceElement(parent, index, newRoot.hasChildren ? newRoot.children[0] : null);
