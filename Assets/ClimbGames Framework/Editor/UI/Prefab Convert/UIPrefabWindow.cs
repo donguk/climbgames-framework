@@ -27,11 +27,15 @@ namespace ClimbGames.Editor.UI
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(windowUxmlPath);
             visualTree.CloneTree(rootVisualElement);
 
+            // 프리팹 뷰
+            var treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
+
             var rawPathField = rootVisualElement.Q<SelectPathField>("raw_path");
             rawPathField.Path = UIPrefabConvertSettings.RawPath;
             rawPathField.OnPathChanged += (path) =>
             {
                 UIPrefabConvertSettings.RawPath = path;
+                treeView.SetRootPath(UIPrefabConvertSettings.RawPath, "*.prefab");
             };
 
             var outputPathField = rootVisualElement.Q<SelectPathField>("output_path");
@@ -49,10 +53,7 @@ namespace ClimbGames.Editor.UI
             };
 
 
-
-            // 프리팹 뷰
-            var treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
-
+            // 프리팹 뷰 column 추가
             string stateUxmlPath = AssetDatabase.GUIDToAssetPath(StateCellUxmlGUID);
             var stateCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(stateUxmlPath);
             treeView.Columns.Insert(1, new Column()
@@ -99,11 +100,13 @@ namespace ClimbGames.Editor.UI
 
             treeView.SetRootPath(UIPrefabConvertSettings.RawPath, "*.prefab");
             //
+            //
         }
 
         void OnClickConvert(string path)
         {
-            Debug.Log($"convert: {path}");
+            string relativePath = path.ToUnityRelativePath();
+            UIPrefabConverter.StartProcess(relativePath);
         }
     }
 }

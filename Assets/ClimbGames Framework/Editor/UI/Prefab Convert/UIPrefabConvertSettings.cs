@@ -27,8 +27,6 @@ namespace ClimbGames.Editor
 
         static UIPrefabConvertSettings()
         {
-            Reset();
-
             rawPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(UIPrefabConvertSettings)}_{nameof(rawPath)}", "Assets/Prefabs/UI");
             outputPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(UIPrefabConvertSettings)}_{nameof(outputPath)}", "Assets/Sources/Prefabs/UI");
             codeGenPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(UIPrefabConvertSettings)}_{nameof(codeGenPath)}", "Assets/Scripts/UI/CodeGen");

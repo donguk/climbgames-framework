@@ -6,53 +6,32 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.Compilation;
 using System;
-using System.Drawing;
-using NUnit.Framework;
-using GluonGui.Dialog;
 
 namespace ClimbGames.Editor.Table
 {
     [InitializeOnLoad]
     public static class TableConverter
     {
-        private const string ReloadFlagKey = "CodeGen_IsWaitingForReload";
-        private const string ConvertExcelFileKey = "Convert_ExcelFiles";
-
-        private static bool compilationFailed;
-
         static TableConverter()
         {
-            compilationFailed = false;
-
-            CompilationPipeline.compilationFinished -= OnCompilationFinished;
-            CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
-
-            if (SessionState.GetBool(ReloadFlagKey, false))
+            if (CodeCompilation<TableCodeGenerator>.IsFinished())
             {
-                SessionState.SetBool(ReloadFlagKey, false);
-                // 리로드 직후 내부 상태가 완전히 안정될 때까지 한 프레임 지연 후 실행
+                string value = CodeCompilation<TableCodeGenerator>.GetData();
                 EditorApplication.delayCall += () =>
                 {
-                    string value = SessionState.GetString(ConvertExcelFileKey, string.Empty);
                     if (string.IsNullOrEmpty(value) == false)
                         CreateTables(value.Split(';', StringSplitOptions.RemoveEmptyEntries));
                 };
             }
+            CodeCompilation<TableCodeGenerator>.Clear();
         }
 
         public static void StartProcess(string[] excelFiles)
         {
-            compilationFailed = false;
-
             if (GenerateTableCode(excelFiles))
             {
-                SessionState.SetString(ConvertExcelFileKey, string.Join(";", excelFiles));
-
-                CompilationPipeline.compilationFinished -= OnCompilationFinished;
-                CompilationPipeline.compilationFinished += OnCompilationFinished;
-
-                CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
-                CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
+                CodeCompilation<TableCodeGenerator>.SetData(string.Join(";", excelFiles));
+                CodeCompilation<TableCodeGenerator>.Start();
             }
             else
             {
@@ -150,37 +129,6 @@ namespace ClimbGames.Editor.Table
             }
 
             return false;
-        }
-
-        static void OnCompilationFinished(object context)
-        {
-            CompilationPipeline.compilationFinished -= OnCompilationFinished;
-            CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
-
-            if (compilationFailed)
-                return;
-
-            SessionState.SetBool(ReloadFlagKey, true);
-        }
-
-        private static void OnAssemblyCompilationFinished(string assemblyPath, CompilerMessage[] messages)
-        {
-            foreach (var message in messages)
-            {
-                if (message.type == CompilerMessageType.Error)
-                {
-                    Debug.LogError(
-                            $"[TableCodeGen] Compile Error\n" +
-                            $"Assembly: {assemblyPath}\n" +
-                            $"File: {message.file}\n" +
-                            $"Line: {message.line}\n" +
-                            $"Column: {message.column}\n" +
-                            $"{message.message}");
-
-                    compilationFailed = true;
-                    break;
-                }
-            }
         }
 
         static List<ClimbGames.Table> CreateTables(string[] excelFiles)

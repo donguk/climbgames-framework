@@ -92,10 +92,17 @@ namespace ClimbGames.Editor.UI
 
         public void SetRootPath(string path, params string[] searchPatterns)
         {
-            datas = BuildEntry(path, searchPatterns);
+            if (Directory.Exists(path))
+            {
+                datas = BuildEntry(path, searchPatterns);
 
-            treeView.SetRootItems(datas);
-            treeView.ExpandItem(datas[0].id);
+                treeView.SetRootItems(datas);
+                treeView.ExpandItem(datas[0].id);
+            }
+            else
+            {
+                Debug.LogError($"[FileTreeView] not exist directory: {path}");
+            }
         }
 
         public FileEntry GetItemDataForIndex(int index) => treeView.GetItemDataForIndex<FileEntry>(index);

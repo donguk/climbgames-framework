@@ -7,21 +7,13 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using ClimbGames;
+using ClimbGames.UI;
 
 namespace #NAMESPACE#
 {
     [Serializable]
-    public partial class #SCRIPTNAME# : Table<#TABLERECORD#>
+    public partial class #SCRIPTNAME# : UIBase
     {
-        public override sealed void Initialize()
-        {
-            OnInitialized();
-        }
-
-        public #TABLERECORD# GetData(int index)
-        {
-            return index >= 0 && index < datas.Count ? datas[index] : null;
-        }
+#FIELDS#
     }
 }

@@ -2,18 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using UnityEditor;
 
 namespace ClimbGames.Editor.Table
 {
-    public interface ICodeGenerator
-    {
-        bool Write(string path);
-    }
-
-    public class TableCodeGenerator : ICodeGenerator
+    public class TableCodeGenerator : CodeGenerator
     {
         private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
 
@@ -45,43 +38,6 @@ namespace ClimbGames.Editor.Table
         public TableCodeGenerator(Schema schema)
         {
             this.schema = schema;
-        }
-
-        public virtual bool Write(string path) { return false; }
-
-        protected static bool Write(string text, string filePath)
-        {
-            Directory.CreateDirectory(TableEditorSettings.CodeGenPath);
-
-            if (File.Exists(filePath))
-            {
-                string oldText = File.ReadAllText(filePath);
-                if (oldText == text)
-                    return false;
-            }
-
-            UTF8Encoding encoding = new UTF8Encoding(true);
-            File.WriteAllText(filePath, text, encoding);
-
-            // 동일한 파일이라도 호출시 컴파일 발생
-            AssetDatabase.ImportAsset(filePath);
-            return true;
-        }
-
-        protected static string CreateScript(string templateGUID, string scriptName)
-        {
-            return CreateScript(templateGUID, null, scriptName);
-        }
-
-        protected static string CreateScript(string templateGUID, string @namespace, string scriptName)
-        {
-            string templatePath = AssetDatabase.GUIDToAssetPath(templateGUID);
-            string scriptText = File.ReadAllText(templatePath);
-
-            scriptText = scriptText.Replace("#NAMESPACE#", @namespace);
-            scriptText = scriptText.Replace("#SCRIPTNAME#", scriptName);
-
-            return scriptText;
         }
 
         protected static bool WriteRecord(Schema schema, string path)
