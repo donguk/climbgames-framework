@@ -17,6 +17,7 @@ namespace ClimbGames.Editor
         public static readonly GUIContent d_TextAsset_Icon = EditorGUIUtility.IconContent("d_TextAsset Icon");
         public static readonly GUIContent UxmlScript_Icon = EditorGUIUtility.IconContent("UxmlScript Icon");
         public static readonly GUIContent DefaultAsset_Icon = EditorGUIUtility.IconContent("DefaultAsset Icon");
+        public static readonly GUIContent d_Prefab_Icon = EditorGUIUtility.IconContent("d_Prefab Icon");
 
 
         // ref: https://github.com/rythwh/unity-editor-icons

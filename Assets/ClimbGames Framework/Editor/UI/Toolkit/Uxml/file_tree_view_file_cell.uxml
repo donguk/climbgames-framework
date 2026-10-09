@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="root" style="flex-direction: row; flex-grow: 1;">
+        <ui:Image name="icon" style="width: 18px; margin-right: 4px;"/>
+        <ui:Label name="name" text="name" style="-unity-text-align: middle-left;">
+            <Bindings>
+                <ui:DataBinding property="text" data-source-path="name" binding-mode="ToTarget"/>
+            </Bindings>
+        </ui:Label>
+    </ui:VisualElement>
+</ui:UXML>

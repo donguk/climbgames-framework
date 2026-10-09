@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="SelectPathField" src="project://database/Assets/ClimbGames%20Framework/Editor/UI/Toolkit/Uxml/select_path_field.uxml?fileID=9197481963319205126&amp;guid=540b38a4aaffbb74e9d798b18fbef6cb&amp;type=3#select_path_field"/>
+    <ui:VisualElement name="root" style="flex-grow: 1;">
+        <ui:Label text="Files" name="title" style="margin-left: 2px; -unity-font-style: bold; margin-bottom: 4px;"/>
+        <ui:MultiColumnTreeView columns="" sort-column-descriptions="" name="tree_view">
+            <ui:Columns>
+                <ui:Column name="file" title="File" cell-template="project://database/Assets/ClimbGames%20Framework/Editor/UI/Toolkit/Uxml/file_tree_view_file_cell.uxml?fileID=9197481963319205126&amp;guid=2664e5480ad83a946a3821d056d272e5&amp;type=3#file_tree_view_file_cell" width="300px" min-width="150px" stretchable="true"/>
+                <ui:Column name="modified" title="Modified" cell-template="project://database/Assets/ClimbGames%20Framework/Editor/UI/Toolkit/Uxml/file_tree_view_modified_cell.uxml?fileID=9197481963319205126&amp;guid=0d59160c1123d394e897525224932da1&amp;type=3#file_tree_view_modified_cell" width="150px"/>
+                <ui:Column name="size" title="Size" cell-template="project://database/Assets/ClimbGames%20Framework/Editor/UI/Toolkit/Uxml/file_tree_view_size_cell.uxml?fileID=9197481963319205126&amp;guid=12ec519605605d442979642645a5e27e&amp;type=3#file_tree_view_size_cell" width="100px"/>
+            </ui:Columns>
+            <ui:SortColumnDescriptions/>
+        </ui:MultiColumnTreeView>
+    </ui:VisualElement>
+</ui:UXML>

@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ClimbGames
+namespace ClimbGames.Editor.UI
 {
     [UxmlElement]
     public partial class SelectPathField : VisualElement
