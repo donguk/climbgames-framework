@@ -8,7 +8,7 @@ using ExcelDataReader;
 
 namespace ClimbGames.Editor.Table
 {
-    public class EnumSchema : Schema
+    public class EnumSchema : Schema, ISchema
     {
         class HeaderPosition
         {
@@ -23,12 +23,11 @@ namespace ClimbGames.Editor.Table
         private Dictionary<string, DeclaredEnum> declaredEnums;
         private Dictionary<string, DeclaredEnum> assemblyEnums;
 
-        public override SchemaType SchemaType => SchemaType.TableEnum;
+        public SchemaType SchemaType => SchemaType.TableEnum;
+        public override string ScriptName => nameof(SchemaType.TableEnum);
 
         public EnumSchema()
         {
-            TableName = nameof(SchemaType.TableEnum);
-
             definitions = new Dictionary<string, EnumDefinition>();
             readPositions = new Dictionary<int, EnumDefinition>();
             tableHeaderPositions = new List<HeaderPosition>();
@@ -36,8 +35,6 @@ namespace ClimbGames.Editor.Table
             declaredEnums = new Dictionary<string, DeclaredEnum>();
             assemblyEnums = new Dictionary<string, DeclaredEnum>();
         }
-
-        public override EnumSchema GetEnumSchema() => this;
 
         public bool ReadDefinition(IExcelDataReader reader)
         {
@@ -159,7 +156,7 @@ namespace ClimbGames.Editor.Table
         public void ReadDeclaredEnum(string codeGenPath)
         {
             // TableEnum 이미 선언된 enum 수집
-            string scriptpPath = $"{codeGenPath}/{TableName}.cs";
+            string scriptpPath = $"{codeGenPath}/{ScriptName}.cs";
             if (File.Exists(scriptpPath))
             {
                 string text = File.ReadAllText(scriptpPath);

@@ -8,30 +8,32 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string TablesScriptGUID = "24e9f7f1262fe3d49a67b68f69950d9e";
 
-        public TableLoadGenerator(Schema schema) : base(schema)
+        private LoadSchema schema;
+
+        public TableLoadGenerator(ISchema schema)
         {
+            this.schema = schema as LoadSchema;
         }
 
         public override bool Write(string path)
         {
-            var loadSchema = schema as LoadSchema;
-            var schemas = loadSchema.TableSchemas;
+            var tableSchemas = schema.TableSchemas;
 
-            string scriptName = schema.TableName;
-            string scriptText = CreateScript(TablesScriptGUID, Schema.GetNamesapce(), "Tables");
+            string scriptName = schema.ScriptName;
+            string scriptText = CreateScript(TablesScriptGUID, schema.Namespace, "Tables");
 
             StringBuilder propertyBuilder = new StringBuilder();
             StringBuilder caseTableBuilder = new StringBuilder();
             StringBuilder caseAssetBuilder = new StringBuilder();
 
-            foreach (var schema in schemas)
+            foreach (var tableSchema in tableSchemas)
             {
-                if (schema.SchemaType == SchemaType.TableEnum)
+                if (tableSchema.SchemaType == SchemaType.TableEnum)
                     continue;
 
-                propertyBuilder.AppendLine($"        public static {schema.TableName}Table {schema.TableName} {{ get; private set; }}");
-                caseTableBuilder.AppendLine($"                    case {schema.TableName}Table value: {schema.TableName} = value; break;");
-                caseAssetBuilder.AppendLine($"                    case \"{schema.TableName}\": {schema.TableName} = Tables<{schema.TableName}Table>.FromBytes(asset.bytes); break;");
+                propertyBuilder.AppendLine($"        public static {tableSchema.ScriptName}Table {tableSchema.ScriptName} {{ get; private set; }}");
+                caseTableBuilder.AppendLine($"                    case {tableSchema.ScriptName}Table value: {tableSchema.ScriptName} = value; break;");
+                caseAssetBuilder.AppendLine($"                    case \"{tableSchema.ScriptName}\": {tableSchema.ScriptName} = Tables<{tableSchema.ScriptName}Table>.FromBytes(asset.bytes); break;");
             }
 
             if (propertyBuilder.Length > 0) propertyBuilder.Length -= Environment.NewLine.Length;

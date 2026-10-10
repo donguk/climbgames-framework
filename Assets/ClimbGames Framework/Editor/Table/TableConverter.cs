@@ -68,7 +68,7 @@ namespace ClimbGames.Editor.Table
                 if (fileName == "TableEnum" || fileName == "Tables") continue;
 
                 fileName = fileName.TrimEnd("Table", "TableRecord");
-                if (schemas.Any(x => x.TableName == fileName) == false)
+                if (schemas.Any(x => x.ScriptName == fileName) == false)
                     isChanged |= AssetDatabase.DeleteAsset(path.ToUnityRelativePath());
             }
 
@@ -77,7 +77,7 @@ namespace ClimbGames.Editor.Table
 
         static bool GenerateTableCode(string[] excelFiles)
         {
-            var schemas = new List<Schema>();
+            var schemas = new List<ISchema>();
             var enumSchema = new EnumSchema();
             var loadSchema = new LoadSchema();
 
@@ -96,25 +96,25 @@ namespace ClimbGames.Editor.Table
                         do
                         {
                             bool result = false;
-                            var schema = new TableSchema(reader.Name, enumSchema);
+                            var tableSchema = new TableSchema(reader.Name, enumSchema);
                             // 동일 테이블 네임 체크 필요
 
                             if (fileNameHash.Contains(Path.GetFileName(filePath)))
                             {
-                                if (result = schema.Resolve(reader))
-                                    schemas.Add(schema);
+                                if (result = tableSchema.Resolve(reader))
+                                    schemas.Add(tableSchema);
                             }
                             else
                             {
-                                result = schema.Read(reader);
+                                result = tableSchema.Read(reader);
                             }
                             if (result)
                             {
-                                loadSchema.AddTableSchema(schema);
+                                loadSchema.AddTableSchema(tableSchema);
                             }
                             else
                             {
-                                Debug.Log($"[Tables] {schema.TableName} table header is invalid...");
+                                Debug.Log($"[Tables] {tableSchema.TableName} table header is invalid...");
                             }
                         }
                         while (reader.NextResult());
@@ -142,20 +142,20 @@ namespace ClimbGames.Editor.Table
                     {
                         do
                         {
-                            var schema = new TableSchema(reader.Name);
+                            var tableSchema = new TableSchema(reader.Name);
                             // 동일 테이블 네임 체크 필요
 
-                            if (schema.Read(reader))
+                            if (tableSchema.Read(reader))
                             {
                                 try
                                 {
                                     string dataPath = TableEditorSettings.DataPath;
-                                    ClimbGames.Table table = TableData.Get(schema).CreateAsset(reader, dataPath);
+                                    ClimbGames.Table table = TableData.Get(tableSchema).CreateAsset(reader, dataPath);
                                     tables.Add(table);
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.Log($"[Tables] fail create table({schema.TableName}): {ex}");
+                                    Debug.Log($"[Tables] fail create table({tableSchema.TableName}): {ex}");
                                 }
                             }
                         }

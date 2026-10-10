@@ -7,19 +7,22 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string KeyValueTableScriptGUID = "6179b5c49fb4b0c44a950139306486d5";
 
-        public KeyValueTableGenerator(Schema schema) : base(schema)
+        private TableSchema schema;
+
+        public KeyValueTableGenerator(ISchema schema)
         {
+            this.schema = schema as TableSchema;
         }
 
         public override bool Write(string path)
         {
             bool isChanged = WriteRecord(schema, path);
-            string recordName = schema.TableName + "TableRecord";
+            string recordName = schema.ScriptName + "TableRecord";
 
-            string scriptName = schema.TableName + "Table";
+            string scriptName = schema.ScriptName + "Table";
             string scriptText = CreateScript(KeyValueTableScriptGUID, schema.Namespace, scriptName);
 
-            var columns = schema.GetTableHeader().Columns;
+            var columns = schema.TableHeader.Columns;
             if (columns.Count > 1)
             {
                 scriptText = scriptText.Replace("#TABLE_RECORD#", recordName);
@@ -37,7 +40,7 @@ namespace ClimbGames.Editor.Table
             }
             else
             {
-                Debug.LogError($"[KeyValueTableGenerator] table({schema.TableName}) column is invalid");
+                Debug.LogError($"[KeyValueTableGenerator] table({schema.ScriptName}) column is invalid");
             }
 
             return isChanged;

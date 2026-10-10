@@ -2,16 +2,16 @@
 
 namespace ClimbGames.Editor.Table
 {
-    public class LoadSchema : Schema
+    public class LoadSchema : Schema, ISchema
     {
         private List<TableSchema> tableSchemas;
 
-        public override SchemaType SchemaType => SchemaType.TableLoad;
+        public SchemaType SchemaType => SchemaType.TableLoad;
+        public override string ScriptName => "Tables";
         public IReadOnlyList<TableSchema> TableSchemas => tableSchemas;
 
         public LoadSchema()
         {
-            TableName = "Tables";
             tableSchemas = new List<TableSchema>();
         }
 

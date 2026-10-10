@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using ExcelDataReader;
 using System.Reflection;
-using UnityEngine;
-using UnityEditor;
-using System.IO;
-using System.Linq;
 
 namespace ClimbGames.Editor.Table
 {
@@ -46,10 +42,10 @@ namespace ClimbGames.Editor.Table
             if (fieldInfos == null)
                 fieldInfos = new Dictionary<string, FieldInfo>();
 
-            var recordType = Type.GetType($"{schema.Namespace}.{schema.TableName}TableRecord, Assembly-CSharp");
+            var recordType = Type.GetType($"{schema.Namespace}.{schema.ScriptName}TableRecord, Assembly-CSharp");
             var data = Activator.CreateInstance(recordType);
 
-            var columns = schema.GetTableHeader().Columns;
+            var columns = schema.TableHeader.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var value = reader.GetValue(columns[i].Index);

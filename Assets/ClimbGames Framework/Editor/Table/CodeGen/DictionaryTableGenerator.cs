@@ -8,19 +8,22 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string DictionaryTableScriptGUID = "f90f88c6da80cef48852f96d9de741eb";
 
-        public DictionaryTableGenerator(Schema schema) : base(schema)
+        private TableSchema schema;
+
+        public DictionaryTableGenerator(ISchema schema)
         {
+            this.schema = schema as TableSchema;
         }
 
         public override bool Write(string path)
         {
             bool isChanged = WriteRecord(schema, path);
-            string recordName = schema.TableName + "TableRecord";
+            string recordName = schema.ScriptName + "TableRecord";
 
-            string scriptName = schema.TableName + "Table";
+            string scriptName = schema.ScriptName + "Table";
             string scriptText = CreateScript(DictionaryTableScriptGUID, schema.Namespace, scriptName);
 
-            var keColumn = schema.GetTableHeader().KeyColumn;
+            var keColumn = schema.TableHeader.KeyColumn;
             if (keColumn != null)
             {
                 scriptText = scriptText.Replace("#TABLE_RECORD#", recordName);
@@ -33,7 +36,7 @@ namespace ClimbGames.Editor.Table
             }
             else
             {
-                Debug.LogError($"[DictionaryTableGenerator] table({schema.TableName}) key column is null");
+                Debug.LogError($"[DictionaryTableGenerator] table({schema.ScriptName}) key column is null");
             }
 
             return isChanged;

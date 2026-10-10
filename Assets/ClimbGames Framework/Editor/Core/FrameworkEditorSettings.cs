@@ -9,7 +9,7 @@ namespace ClimbGames.Editor
         public static string EditorKey => $"{Application.dataPath.GetHashCode()}";
 
         [SerializeField] private bool showSceneName = true;
-        [SerializeField] private string projectNamesapce;
+        [SerializeField] private string projectNamesapce = "ClimbGames";
 
         public string ProjectNamesapce => projectNamesapce;
 

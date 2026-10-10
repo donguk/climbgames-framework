@@ -10,21 +10,22 @@ namespace ClimbGames.Editor.Table
         private static readonly string EnumScriptGUID = "5bebd521bc3a8604ebff8c5cae46af57";
         private static readonly string TableEnumScriptGUID = "bb5bd9a6232dc52488460c4b8589b1b3";
 
+        private EnumSchema schema;
         private StringBuilder enumBuilder = new StringBuilder();
 
-        public TableEnumGenerator(Schema schema) : base(schema)
+        public TableEnumGenerator(ISchema schema)
         {
+            this.schema = schema as EnumSchema;
         }
 
         public override bool Write(string path)
         {
-            string scriptName = schema.TableName;
+            string scriptName = schema.ScriptName;
             string scriptText = CreateScript(TableEnumScriptGUID, schema.Namespace, scriptName);
 
             StringBuilder builder = new StringBuilder();
-            var enumSchema = schema.GetEnumSchema();
 
-            var definistions = enumSchema.GetDeclareEnums();
+            var definistions = schema.GetDeclareEnums();
             for (int i = 0; i < definistions.Count; ++i)
             {
                 var definition = definistions[i];

@@ -39,15 +39,15 @@ namespace ClimbGames.Editor.UI
         static bool GeneratePrefabCode(string prefabPath)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            var root = prefab.transform;
 
-            string scriptText = CodeGenerator.CreateScript("3f97c32d3d31ede44b44bb53e15dfb6d", "ClimbGames", "UIPrefab");
-            scriptText = scriptText.Replace("#FIELDS#", string.Empty);
 
-            string filePath = Path.Combine(UIPrefabConvertSettings.CodeGenPath, $"UIPrefab.cs");
-            CodeGenerator.Write(scriptText, filePath);
 
-            AssetDatabase.ImportAsset(filePath);
-            AssetDatabase.Refresh();
+
+
+
+
+
             return true;
         }
 

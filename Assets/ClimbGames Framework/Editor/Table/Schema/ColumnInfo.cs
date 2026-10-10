@@ -45,7 +45,7 @@ namespace ClimbGames.Editor.Table
                 var column = new ColumnInfo(columnIndex, fieldName)
                 {
                     // enum 스키마 저장
-                    enumSchema = schema.GetEnumSchema()
+                    enumSchema = schema.EnumSchema
                 };
 
                 if (match.Groups[2].Success)

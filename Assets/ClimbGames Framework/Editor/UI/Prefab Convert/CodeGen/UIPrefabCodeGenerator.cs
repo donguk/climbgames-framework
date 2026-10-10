@@ -1,4 +1,6 @@
-﻿namespace ClimbGames.Editor.UI
+﻿using UnityEditor;
+
+namespace ClimbGames.Editor.UI
 {
     public class UIPrefabCodeGenerator : CodeGenerator
     {
@@ -17,8 +19,7 @@
 
 
 
-
-
+            //AssetDatabase.ImportAsset(filePath);
             return isChanged;
         }
 

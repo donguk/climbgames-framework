@@ -7,16 +7,19 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string ListTableScriptGUID = "81581d2875974034d809155ef69fc97c";
 
-        public ListTableGenerator(Schema schema) : base(schema)
+        private TableSchema schema;
+
+        public ListTableGenerator(ISchema schema)
         {
+            this.schema = schema as TableSchema;
         }
 
         public override bool Write(string path)
         {
             bool isChanged = WriteRecord(schema, path);
-            string recordName = schema.TableName + "TableRecord";
+            string recordName = schema.ScriptName + "TableRecord";
 
-            string scriptName = schema.TableName + "Table";
+            string scriptName = schema.ScriptName + "Table";
             string scriptText = CreateScript(ListTableScriptGUID, schema.Namespace, scriptName);
 
             scriptText = scriptText.Replace("#TABLERECORD#", recordName);

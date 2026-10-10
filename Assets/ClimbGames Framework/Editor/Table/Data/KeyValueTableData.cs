@@ -21,7 +21,7 @@ namespace ClimbGames.Editor.Table
             var methodInfo = listInfo.FieldType.GetMethod("Add");
 
             var list = Activator.CreateInstance(listInfo.FieldType);
-            var columns = schema.GetTableHeader().Columns;
+            var columns = schema.TableHeader.Columns;
             if (columns.Count > 1)
             {
                 var keyColumn = columns[0];

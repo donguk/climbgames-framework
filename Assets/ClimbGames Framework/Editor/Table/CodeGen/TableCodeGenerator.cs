@@ -10,7 +10,7 @@ namespace ClimbGames.Editor.Table
     {
         private static readonly string RecordScriptGUID = "7f64cc9c6158a0249a16ede93597f3ab";
 
-        public static ICodeGenerator Get(Schema schema)
+        public static ICodeGenerator Get(ISchema schema)
         {
             switch (schema.SchemaType)
             {
@@ -21,10 +21,10 @@ namespace ClimbGames.Editor.Table
                 case SchemaType.TableLoad: return new TableLoadGenerator(schema);
             }
 
-            return new TableCodeGenerator(schema);
+            return new TableCodeGenerator();
         }
 
-        public static bool Write(string path, List<Schema> schemas)
+        public static bool Write(string path, List<ISchema> schemas)
         {
             bool isChanged = false;
             foreach (var schema in schemas)
@@ -33,16 +33,9 @@ namespace ClimbGames.Editor.Table
             return isChanged;
         }
 
-        protected Schema schema;
-
-        public TableCodeGenerator(Schema schema)
+        protected static bool WriteRecord(TableSchema schema, string path)
         {
-            this.schema = schema;
-        }
-
-        protected static bool WriteRecord(Schema schema, string path)
-        {
-            string scriptName = schema.TableName + "TableRecord";
+            string scriptName = schema.ScriptName + "TableRecord";
             string scriptText = CreateScript(RecordScriptGUID, schema.Namespace, scriptName);
 
             StringBuilder fieldBuilder = new StringBuilder();
@@ -50,7 +43,7 @@ namespace ClimbGames.Editor.Table
             StringBuilder writeBuilder = new StringBuilder();
             StringBuilder readBuilder = new StringBuilder();
 
-            var columns = schema.GetTableHeader().Columns;
+            var columns = schema.TableHeader.Columns;
             for (int i = 0; i < columns.Count; ++i)
             {
                 var column = columns[i];
