@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
-using Unity.Android.Gradle;
 using UnityEditor.UIElements;
 
 namespace ClimbGames.Editor.UI
 {
-    public class UIPrefabWindow : EditorWindow
+    public class PrefabWindow : EditorWindow
     {
         private const string WindowUxmlGUID = "8871c4d2fda088847a0c7fd3ac3c627e";
         private const string StateCellUxmlGUID = "74fa90ff22b5ca34abb41cc8a3468495";
@@ -15,7 +14,7 @@ namespace ClimbGames.Editor.UI
         [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
         private static void Open()
         {
-            var window = GetWindow<UIPrefabWindow>();
+            var window = GetWindow<PrefabWindow>();
             window.titleContent = new GUIContent("UI Prefab Convert");
             window.minSize = new Vector2(400, 300);
         }
@@ -31,25 +30,25 @@ namespace ClimbGames.Editor.UI
             var treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
 
             var rawPathField = rootVisualElement.Q<SelectPathField>("raw_path");
-            rawPathField.Path = UIPrefabConvertSettings.RawPath;
+            rawPathField.Path = PrefabConvertSettings.RawPath;
             rawPathField.OnPathChanged += (path) =>
             {
-                UIPrefabConvertSettings.RawPath = path;
-                treeView.SetRootPath(UIPrefabConvertSettings.RawPath, "*.prefab");
+                PrefabConvertSettings.RawPath = path;
+                treeView.SetRootPath(PrefabConvertSettings.RawPath, "*.prefab");
             };
 
             var outputPathField = rootVisualElement.Q<SelectPathField>("output_path");
-            outputPathField.Path = UIPrefabConvertSettings.OutputPath;
+            outputPathField.Path = PrefabConvertSettings.OutputPath;
             outputPathField.OnPathChanged += (path) =>
             {
-                UIPrefabConvertSettings.OutputPath = path;
+                PrefabConvertSettings.OutputPath = path;
             };
 
             var codeGenPathField = rootVisualElement.Q<SelectPathField>("codegen_path");
-            codeGenPathField.Path = UIPrefabConvertSettings.CodeGenPath;
+            codeGenPathField.Path = PrefabConvertSettings.CodeGenPath;
             codeGenPathField.OnPathChanged += (path) =>
             {
-                UIPrefabConvertSettings.CodeGenPath = path;
+                PrefabConvertSettings.CodeGenPath = path;
             };
 
 
@@ -98,7 +97,7 @@ namespace ClimbGames.Editor.UI
             });
 
 
-            treeView.SetRootPath(UIPrefabConvertSettings.RawPath, "*.prefab");
+            treeView.SetRootPath(PrefabConvertSettings.RawPath, "*.prefab");
             //
             //
         }
@@ -106,7 +105,7 @@ namespace ClimbGames.Editor.UI
         void OnClickConvert(string path)
         {
             string relativePath = path.ToUnityRelativePath();
-            UIPrefabConverter.StartProcess(relativePath);
+            PrefabConverter.StartProcess(relativePath);
         }
     }
 }

@@ -1,25 +1,22 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace ClimbGames.Editor.UI
 {
     [InitializeOnLoad]
-    public static class UIPrefabConverter
+    public static class PrefabConverter
     {
-        static UIPrefabConverter()
+        static PrefabConverter()
         {
-            if (CodeCompilation<UIPrefabCodeGenerator>.IsFinished())
+            if (CodeCompilation<PrefabCodeGenerator>.IsFinished())
             {
-                var prefabPath = CodeCompilation<UIPrefabCodeGenerator>.GetData();
+                var prefabPath = CodeCompilation<PrefabCodeGenerator>.GetData();
                 EditorApplication.delayCall += () =>
                 {
                     CreatePrefab(prefabPath);
                 };
             }
-            CodeCompilation<UIPrefabCodeGenerator>.Clear();
+            CodeCompilation<PrefabCodeGenerator>.Clear();
         }
 
         public static void StartProcess(string prefabPath)
@@ -27,8 +24,8 @@ namespace ClimbGames.Editor.UI
             // generate code
             if (GeneratePrefabCode(prefabPath))
             {
-                CodeCompilation<UIPrefabCodeGenerator>.SetData(prefabPath);
-                CodeCompilation<UIPrefabCodeGenerator>.Start();
+                CodeCompilation<PrefabCodeGenerator>.SetData(prefabPath);
+                CodeCompilation<PrefabCodeGenerator>.Start();
             }
             else
             {
@@ -63,11 +60,11 @@ namespace ClimbGames.Editor.UI
 
 
             AssetDatabase.Refresh();
-            Debug.Log($"[UIPrefabConvet] convert success: {prefabPath}");
+            Debug.Log($"[PrefabConvet] convert success: {prefabPath}");
 
-            if (EditorWindow.HasOpenInstances<UIPrefabWindow>())
+            if (EditorWindow.HasOpenInstances<PrefabWindow>())
             {
-                var window = EditorWindow.GetWindow<UIPrefabWindow>();
+                var window = EditorWindow.GetWindow<PrefabWindow>();
                 //window?.OnConvertFinished(tables);
             }
         }
