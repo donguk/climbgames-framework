@@ -7,13 +7,17 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
 using ClimbGames.UI;
 
 namespace #NAMESPACE#
 {
-    [Serializable]
     public partial class #SCRIPTNAME# : UIBase
     {
 #FIELDS#
+
+
+#GROUPS#
     }
 }

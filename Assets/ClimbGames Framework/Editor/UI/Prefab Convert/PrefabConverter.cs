@@ -36,14 +36,16 @@ namespace ClimbGames.Editor.UI
         static bool GeneratePrefabCode(string prefabPath)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            var root = prefab.transform;
+            var schema = new PrefabSchema(prefab.name);
 
+            schema.Read(prefab.transform);
 
-
-
-
-
-
+            var generator = new PrefabCodeGenerator(schema);
+            if (generator.Write(PrefabConvertSettings.CodeGenPath))
+            {
+                AssetDatabase.Refresh();
+                return true;
+            }
 
             return true;
         }

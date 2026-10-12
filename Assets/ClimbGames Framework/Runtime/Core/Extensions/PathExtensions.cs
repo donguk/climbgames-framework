@@ -54,5 +54,19 @@ namespace ClimbGames
 
             return path;
         }
+
+        public static string TrimStart(this string path, params string[] prefix)
+        {
+            if (prefix == null)
+                return path;
+
+            foreach (var value in prefix)
+            {
+                if (path.StartsWith(value))
+                    return path.Substring(value.Length);
+            }
+
+            return path;
+        }
     }
 }
