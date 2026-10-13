@@ -1,47 +1,24 @@
 ﻿using System;
-using ClimbGames.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using ClimbGames.UI;
+using ClimbGames.Eidot.UI;
 
 namespace ClimbGames.Editor.UI
 {
-    public abstract class Binding
+    public enum BindingType
     {
-        [Serializable]
-        public class Prefix
-        {
-            public string[] values;
+        None,
+        Component,
+        Group,
+        List,
+        UIBase,
+    }
 
-            public Prefix(string value)
-            {
-                values = new string[] { value };
-            }
-
-            public bool Match(string name)
-            {
-                foreach (var value in values)
-                {
-                    if (name.StartsWith(value, StringComparison.OrdinalIgnoreCase))
-                        return true;
-                }
-
-                return false;
-            }
-
-            public override string ToString()
-            {
-                string text = string.Empty;
-                for (int i = 0; i < values.Length; ++i)
-                {
-                    if (text.Length > 0)
-                        text += ", ";
-                    text += values[i];
-                }
-
-                return $"prefix: [{text}]";
-            }
-        }
+    public partial class Binding
+    {
+        public static readonly Binding Default = new Binding(BindingType.None, string.Empty);
 
         [Serializable]
         public class Schema
@@ -50,20 +27,33 @@ namespace ClimbGames.Editor.UI
             public string typeName;
         }
 
+        private BindingType bindingType;
+        private Prefix prefix;
 
-
-
-        protected Prefix prefix;
+        public BindingType Type => bindingType;
+        public Type FieldType { get; private set; }
         public string MatchValue { get; private set; }
 
-        public Binding(string prefix)
+        public Binding(BindingType type, string prefix, Type fieldType)
         {
+            bindingType = type;
             this.prefix = new Prefix(prefix);
+            FieldType = fieldType;
         }
 
-        public Binding(Prefix prefix)
+        public Binding(BindingType type, string prefix) : this(type, prefix, typeof(Transform))
         {
+        }
+
+        public Binding(BindingType type, Prefix prefix, Type fieldType)
+        {
+            bindingType = type;
             this.prefix = prefix;
+            FieldType = fieldType;
+        }
+
+        public Binding(BindingType type, Prefix prefix) : this(type, prefix, typeof(Transform))
+        {
         }
 
         public virtual bool Match(string name)
@@ -76,23 +66,32 @@ namespace ClimbGames.Editor.UI
             return false;
         }
 
-        public abstract BindingElement CreateElement(GameObject target);
+        public BindingElement CreateElement(GameObject target)
+        {
+            return bindingType switch
+            {
+                BindingType.Component => new ComponentElement(target, this),
+                BindingType.Group => new GroupElement(target, this),
+                BindingType.List => new ListElement(target, this),
+                BindingType.UIBase => new UIBaseElement(target, this),
+                _ => new BindingElement(target, this),
+            };
+        }
 
-        public virtual Type GetFieldType() { return typeof(Transform); }
 
 
 
 
         private static Binding[] bindings = new Binding[]
         {
-            new ComponentBinding(typeof(Transform), "trs_"),
-            new ComponentBinding(typeof(TMP_Text), "txt_"),
-            new ComponentBinding(typeof(Image), "img_"),
+            new Binding(BindingType.Component, "trs_", typeof(Transform)),
+            new Binding(BindingType.Component, "txt_", typeof(TMP_Text)),
+            new Binding(BindingType.Component, "img_", typeof(Image)),
 
-            new ComponentBinding(typeof(UIBase), "ui_"),
+            new Binding(BindingType.Group, "grp_"),
+            new Binding(BindingType.List, "list_"),
 
-            new GroupBinding("grp_"),
-            new ListBinding("list_"),
+            new Binding(BindingType.UIBase, "ui_", typeof(UIBase)),
         };
 
         public static bool TryGetMatch(string name, out Binding result)

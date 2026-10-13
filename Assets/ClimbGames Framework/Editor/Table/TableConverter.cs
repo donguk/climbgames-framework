@@ -133,6 +133,9 @@ namespace ClimbGames.Editor.Table
 
         static List<ClimbGames.Table> CreateTables(string[] excelFiles)
         {
+            string dataPath = TableEditorSettings.DataPath;
+            Directory.CreateDirectory(dataPath);
+
             List<ClimbGames.Table> tables = new List<ClimbGames.Table>();
             foreach (var filePath in excelFiles)
             {
@@ -149,7 +152,6 @@ namespace ClimbGames.Editor.Table
                             {
                                 try
                                 {
-                                    string dataPath = TableEditorSettings.DataPath;
                                     ClimbGames.Table table = TableData.Get(tableSchema).CreateAsset(reader, dataPath);
                                     tables.Add(table);
                                 }

@@ -55,11 +55,11 @@ namespace ClimbGames.Editor.UI
             string scriptText = CreateScript(GroupTemplateGUID, definition.name);
 
             groupBuilder.Clear();
-            groupBuilder.AppendLine($"            [SerializeField] private Transform transform;");
+            groupBuilder.AppendLine($"            public Transform transform;");
 
             var elements = definition.Elements;
             for (int i = 0; i < elements.Count; ++i)
-                groupBuilder.AppendLine(elements[i].GetFieldText("            ", false));
+                groupBuilder.AppendLine(elements[i].GetGroupFieldText());
 
             if (groupBuilder.Length > 0) groupBuilder.Length -= Environment.NewLine.Length;
             scriptText = scriptText.Replace("#FIELDS#", groupBuilder.ToString());

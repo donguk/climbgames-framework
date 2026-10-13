@@ -1,5 +1,5 @@
         [Serializable]
-        public class #SCRIPTNAME#
+        public partial class #SCRIPTNAME#
         {
 #FIELDS#
         }

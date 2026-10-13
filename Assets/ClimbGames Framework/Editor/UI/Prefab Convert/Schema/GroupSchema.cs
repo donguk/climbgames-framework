@@ -16,16 +16,13 @@ namespace ClimbGames.Editor.UI
             elements = new Dictionary<string, BindingElement>();
         }
 
-        public void AddElements(List<BindingElement> list)
+        public void AddElement(BindingElement element)
         {
-            for (int i = 0; i < list.Count; ++i)
-            {
-                string fieldName = list[i].FieldName;
-                if (elements.ContainsKey(fieldName) == false)
-                    elements[fieldName] = list[i];
-                else
-                    Debug.LogError($"[GroupDefinition] {name} Group has duplicated fieldName: {fieldName}");
-            }
+            string fieldName = element.FieldName;
+            if (elements.ContainsKey(fieldName) == false)
+                elements[fieldName] = element;
+            else
+                Debug.LogError($"[GroupDefinition] {name} Group has duplicated fieldName: {fieldName}");
         }
     }
 
@@ -42,12 +39,12 @@ namespace ClimbGames.Editor.UI
             definitions = new Dictionary<string, GroupDefinition>();
         }
 
-        public void AddDefinition(string groupName, List<BindingElement> elements)
+        public GroupDefinition AddGroup(string groupName)
         {
             if (definitions.TryGetValue(groupName, out var definition) == false)
                 definitions[groupName] = definition = new GroupDefinition(groupName);
 
-            definition.AddElements(elements);
+            return definition;
         }
     }
 }

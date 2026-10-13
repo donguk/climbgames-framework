@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -27,9 +28,6 @@ namespace ClimbGames.Editor.UI
 
             entry = new BindingElement(root.gameObject, this);
             entry.SearchElements();
-
-            // 그룹 정의 수집
-            entry.RetrieveGroup(GroupSchema);
         }
 
         public string GetUniqueFieldName(BindingElement element)
@@ -64,7 +62,22 @@ namespace ClimbGames.Editor.UI
             StringBuilder builder = new StringBuilder();
             entry.RetrieveFieldText(builder);
 
+            if (builder.Length > 0) builder.Length -= Environment.NewLine.Length;
             return builder.ToString();
+        }
+
+        public bool AssignElements()
+        {
+            Type type = Type.GetType($"{Namespace}.{ScriptName}, Assembly-CSharp");
+            if (type != null)
+            {
+                var component = entry.Target.AddComponent(type);
+                entry.AssignFieldValue(component);
+                return true;
+            }
+
+            Debug.LogError($"[PrefabConvert] can not find type({Namespace}.{ScriptName})");
+            return false;
         }
     }
 }

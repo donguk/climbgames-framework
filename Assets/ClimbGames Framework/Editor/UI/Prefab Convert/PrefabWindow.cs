@@ -107,5 +107,10 @@ namespace ClimbGames.Editor.UI
             string relativePath = path.ToUnityRelativePath();
             PrefabConverter.StartProcess(relativePath);
         }
+
+        public void OnConvertFinished(string originPrefabPath, bool success)
+        {
+
+        }
     }
 }

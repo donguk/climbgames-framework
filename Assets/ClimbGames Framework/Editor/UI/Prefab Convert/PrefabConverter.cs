@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace ClimbGames.Editor.UI
@@ -29,7 +30,7 @@ namespace ClimbGames.Editor.UI
             }
             else
             {
-
+                CreatePrefab(prefabPath);
             }
         }
 
@@ -37,7 +38,6 @@ namespace ClimbGames.Editor.UI
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             var schema = new PrefabSchema(prefab.name);
-
             schema.Read(prefab.transform);
 
             var generator = new PrefabCodeGenerator(schema);
@@ -47,27 +47,32 @@ namespace ClimbGames.Editor.UI
                 return true;
             }
 
-            return true;
+            return false;
         }
 
         static void CreatePrefab(string prefabPath)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
 
+            var schema = new PrefabSchema(instance.name);
+            schema.Read(instance.transform);
+            schema.AssignElements();
 
+            Directory.CreateDirectory(PrefabConvertSettings.OutputPath);
+            string newPath = Path.Combine(PrefabConvertSettings.OutputPath, Path.GetFileName(prefabPath));
 
-
-
-
+            PrefabUtility.SaveAsPrefabAsset(instance, newPath, out bool success);
+            GameObject.DestroyImmediate(instance);
 
             AssetDatabase.Refresh();
-            Debug.Log($"[PrefabConvet] convert success: {prefabPath}");
-
+            Debug.Log($"[PrefabConvet] convert success({success}): {newPath}");
             if (EditorWindow.HasOpenInstances<PrefabWindow>())
             {
                 var window = EditorWindow.GetWindow<PrefabWindow>();
-                //window?.OnConvertFinished(tables);
+                window?.OnConvertFinished(prefabPath, success);
             }
         }
     }

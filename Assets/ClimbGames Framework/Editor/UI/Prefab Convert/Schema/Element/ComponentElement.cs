@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ClimbGames.Editor.UI
 {
@@ -11,29 +8,14 @@ namespace ClimbGames.Editor.UI
         {
         }
 
-        public override void RetrieveFieldText(StringBuilder builder)
+        public override object GetFieldValue()
         {
-            builder.AppendLine(GetFieldText("        ", true));
-            base.RetrieveFieldText(builder);
-        }
+            var value = target.GetComponent(FieldType);
+            if (value != null)
+                return value;
 
-        public override string GetFieldText(string indent, bool uniqueName)
-        {
-            Type fieldType = binding.GetFieldType();
-
-            string typeName = fieldType.FullName.TrimStart($"{schema.Namespace}.", "UnityEngine.UI.", "UnityEngine.", "TMPro.");
-            string fieldName = FieldName;
-
-            if (uniqueName)
-                fieldName = schema.GetUniqueFieldName(this);
-
-            return $"{indent}[SerializeField] private {typeName} {fieldName};";
-        }
-
-        public override void RetrieveGroupChildren(ref List<BindingElement> list)
-        {
-            list.Add(this);
-            base.RetrieveGroupChildren(ref list);
+            Debug.LogError($"[ComponentElement] not exist component({FieldType.Name}): target({target.name})");
+            return base.GetFieldValue();
         }
     }
 }

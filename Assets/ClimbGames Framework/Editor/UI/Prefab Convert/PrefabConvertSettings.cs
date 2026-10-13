@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEngine.UIElements;
 
 namespace ClimbGames.Editor.UI
 {

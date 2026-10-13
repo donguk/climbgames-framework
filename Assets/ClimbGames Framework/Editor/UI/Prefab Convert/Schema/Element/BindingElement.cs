@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using ClimbGames.Editor.Table;
 using UnityEngine;
@@ -10,22 +12,30 @@ namespace ClimbGames.Editor.UI
         protected PrefabSchema schema;
         protected GameObject target;
         protected Binding binding;
-        protected BindingElement parent;
-        protected int depth;
-        protected List<BindingElement> children;
 
+        private BindingElement parent;
+        private List<BindingElement> children;
+        private int depth;
+
+        public GameObject Target => target;
         public BindingElement Parent => parent;
-        public virtual string FieldName { get; private set; }
+        public IReadOnlyList<BindingElement> Children => children;
+        public string FieldName { get; protected set; }
+        public Type FieldType => binding != null ? binding.FieldType : typeof(Transform);
+        public bool IsValid => binding != null;
 
-        public BindingElement(GameObject target, Binding binding)
+        private BindingElement(GameObject target)
         {
             this.target = target;
+        }
+
+        public BindingElement(GameObject target, Binding binding) : this(target)
+        {
             this.binding = binding;
         }
 
-        public BindingElement(GameObject target, PrefabSchema schema)
+        public BindingElement(GameObject target, PrefabSchema schema) : this(target)
         {
-            this.target = target;
             this.schema = schema;
         }
 
@@ -38,12 +48,13 @@ namespace ClimbGames.Editor.UI
             FieldName = target.name.ToValidFieldName();
         }
 
-        protected void AddChild(BindingElement element)
+        protected virtual BindingElement AddChild(BindingElement element)
         {
             if (children == null)
                 children = new List<BindingElement>();
 
             children.Add(element);
+            return element;
         }
 
         public void SearchElements()
@@ -51,7 +62,7 @@ namespace ClimbGames.Editor.UI
             SearchElements(target.transform, depth);
         }
 
-        protected void SearchElements(Transform transform, int depth)
+        protected virtual void SearchElements(Transform transform, int depth)
         {
             int count = transform.childCount;
             for (int i = 0; i < count; ++i)
@@ -62,7 +73,7 @@ namespace ClimbGames.Editor.UI
                     var element = binding.CreateElement(chlid.gameObject);
                     element.Initialize(this, schema, depth + 1);
 
-                    AddChild(element);
+                    element = AddChild(element);
                     element.SearchElements();
                 }
                 else
@@ -72,26 +83,14 @@ namespace ClimbGames.Editor.UI
             }
         }
 
-        public virtual void RetrieveGroup(GroupSchema groupSchema)
+        public void RetrieveFieldText(StringBuilder builder)
         {
-            if (children != null)
+            if (IsValid)
             {
-                foreach (var child in children)
-                    child.RetrieveGroup(groupSchema);
+                if (OnRetrieveFieldText(builder) == false)
+                    return;
             }
-        }
 
-        public virtual void RetrieveGroupChildren(ref List<BindingElement> list)
-        {
-            if (children != null)
-            {
-                foreach (var child in children)
-                    child.RetrieveGroupChildren(ref list);
-            }
-        }
-
-        public virtual void RetrieveFieldText(StringBuilder builder)
-        {
             if (children != null)
             {
                 foreach (var child in children)
@@ -99,9 +98,87 @@ namespace ClimbGames.Editor.UI
             }
         }
 
-        public virtual string GetFieldText(string indent, bool uniqueName)
+        protected virtual bool OnRetrieveFieldText(StringBuilder builder)
         {
-            return string.Empty;
+            builder.AppendLine(GetFieldText());
+            return true;
+        }
+
+        public string GetFieldText()
+        {
+            string typeName = GetFieldTypeName();
+            string fieldName = schema.GetUniqueFieldName(this);
+
+            return $"{GetIndent(2)}[SerializeField] private {typeName} {fieldName};";
+        }
+
+        public string GetGroupFieldText()
+        {
+            string typeName = GetFieldTypeName();
+            string fieldName = FieldName;
+
+            return $"{GetIndent(3)}public {typeName} {fieldName};";
+        }
+
+        protected virtual string GetFieldTypeName()
+        {
+            return GetTypeName(FieldType);
+        }
+
+        protected string GetTypeName(Type type)
+        {
+            string fullName = type.FullName;
+            return fullName.TrimStart("ClimbGames.UI.", "UnityEngine.UI.", "UnityEngine.", "TMPro.", $"{schema.Namespace}.");
+        }
+
+        protected string GetIndent(int level)
+        {
+            string indent = string.Empty;
+            for (int i = 0; i < level; ++i)
+                indent += "    ";
+
+            return indent;
+        }
+
+        public void AssignFieldValue(object obj)
+        {
+            if (IsValid)
+            {
+                if (OnAssignFieldValue(obj) == false)
+                    return;
+            }
+
+            if (children != null)
+            {
+                foreach (var child in children)
+                    child.AssignFieldValue(obj);
+            }
+        }
+
+        protected virtual bool OnAssignFieldValue(object obj)
+        {
+            Type type = obj.GetType();
+            string fieldName = schema.GetUniqueFieldName(this);
+
+            var fieldInfo = type.GetField($"{fieldName}", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (fieldInfo == null)
+                Debug.LogError($"[BindingElement] can not find field({FieldName})");
+
+            var fieldValue = GetFieldValue();
+            try
+            {
+                fieldInfo?.SetValue(obj, fieldValue);
+            }
+            catch
+            {
+                //
+            }
+            return true;
+        }
+
+        public virtual object GetFieldValue()
+        {
+            return target.transform;
         }
 
         public void LogElements()
