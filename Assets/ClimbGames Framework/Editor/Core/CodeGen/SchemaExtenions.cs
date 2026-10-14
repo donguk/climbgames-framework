@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClimbGames.Editor.Table
+namespace ClimbGames.Editor
 {
     public static class SchemaExtenions
     {

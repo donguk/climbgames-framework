@@ -10,11 +10,11 @@ namespace ClimbGames.Editor.UI
 
         public override object GetFieldValue()
         {
-            var value = target.GetComponent(FieldType);
+            var value = Target.GetComponent(FieldType);
             if (value != null)
                 return value;
 
-            Debug.LogError($"[ComponentElement] not exist component({FieldType.Name}): target({target.name})");
+            Debug.LogError($"[ComponentElement] not exist component({FieldType.Name}): target({Target.name})");
             return base.GetFieldValue();
         }
     }

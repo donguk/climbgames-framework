@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ClimbGames.Editor.Table;
+using System.Text;
 using UnityEngine;
 
 namespace ClimbGames.Editor.UI
@@ -10,49 +10,76 @@ namespace ClimbGames.Editor.UI
     {
         private string groupName;
         private GroupDefinition definition;
-        private List<BindingElement> targets;
+        private BindingElement virtualRoot;
+        private List<BindingElement> targetElements;
+
+        public override Type FieldType
+        {
+            get
+            {
+                var type = Type.GetType($"{Schema.Namespace}.{Schema.ScriptName}+{groupName}, Assembly-CSharp");
+                return type ?? base.FieldType;
+            }
+        }
 
         public GroupElement(GameObject target, Binding binding) : base(target, binding)
         {
         }
 
-        protected override void Initialize(BindingElement parent, PrefabSchema schema, int depth = 0)
+        protected override void OnInitialize(BindingElement parent, PrefabSchema schema, int depth = 0)
         {
-            base.Initialize(parent, schema, depth);
+            base.OnInitialize(parent, schema, depth);
 
-            groupName = binding.MatchValue.ToValidFieldName();
+            virtualRoot = new BindingElement(Target, schema);
+            groupName = PrefixMatchValue.ToValidFieldName();
             definition = schema.GroupSchema.AddGroup(groupName);
+        }
+
+        protected override BindingElement OnBeforeAdded()
+        {
+            // 동일한 그룹의 상위 element가 열려 있는 경우, 포함 시키기 위해 일반 element 로 변환
+            if (definition.Depth > 0)
+            {
+                var element = new BindingElement(this, targetElements);
+                return element;
+            }
+
+            return base.OnBeforeAdded();
         }
 
         protected override BindingElement AddChild(BindingElement element)
         {
-            if (targets == null)
-                targets = new List<BindingElement>();
+            if (targetElements == null)
+                targetElements = new List<BindingElement>();
 
-            targets.Add(element);
+            element.SetParent(virtualRoot);
+            targetElements.Add(element);
+
             return element;
         }
 
         protected override void SearchElements(Transform transform, int depth)
         {
+            definition.Open();
             base.SearchElements(transform, depth);
 
-            // 하위 아이탬 수집 후 그룹 field 수집
-            if (targets != null)
+            // 최상위 group 의 탐색이 끝난 경우
+            if (definition.Depth <= 1)
             {
-                foreach (var element in targets)
-                    OnRetrieveGroupField(element, definition);
+                // 하위 아이탬 field 수집
+                if (targetElements != null)
+                {
+                    foreach (var element in targetElements)
+                        OnRetrieveGroupField(element, definition);
+                }
             }
+            definition.Close();
         }
 
         void OnRetrieveGroupField(BindingElement element, GroupDefinition definition)
         {
             if (element.IsValid)
-            {
-                // 동일 그룹인 경우 제외
-                if (element is GroupElement groupElement == false || groupElement.groupName != groupName)
-                    definition.AddElement(element);
-            }
+                definition.AddElement(element);
 
             var children = element.Children;
             if (children != null)
@@ -62,23 +89,39 @@ namespace ClimbGames.Editor.UI
             }
         }
 
-        protected override string GetFieldTypeName()
+        public override string GetFieldTypeName()
         {
             return $"{groupName}";
         }
 
         public override object GetFieldValue()
         {
-            var type = Type.GetType($"{schema.Namespace}.{schema.ScriptName}+{groupName}, Assembly-CSharp");
+            var type = FieldType;
             var obj = Activator.CreateInstance(type);
 
+            // root transform 할당
             var fieldInfo = type.GetField("transform", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            fieldInfo.SetValue(obj, target.transform);
+            fieldInfo.SetValue(obj, Target.transform);
 
-            if (targets != null)
+            definition.ClearAndCheckAssignment();
+            if (targetElements != null)
             {
-                foreach (var element in targets)
+                foreach (var element in targetElements)
                     OnAssignGroupValue(element, obj);
+            }
+
+            var notAssignedElements = definition.NotAssignedElements;
+            if (notAssignedElements.Count > 0)
+            {
+                string text = string.Empty;
+                foreach (var element in notAssignedElements)
+                {
+                    if (text.Length > 0)
+                        text += ", ";
+                    text += $"{element.fieldName}";
+                }
+
+                Debug.LogError($"[GroupElement] {FieldName} Group has not assigned fields: {text}");
             }
 
             return obj;
@@ -88,21 +131,18 @@ namespace ClimbGames.Editor.UI
         {
             if (element.IsValid)
             {
-                // 동일 그룹인 경우 제외
-                if (element is GroupElement groupElement == false || groupElement.groupName != groupName)
-                {
-                    var fieldInfo = obj.GetType().GetField(element.FieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    if (fieldInfo == null)
-                        Debug.LogError($"[GroupElement] can not find field in {groupName} Group: {element.FieldName}");
+                string fieldName = definition.GetUniqueFieldName(element);
+                var fieldInfo = obj.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (fieldInfo == null)
+                    Debug.LogError($"[GroupElement] can not find field in {groupName} Group: {element.FieldName}");
 
-                    try
-                    {
-                        fieldInfo?.SetValue(obj, element.GetFieldValue());
-                    }
-                    catch
-                    {
-                        //
-                    }
+                try
+                {
+                    fieldInfo?.SetValue(obj, element.GetFieldValue());
+                }
+                catch
+                {
+                    //
                 }
             }
 

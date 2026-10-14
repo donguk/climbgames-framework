@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using ClimbGames.Editor.UI;
 using UnityEngine;
 
@@ -8,11 +8,18 @@ namespace ClimbGames.Eidot.UI
 {
     public class ListElement : BindingElement
     {
-        private Type itemType = typeof(Transform);
+        private BindingElement virtualRoot;
         private List<BindingElement> items;
 
-        public ListElement(GameObject target, Binding binding = null) : base(target, binding)
+        public ListElement(GameObject target, Binding binding) : base(target, binding)
         {
+        }
+
+        protected override void OnInitialize(BindingElement parent, PrefabSchema schema, int depth = 0)
+        {
+            base.OnInitialize(parent, schema, depth);
+
+            virtualRoot = new BindingElement(Target, schema);
         }
 
         protected override BindingElement AddChild(BindingElement element)
@@ -21,26 +28,26 @@ namespace ClimbGames.Eidot.UI
                 items = new List<BindingElement>();
 
             // 첫번째 자식의 타입으로 결정
-            if (items.Count == 0 || itemType == element.FieldType)
+            if (items.Count <= 0 || items[0].GetFieldTypeName() == element.GetFieldTypeName())
             {
                 items.Add(element);
-                itemType = element.FieldType;
 
-                // 새로운 루트 생성
-                element = new BindingElement(element.Target, schema);
+                // create none binding element
+                element = new BindingElement(element);
             }
 
             return base.AddChild(element);
         }
 
-        protected override string GetFieldTypeName()
+        public override string GetFieldTypeName()
         {
-            string typeName = GetTypeName(itemType);
-            return $"List<{typeName}>";
+            string fielTypeName = items?.FirstOrDefault()?.GetFieldTypeName() ?? GetFieldTypeName();
+            return $"List<{fielTypeName}>";
         }
 
         public override object GetFieldValue()
         {
+            var itemType = items?.FirstOrDefault()?.FieldType ?? FieldType;
             var type = typeof(List<>).MakeGenericType(itemType);
             var list = (System.Collections.IList)Activator.CreateInstance(type);
 
@@ -51,14 +58,14 @@ namespace ClimbGames.Eidot.UI
                     var value = item.GetFieldValue();
                     if (value == null)
                     {
-                        Debug.Log($"[ListElement] item value is null: {item.FieldName}");
+                        Debug.LogError($"[ListElement] item value is null: {item.FieldName}");
                         continue;
                     }
 
                     if (itemType.IsAssignableFrom(value.GetType()))
                         list.Add(value);
                     else
-                        Debug.Log($"[ListElement] can not add item: {item.FieldName}");
+                        Debug.LogError($"[ListElement] can not add item: {item.FieldName}");
                 }
             }
 

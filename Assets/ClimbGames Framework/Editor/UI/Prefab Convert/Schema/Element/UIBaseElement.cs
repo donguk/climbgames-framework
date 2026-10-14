@@ -17,14 +17,14 @@ namespace ClimbGames
             // 자식을 찾지 않음.
         }
 
-        protected override void Initialize(BindingElement parent, PrefabSchema schema, int depth = 0)
+        protected override void OnInitialize(BindingElement parent, PrefabSchema schema, int depth = 0)
         {
-            base.Initialize(parent, schema, depth);
+            base.OnInitialize(parent, schema, depth);
 
-            uiBase = target.GetComponent(FieldType);
+            uiBase = Target.GetComponent(FieldType);
         }
 
-        protected override string GetFieldTypeName()
+        public override string GetFieldTypeName()
         {
             if (uiBase != null)
                 return GetTypeName(uiBase.GetType());
@@ -34,11 +34,11 @@ namespace ClimbGames
 
         public override object GetFieldValue()
         {
-            var value = target.GetComponent(FieldType);
+            var value = Target.GetComponent(FieldType);
             if (value != null)
                 return value;
 
-            Debug.LogError($"[UIBaseElement] not exist component({(uiBase != null ? uiBase.GetType().Name : FieldType.Name)}): target({target.name})");
+            Debug.LogError($"[UIBaseElement] not exist component({(uiBase != null ? uiBase.GetType().Name : FieldType.Name)}): target({Target.name})");
             return base.GetFieldValue();
         }
     }
