@@ -66,24 +66,24 @@ namespace ClimbGames.Editor
 
     public static class CommandLineBuilder
     {
-        private static BuildProfile FindProfile(CustomArgs customArgs)
+        private static BuildPreset FindProfile(CustomArgs customArgs)
         {
             string profileName = customArgs.GetValue<string>("profileName");
-            string profilePath = Path.Combine(BuildProfile.TargetPath, $"{profileName}.asset");
+            string profilePath = Path.Combine(BuildPreset.TargetPath, $"{profileName}.asset");
             if (File.Exists(profilePath))
-                return AssetDatabase.LoadAssetAtPath<BuildProfile>(profilePath);
+                return AssetDatabase.LoadAssetAtPath<BuildPreset>(profilePath);
 
             string buildType = customArgs.GetValue<string>("buildType");
-            profilePath = Path.Combine(BuildProfile.TargetPath, $"{buildType}.asset");
+            profilePath = Path.Combine(BuildPreset.TargetPath, $"{buildType}.asset");
             if (File.Exists(profilePath))
-                return AssetDatabase.LoadAssetAtPath<BuildProfile>(profilePath);
+                return AssetDatabase.LoadAssetAtPath<BuildPreset>(profilePath);
 
             string branchName = customArgs.GetValue<string>("branchName");
-            profilePath = Path.Combine(BuildProfile.TargetPath, $"{branchName}.asset");
+            profilePath = Path.Combine(BuildPreset.TargetPath, $"{branchName}.asset");
             if (File.Exists(profilePath))
-                return AssetDatabase.LoadAssetAtPath<BuildProfile>(profilePath);
+                return AssetDatabase.LoadAssetAtPath<BuildPreset>(profilePath);
 
-            throw new Exception($"Can not find buildProfile: {profileName} or {branchName}");
+            throw new Exception($"Can not find buildPreset: {profileName} or {branchName}");
         }
 
         public static void BuildAndroid()
@@ -92,7 +92,7 @@ namespace ClimbGames.Editor
                 throw new Exception($"Platform switch failed! Please check if the corresponding target module (Android/iOS Build Support) is installed.");
 
             CustomArgs customArgs = CustomArgs.ParseCommandLineArgs();
-            BuildProfile profile = FindProfile(customArgs);
+            BuildPreset profile = FindProfile(customArgs);
             profile.bundleVersion = customArgs.GetValue<string>("buildVersion");
             profile.versionCode = customArgs.GetValue<int>("versionCode");
 
@@ -131,7 +131,7 @@ namespace ClimbGames.Editor
                 throw new Exception($"Platform switch failed! Please check if the corresponding target module (Android/iOS Build Support) is installed.");
 
             CustomArgs customArgs = CustomArgs.ParseCommandLineArgs();
-            BuildProfile profile = FindProfile(customArgs);
+            BuildPreset profile = FindProfile(customArgs);
             profile.bundleVersion = customArgs.GetValue<string>("buildVersion");
             profile.versionCode = customArgs.GetValue<int>("versionCode");
 

@@ -190,7 +190,7 @@ namespace ClimbGames.Editor
             EditorUserBuildSettings.allowDebugging = developmentBuild;
         }
 
-        public static void LoadFromProfile(BuildProfile profile)
+        public static void LoadFromProfile(BuildPreset profile)
         {
             BuildType = profile.buildType;
             BundleVersion = profile.bundleVersion;

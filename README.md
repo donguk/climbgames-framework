@@ -185,7 +185,7 @@ Unity Editor에서 직접 빌드하거나 Jenkins를 이용한 **원격 빌드 �
 * `addressables_content_state.bin` 기반 Content Update 지원
 * Addressables Build 결과물 백업
 * `EditorEnv.zip` 생성 및 테스트 지원
-* BuildProfile 생성(`Tools` > `ClimbGames` > `Build` > `Create Profile`) 및 Jenkins 연동
+* BuildPreset 생성(`Tools` > `ClimbGames` > `Build` > `Create Preset`) 및 Jenkins 연동
 
 ---
 
