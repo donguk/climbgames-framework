@@ -32,6 +32,22 @@ namespace ClimbGames
 
             return files;
         }
+
+        public static string[] GetFiles(string path, string[] searchPatterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            string[] files = new string[] { };
+
+            if (Directory.Exists(path))
+            {
+                if (searchPatterns == null || searchPatterns.Length <= 0)
+                    return Directory.GetFiles(path, "*.*", searchOption);
+
+                foreach (var pattern in searchPatterns)
+                    files = files.Concat(Directory.GetFiles(path, pattern, searchOption)).ToArray();
+            }
+
+            return files;
+        }
     }
 
     public static class PathExtensions

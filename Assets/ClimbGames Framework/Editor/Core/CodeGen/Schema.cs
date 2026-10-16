@@ -7,7 +7,7 @@
 
         public Schema()
         {
-            Namespace = FrameworkEditorSettings.instance.ProjectNamesapce;
+            Namespace = FrameworkEditorSettings.Instance.ProjectNamesapce;
             if (string.IsNullOrEmpty(Namespace))
                 Namespace = "ClimbGames";
         }

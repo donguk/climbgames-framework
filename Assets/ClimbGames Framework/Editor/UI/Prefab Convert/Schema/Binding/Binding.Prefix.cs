@@ -11,14 +11,19 @@ namespace ClimbGames.Editor.UI
 
             public Prefix(string value = default)
             {
-                if (string.IsNullOrEmpty(value))
-                    values = new string[] { };
-                else
-                    values = new string[] { value };
+                values = new string[] { value };
+            }
+
+            public Prefix(string[] values)
+            {
+                this.values = values;
             }
 
             public bool Match(string name)
             {
+                if (values == null)
+                    return false;
+
                 foreach (var value in values)
                 {
                     if (name.StartsWith(value, StringComparison.OrdinalIgnoreCase))
@@ -31,11 +36,14 @@ namespace ClimbGames.Editor.UI
             public override string ToString()
             {
                 string text = string.Empty;
-                for (int i = 0; i < values.Length; ++i)
+                if (values != null)
                 {
-                    if (text.Length > 0)
-                        text += ", ";
-                    text += values[i];
+                    for (int i = 0; i < values.Length; ++i)
+                    {
+                        if (text.Length > 0)
+                            text += ", ";
+                        text += values[i];
+                    }
                 }
 
                 return $"prefix: [{text}]";

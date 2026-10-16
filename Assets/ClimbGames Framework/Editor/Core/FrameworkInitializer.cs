@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ClimbGames.Editor.UI;
 using ClimbGames.UI;
 using UnityEditor;
 using UnityEngine;
@@ -27,7 +28,8 @@ namespace ClimbGames.Editor
             UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
             RegisterUIEnvironmentScene();
             AddLayerToTagManager(UIManager.WORLD_UI_LAYER);
-            FrameworkEditorSettings.instance.UpdateRuntimeSettings();
+
+            FrameworkEditorSettings.Instance.UpdateRuntimeSettings();
         }
 
         private static void CreateSettingsIfNotExist()

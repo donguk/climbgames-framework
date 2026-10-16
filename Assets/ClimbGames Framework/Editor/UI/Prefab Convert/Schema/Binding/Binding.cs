@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 using ClimbGames.UI;
 using ClimbGames.Eidot.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ClimbGames.Editor.UI
 {
@@ -18,15 +20,6 @@ namespace ClimbGames.Editor.UI
 
     public partial class Binding
     {
-        public static readonly Binding Default = new Binding(BindingType.None, string.Empty);
-
-        [Serializable]
-        public class Schema
-        {
-            public Prefix Prefix;
-            public string typeName;
-        }
-
         private BindingType bindingType;
         private Prefix prefix;
 
@@ -43,6 +36,16 @@ namespace ClimbGames.Editor.UI
 
         public Binding(BindingType type, string prefix) : this(type, prefix, typeof(Transform))
         {
+        }
+
+        public Binding(Schema schema)
+        {
+            string[] values = schema.prefix.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
+            prefix = new Prefix(values);
+            bindingType = schema.bindingType;
+
+            if (string.IsNullOrEmpty(schema.typeName) == false)
+                FieldType = System.Type.GetType(schema.typeName);
         }
 
         public Binding(BindingType type, Prefix prefix, Type fieldType)
@@ -80,23 +83,25 @@ namespace ClimbGames.Editor.UI
 
 
 
-
-
-        private static Binding[] bindings = new Binding[]
+        private static List<Binding> bindings;
+        public static void Initialize(Schema[] schemas)
         {
-            new Binding(BindingType.Component, "trs_", typeof(Transform)),
-            new Binding(BindingType.Component, "txt_", typeof(TMP_Text)),
-            new Binding(BindingType.Component, "img_", typeof(Image)),
+            if (bindings == null)
+                bindings = new List<Binding>();
 
-            new Binding(BindingType.Group, "grp_"),
-            new Binding(BindingType.List, "list_"),
+            bindings.Clear();
 
-            new Binding(BindingType.UIBase, "ui_", typeof(UIBase)),
-        };
+            foreach (var schema in schemas)
+                bindings.Add(new Binding(schema));
+        }
 
         public static bool TryGetMatch(string name, out Binding result)
         {
             result = null;
+
+            if (bindings == null)
+                return false;
+
             foreach (var match in bindings)
             {
                 if (match.Match(name))

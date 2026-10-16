@@ -31,7 +31,7 @@ namespace ClimbGames.Editor.UI
             base.OnInitialize(parent, schema, depth);
 
             virtualRoot = new BindingElement(Target, schema);
-            groupName = PrefixMatchValue.ToValidFieldName();
+            groupName = MatchName.ToValidFieldName();
             definition = schema.GroupSchema.AddGroup(groupName);
         }
 

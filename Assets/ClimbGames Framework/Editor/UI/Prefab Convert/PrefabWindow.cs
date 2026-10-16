@@ -2,14 +2,25 @@
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using System.Collections.Generic;
+using System.IO;
 
 namespace ClimbGames.Editor.UI
 {
     public class PrefabWindow : EditorWindow
     {
+        public class ConvertData
+        {
+            public FileEntry entry;
+            public GameObject prefab;
+        }
+
         private const string WindowUxmlGUID = "8871c4d2fda088847a0c7fd3ac3c627e";
         private const string StateCellUxmlGUID = "74fa90ff22b5ca34abb41cc8a3468495";
         private const string OutputCellUxmlGUID = "5da4454cd02d87443a922c64360d0ae8";
+
+        private FileTreeView treeView;
+        private Dictionary<string, ConvertData> convertDatas = new Dictionary<string, ConvertData>();
 
         [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
         private static void Open()
@@ -27,28 +38,33 @@ namespace ClimbGames.Editor.UI
             visualTree.CloneTree(rootVisualElement);
 
             // 프리팹 뷰
-            var treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
+            treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
 
             var rawPathField = rootVisualElement.Q<SelectPathField>("raw_path");
-            rawPathField.Path = PrefabConvertSettings.RawPath;
+            rawPathField.Path = PrefabConvertSettings.OriginPath;
             rawPathField.OnPathChanged += (path) =>
             {
-                PrefabConvertSettings.RawPath = path;
-                treeView.SetRootPath(PrefabConvertSettings.RawPath, "*.prefab");
+                string relativePath = path.ToUnityRelativePath();
+                treeView.SetRootPath(relativePath, "*.prefab");
+                return PrefabConvertSettings.OriginPath = relativePath;
             };
 
             var outputPathField = rootVisualElement.Q<SelectPathField>("output_path");
             outputPathField.Path = PrefabConvertSettings.OutputPath;
             outputPathField.OnPathChanged += (path) =>
             {
-                PrefabConvertSettings.OutputPath = path;
+                string relativePath = path.ToUnityRelativePath();
+                RefreshConvertDatas();
+                treeView.RefreshItems();
+                return PrefabConvertSettings.OutputPath = relativePath;
             };
 
             var codeGenPathField = rootVisualElement.Q<SelectPathField>("codegen_path");
-            codeGenPathField.Path = PrefabConvertSettings.CodeGenPath;
+            codeGenPathField.Path = PrefabConvertSettings.ScriptPath;
             codeGenPathField.OnPathChanged += (path) =>
             {
-                PrefabConvertSettings.CodeGenPath = path;
+                string relativePath = path.ToUnityRelativePath();
+                return PrefabConvertSettings.ScriptPath = relativePath;
             };
 
 
@@ -61,7 +77,19 @@ namespace ClimbGames.Editor.UI
                 width = 150f,
                 minWidth = 100f,
 
-                makeCell = () => stateCell.Instantiate(),
+                makeCell = () =>
+                {
+                    var cell = stateCell.Instantiate();
+                    var stateButton = cell.Q<Button>("state");
+
+                    stateButton.clicked += () =>
+                    {
+                        if (cell.userData is FileEntry entry)
+                            OnClickConvert(entry.path);
+                    };
+
+                    return cell;
+                },
                 bindCell = (element, index) =>
                 {
                     var entry = treeView.GetItemDataForIndex(index);
@@ -70,7 +98,7 @@ namespace ClimbGames.Editor.UI
                     var stateButton = element.Q<Button>("state");
                     stateButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
 
-                    stateButton.clicked += () => OnClickConvert(entry.path);
+                    element.userData = entry;
                 }
             });
 
@@ -89,17 +117,46 @@ namespace ClimbGames.Editor.UI
                     element.style.height = Length.Percent(100);
 
                     var objectField = element.Q<ObjectField>("output");
-                    objectField.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
+                    if (entry.isDirectory == false)
+                    {
+                        if (convertDatas.TryGetValue(entry.path.ToUnityRelativePath(), out var data))
+                            objectField.value = data.prefab;
+                        else
+                            objectField.value = null;
+                        objectField.style.visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        objectField.style.visibility = Visibility.Hidden;
+                    }
                     objectField.SetEnabled(false);
-
-                    //
                 }
             });
 
+            treeView.SetRootPath(PrefabConvertSettings.OriginPath, "*.prefab");
+            RefreshConvertDatas();
+        }
 
-            treeView.SetRootPath(PrefabConvertSettings.RawPath, "*.prefab");
-            //
-            //
+        void RefreshConvertDatas()
+        {
+            convertDatas.Clear();
+            using (new ListPoolScope<FileEntry>(out var list))
+            {
+                treeView.GetFileItemDatas(ref list);
+
+                foreach (var entry in list)
+                {
+                    string originPath = entry.path.ToUnityRelativePath();
+                    string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
+                    string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
+
+                    convertDatas[originPath] = new ConvertData()
+                    {
+                        entry = entry,
+                        prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath),
+                    };
+                }
+            }
         }
 
         void OnClickConvert(string path)
@@ -108,9 +165,16 @@ namespace ClimbGames.Editor.UI
             PrefabConverter.StartProcess(relativePath);
         }
 
-        public void OnConvertFinished(string originPrefabPath, bool success)
+        public void OnConvertFinished(string originPath)
         {
+            if (convertDatas.TryGetValue(originPath, out var data))
+            {
+                string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
+                string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
+                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
+                treeView.RefreshItem(data.entry.id);
+            }
         }
     }
 }

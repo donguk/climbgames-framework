@@ -1,41 +1,61 @@
-﻿using UnityEditor;
+﻿using System;
+using ClimbGames.UI;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ClimbGames.Editor.UI
 {
-    public static class PrefabConvertSettings
+    [Serializable]
+    public class PrefabConvertSettings
     {
-        private static string rawPath;
-        private static string outputPath;
-        private static string codeGenPath;
+        [SerializeField] private string originPath = "Assets/Prefabs/UI";
+        [SerializeField] private string outputPath = "Assets/Sources/Prefabs/UI";
+        [SerializeField] private string scriptPath = "Assets/Scripts/UI";
 
-        public static string RawPath
+        [SerializeField] private Binding.Schema[] bindingSchemas;
+
+        public static string OriginPath
         {
-            get => rawPath;
-            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(rawPath)}", rawPath = value);
+            get => UISettings.Instance.PrefabConvertSettings.originPath;
+            set => UISettings.Instance.PrefabConvertSettings.originPath = value;
         }
         public static string OutputPath
         {
-            get => outputPath;
-            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(outputPath)}", outputPath = value);
+            get => UISettings.Instance.PrefabConvertSettings.outputPath;
+            set => UISettings.Instance.PrefabConvertSettings.outputPath = value;
         }
-        public static string CodeGenPath
+        public static string ScriptPath
         {
-            get => codeGenPath;
-            set => EditorPrefs.SetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(codeGenPath)}", codeGenPath = value);
+            get => UISettings.Instance.PrefabConvertSettings.scriptPath;
+            set => UISettings.Instance.PrefabConvertSettings.scriptPath = value;
         }
+        public static Binding.Schema[] BindingSchemas => UISettings.Instance.PrefabConvertSettings.bindingSchemas;
 
-        static PrefabConvertSettings()
+        public void Reset()
         {
-            rawPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(rawPath)}", "Assets/Prefabs/UI");
-            outputPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(outputPath)}", "Assets/Sources/Prefabs/UI");
-            codeGenPath = EditorPrefs.GetString($"{FrameworkEditorSettings.EditorKey}_{nameof(PrefabConvertSettings)}_{nameof(codeGenPath)}", "Assets/Scripts/UI/CodeGen");
-        }
-
-        public static void Reset()
-        {
-            RawPath = "Assets/Prefabs/UI";
+            originPath = "Assets/Prefabs/UI";
             outputPath = "Assets/Sources/Prefabs/UI";
-            codeGenPath = "Assets/Scripts/UI/CodeGen";
+            scriptPath = "Assets/Scripts/UI";
+
+            ResetSchemas();
+        }
+
+        public void ResetSchemas()
+        {
+            bindingSchemas = new Binding.Schema[]
+            {
+                new Binding.Schema("list_", BindingType.List, true),
+                new Binding.Schema("grp_", BindingType.Group, true),
+                new Binding.Schema("ui_", typeof(UIBase), BindingType.UIBase, true),
+
+                new Binding.Schema("txt_", typeof(TMP_Text), BindingType.Component),
+                new Binding.Schema("img_", typeof(Image), BindingType.Component),
+                //
+                //
+                //
+                //
+            };
         }
     }
 }

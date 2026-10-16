@@ -22,8 +22,10 @@ namespace ClimbGames.Editor.UI
 
         public static void StartProcess(string prefabPath)
         {
-            // generate code
+            Binding.Initialize(PrefabConvertSettings.BindingSchemas);
+
             if (GeneratePrefabCode(prefabPath))
+            // generate code
             {
                 CodeCompilation<PrefabCodeGenerator>.SetData(prefabPath);
                 CodeCompilation<PrefabCodeGenerator>.Start();
@@ -41,7 +43,7 @@ namespace ClimbGames.Editor.UI
             schema.Read(prefab.transform);
 
             var generator = new PrefabCodeGenerator(schema);
-            if (generator.Write(PrefabConvertSettings.CodeGenPath))
+            if (generator.Write(PrefabConvertSettings.ScriptPath))
             {
                 AssetDatabase.Refresh();
                 return true;
@@ -52,18 +54,20 @@ namespace ClimbGames.Editor.UI
 
         static void CreatePrefab(string prefabPath)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            Binding.Initialize(PrefabConvertSettings.BindingSchemas);
+            var origin = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(origin);
             PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
 
             var schema = new PrefabSchema(instance.name);
             schema.Read(instance.transform);
             schema.AssignElements();
 
-            Directory.CreateDirectory(PrefabConvertSettings.OutputPath);
-            string newPath = Path.Combine(PrefabConvertSettings.OutputPath, Path.GetFileName(prefabPath));
+            string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, prefabPath);
+            string newPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath);
 
+            Directory.CreateDirectory(Path.GetDirectoryName(newPath));
             PrefabUtility.SaveAsPrefabAsset(instance, newPath, out bool success);
             GameObject.DestroyImmediate(instance);
 
@@ -72,7 +76,7 @@ namespace ClimbGames.Editor.UI
             if (EditorWindow.HasOpenInstances<PrefabWindow>())
             {
                 var window = EditorWindow.GetWindow<PrefabWindow>();
-                window?.OnConvertFinished(prefabPath, success);
+                window?.OnConvertFinished(prefabPath);
             }
         }
     }

@@ -94,8 +94,8 @@ namespace ClimbGames.Editor
                     {
                         EditorGUILayout.BeginHorizontal();
 
-                        if (EditorGUIs.SelectFileField("KeystoreName", BuildSettings.KeystoreName, "keystore,jks", out var selectedPatha))
-                            BuildSettings.KeystoreName = selectedPatha.ToUnityRelativePath();
+                        if (EditorGUIs.SelectFileField("KeystoreName", BuildSettings.KeystoreName, "keystore,jks", out selectedPath))
+                            BuildSettings.KeystoreName = selectedPath.ToUnityRelativePath();
 
                         GUIContent clearIcon = EditorGUIUtility.IconContent("TreeEditor.Trash");
                         clearIcon.tooltip = "Clear Keystore Settings";

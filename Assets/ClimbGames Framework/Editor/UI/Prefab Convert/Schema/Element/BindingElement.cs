@@ -14,13 +14,13 @@ namespace ClimbGames.Editor.UI
 
         protected PrefabSchema Schema { get; private set; }
         public GameObject Target { get; private set; }
-        public string PrefixMatchValue { get; private set; }
+        public string MatchName { get; private set; }
         public string FieldName { get; private set; }
 
         public bool IsValid => binding != null;
         public BindingElement Parent => parent;
         public IReadOnlyList<BindingElement> Children => children;
-        public virtual Type FieldType => binding != null ? binding.FieldType : typeof(Transform);
+        public virtual Type FieldType => binding?.FieldType ?? typeof(Transform);
         public int Depth { get; private set; }
 
         IUniquableName IUniquableName.Parent => Parent;
@@ -31,7 +31,7 @@ namespace ClimbGames.Editor.UI
             Target = target;
             this.binding = binding;
 
-            PrefixMatchValue = binding.MatchValue;
+            MatchName = binding.MatchValue;
             FieldName = Target.name.ToValidFieldName();
         }
 

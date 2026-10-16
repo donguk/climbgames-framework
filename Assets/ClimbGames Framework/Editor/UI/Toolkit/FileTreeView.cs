@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -27,8 +28,7 @@ namespace ClimbGames.Editor.UI
 
         private Label title;
         private MultiColumnTreeView treeView;
-
-        private List<TreeViewItemData<FileEntry>> datas;
+        private TreeViewItemData<FileEntry> rootItemData;
 
         [UxmlAttribute]
         public string Title
@@ -94,10 +94,10 @@ namespace ClimbGames.Editor.UI
         {
             if (Directory.Exists(path))
             {
-                datas = BuildEntry(path, searchPatterns);
+                rootItemData = BuildRoot(path, searchPatterns);
 
-                treeView.SetRootItems(datas);
-                treeView.ExpandItem(datas[0].id);
+                treeView.SetRootItems(new List<TreeViewItemData<FileEntry>>() { rootItemData });
+                treeView.ExpandItem(rootItemData.id);
             }
             else
             {
@@ -107,17 +107,72 @@ namespace ClimbGames.Editor.UI
 
         public FileEntry GetItemDataForIndex(int index) => treeView.GetItemDataForIndex<FileEntry>(index);
 
-        public static List<TreeViewItemData<FileEntry>> BuildEntry(string path, params string[] searchPatterns)
+        public void GetFileItemDatas(ref List<FileEntry> list)
         {
-            var roots = new List<TreeViewItemData<FileEntry>>();
+            GetFileItemDatas(rootItemData, ref list);
+        }
 
+        void GetFileItemDatas(TreeViewItemData<FileEntry> item, ref List<FileEntry> list)
+        {
+            if (item.data == null)
+                return;
+
+            if (item.data.isDirectory == false)
+                list.Add(item.data);
+
+            if (item.hasChildren)
+            {
+                foreach (var child in item.children)
+                    GetFileItemDatas(child, ref list);
+            }
+        }
+
+        public void RefreshItems()
+        {
+            treeView.RefreshItems();
+        }
+
+        public void RefreshItem(int id)
+        {
+            int index = FindItemDataIndex(id);
+            if (index > -1)
+                treeView.RefreshItem(index);
+        }
+
+        public int FindItemDataIndex(int id)
+        {
+            int index = 0;
+            return FindItemIndex(rootItemData, id, ref index);
+        }
+
+        int FindItemIndex(TreeViewItemData<FileEntry> item, int id, ref int index)
+        {
+            if (item.data.id == id)
+                return index;
+
+            index++;
+
+            if (item.hasChildren && treeView.IsExpanded(item.id))
+            {
+                foreach (var child in item.children)
+                {
+                    int foundIndex = FindItemIndex(child, id, ref index);
+                    if (foundIndex != -1)
+                        return foundIndex;
+                }
+            }
+
+            return -1;
+        }
+
+        public static TreeViewItemData<FileEntry> BuildRoot(string path, params string[] searchPatterns)
+        {
             int id = 0;
 
             var rootEntry = CreateEntry(id++, path);
             var rootItem = CreateTreeItem(rootEntry, ref id, searchPatterns);
 
-            roots.Add(rootItem);
-            return roots;
+            return rootItem;
         }
 
         private static TreeViewItemData<FileEntry> CreateTreeItem(FileEntry entry, ref int id, params string[] searchPatterns)
@@ -132,7 +187,7 @@ namespace ClimbGames.Editor.UI
                 try
                 {
                     directories = Directory.GetDirectories(entry.path);
-                    files = Paths.GetFiles(entry.path, searchPatterns);
+                    files = Paths.GetFiles(entry.path, searchPatterns, SearchOption.TopDirectoryOnly);
                 }
                 catch
                 {

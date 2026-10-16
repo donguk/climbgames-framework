@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace ClimbGames.Editor
 {
-    [FilePath("ProjectSettings/ClimbGamesSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    public class FrameworkEditorSettings : UnityEditor.ScriptableSingleton<FrameworkEditorSettings>
+    [Serializable]
+    public class FrameworkEditorSettings : ClimbGamesSettings<FrameworkEditorSettings>
     {
         public static string EditorKey => $"{Application.dataPath.GetHashCode()}";
 
@@ -13,15 +14,14 @@ namespace ClimbGames.Editor
 
         public string ProjectNamesapce => projectNamesapce;
 
-        public void Save()
-        {
-            Save(true);
-        }
-
         public void UpdateRuntimeSettings()
         {
             FrameworkSettings.Instance.ShowSceneName = showSceneName;
-            EditorUtility.SetDirty(FrameworkSettings.Instance);
+        }
+
+        public override SettingsProvider CreateProvider()
+        {
+            return new FrameworkSettingsProvider("Project/ClimbGames/Framework Settings", SettingsScope.Project);
         }
     }
 }

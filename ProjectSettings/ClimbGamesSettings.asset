@@ -9,8 +9,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0ae63a17459ccc4f9e0bf25feb70ea1, type: 3}
+  m_Script: {fileID: 11500000, guid: 12b083fb22dfb52438172f99b9aa34f7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: ClimbGames.Framework.Editor::ClimbGames.Editor.FrameworkEditorSettings
-  showSceneName: 1
-  projectNamesapce: 
+  m_EditorClassIdentifier: ClimbGames.Framework.Editor::ClimbGames.Editor.ClimbGamesSettings
+  settings:
+  - rid: 8146080807780089856
+  - rid: 8146080807780089857
+  references:
+    version: 2
+    RefIds:
+    - rid: 8146080807780089856
+      type: {class: FrameworkEditorSettings, ns: ClimbGames.Editor, asm: ClimbGames.Framework.Editor}
+      data:
+        showSceneName: 1
+        projectNamesapce: ClimbGames
+    - rid: 8146080807780089857
+      type: {class: UISettings, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefabConvertSettings:
+          originPath: Assets/ClimbGames/Sources/Prefabs
+          outputPath: Assets/Sources/Prefabs/UI
+          scriptPath: Assets/Scripts/UI
+          bindingSchemas:
+          - bindingType: 3
+            prefix: list_
+            typeName: 
+            isReadOnly: 1
+          - bindingType: 2
+            prefix: grp_
+            typeName: 
+            isReadOnly: 1
+          - bindingType: 4
+            prefix: ui_
+            typeName: ClimbGames.UI.UIBase, ClimbGames.Framework, Version=0.0.0.0,
+              Culture=neutral, PublicKeyToken=null
+            isReadOnly: 1
+          - bindingType: 1
+            prefix: txt_
+            typeName: TMPro.TMP_Text, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+            isReadOnly: 0
+          - bindingType: 1
+            prefix: img_
+            typeName: UnityEngine.UI.Image, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+            isReadOnly: 0

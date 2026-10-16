@@ -13,7 +13,7 @@ namespace ClimbGames.Editor.UI
         private Label path;
         private Button browse;
 
-        public event Action<string> OnPathChanged;
+        public event Func<string, string> OnPathChanged;
 
         [UxmlAttribute]
         public string Title
@@ -29,10 +29,7 @@ namespace ClimbGames.Editor.UI
             set
             {
                 if (path != null)
-                {
                     path.text = value;
-                    OnPathChanged?.Invoke(value);
-                }
             }
         }
 
@@ -61,7 +58,7 @@ namespace ClimbGames.Editor.UI
             string selectedPath = EditorUtility.OpenFolderPanel("Select Path", Path, "");
             if (!string.IsNullOrEmpty(selectedPath))
             {
-                Path = selectedPath;
+                Path = OnPathChanged?.Invoke(selectedPath);
             }
         }
     }
