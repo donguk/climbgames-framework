@@ -110,13 +110,13 @@ namespace ClimbGames.Editor.UI
                             case PrefabConvertStatus.InvalidMetadata:
                                 {
                                     status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Failed);
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
                                     break;
                                 }
                             case PrefabConvertStatus.BaseTypeChanged:
                                 {
                                     status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Processing);
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Failed);
                                     break;
                                 }
                             case PrefabConvertStatus.OriginModified:
