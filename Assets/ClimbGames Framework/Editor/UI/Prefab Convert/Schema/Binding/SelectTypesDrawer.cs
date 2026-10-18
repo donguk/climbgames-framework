@@ -46,6 +46,9 @@ namespace ClimbGames.Editor.UI
 
         void OnTypeSelected(SerializedProperty property, Type selectedType)
         {
+            if (selectedType == null)
+                return;
+
             property.stringValue = selectedType.AssemblyQualifiedName;
             property.serializedObject.ApplyModifiedProperties();
         }

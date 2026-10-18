@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="root" style="flex-grow: 1; flex-direction: row; justify-content: center;">
+        <ui:Button text="Convert" name="convert" style="flex-grow: 1;"/>
+    </ui:VisualElement>
+</ui:UXML>

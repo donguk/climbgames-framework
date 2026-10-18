@@ -19,17 +19,29 @@ namespace ClimbGames.Editor.UI
         public static string OriginPath
         {
             get => UISettings.Instance.PrefabConvertSettings.originPath;
-            set => UISettings.Instance.PrefabConvertSettings.originPath = value;
+            set
+            {
+                UISettings.Instance.PrefabConvertSettings.originPath = value;
+                UISettings.Instance.SetDirty();
+            }
         }
         public static string OutputPath
         {
             get => UISettings.Instance.PrefabConvertSettings.outputPath;
-            set => UISettings.Instance.PrefabConvertSettings.outputPath = value;
+            set
+            {
+                UISettings.Instance.PrefabConvertSettings.outputPath = value;
+                UISettings.Instance.SetDirty();
+            }
         }
         public static string ScriptPath
         {
             get => UISettings.Instance.PrefabConvertSettings.scriptPath;
-            set => UISettings.Instance.PrefabConvertSettings.scriptPath = value;
+            set
+            {
+                UISettings.Instance.PrefabConvertSettings.scriptPath = value;
+                UISettings.Instance.SetDirty();
+            }
         }
         public static Binding.Schema[] BindingSchemas => UISettings.Instance.PrefabConvertSettings.bindingSchemas;
 

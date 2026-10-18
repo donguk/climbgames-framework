@@ -36,6 +36,7 @@ namespace ClimbGames
         private void OnLostFocus()
         {
             Close();
+            onComplete?.Invoke(null);
         }
 
         private void OnGUI()

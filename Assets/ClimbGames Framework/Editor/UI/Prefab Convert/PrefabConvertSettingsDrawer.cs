@@ -5,64 +5,6 @@ using ClimbGames.Editor.UI;
 
 namespace ClimbGames.Editor
 {
-    public class FoldoutHeaderExampleWindow : EditorWindow
-    {
-        // 폴드아웃(접기/펼치기) 상태를 저장할 변수
-        private bool isSettingsFoldout = true;
-        private bool isAdvancedFoldout = false;
-
-        // 예시 데이터 필드들
-        private string playerName = "Hero";
-        private int playerLevel = 10;
-        private float moveSpeed = 5.5f;
-
-        [MenuItem("Tools/Open Foldout Example")]
-        public static void ShowWindow()
-        {
-            GetWindow<FoldoutHeaderExampleWindow>("Foldout Example");
-        }
-
-        private void OnGUI()
-        {
-            EditorGUILayout.Space(10);
-
-            // 1. 첫 번째 폴드아웃 헤더 시작
-            isSettingsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(isSettingsFoldout, "Player Basic Settings");
-
-            // 폴드아웃이 열려있을(true) 때만 내부 UI를 그림
-            if (isSettingsFoldout)
-            {
-                // 들여쓰기를 주면 계층 구조가 훨씬 깔끔해집니다.
-                EditorGUI.indentLevel++;
-
-                playerName = EditorGUILayout.TextField("Player Name", playerName);
-                playerLevel = EditorGUILayout.IntField("Level", playerLevel);
-
-                EditorGUI.indentLevel--;
-            }
-
-            // 헤더 그룹 종료
-            EditorGUILayout.EndFoldoutHeaderGroup();
-
-            EditorGUILayout.Space(5);
-
-            // 2. 두 번째 폴드아웃 헤더 시작
-            isAdvancedFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(isAdvancedFoldout, "Advanced Settings");
-
-            if (isAdvancedFoldout)
-            {
-                EditorGUI.indentLevel++;
-
-                moveSpeed = EditorGUILayout.FloatField("Move Speed", moveSpeed);
-
-                EditorGUI.indentLevel--;
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
-        }
-    }
-
-
     [CustomPropertyDrawer(typeof(PrefabConvertSettings))]
     public class PrefabConvertSettingsDrawer : PropertyDrawer
     {
@@ -97,14 +39,9 @@ namespace ClimbGames.Editor
 
             var schemasProperty = property.FindPropertyRelative("bindingSchemas");
             Rect headerRect = new Rect(rect.x, rect.yMax, position.width, lineHeight);
-            ReorderableList.defaultBehaviours.DrawHeaderBackground(headerRect);
+            schemasProperty.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerRect, schemasProperty.isExpanded, "Binding Schemas");
+            EditorGUI.EndFoldoutHeaderGroup();
 
-            headerRect.xMin += 6f;
-            headerRect.xMax -= 6f;
-            headerRect.height -= 2f;
-            headerRect.y += 1f;
-
-            schemasProperty.isExpanded = EditorGUI.Foldout(headerRect, schemasProperty.isExpanded, "Binding Schemas", true);
             if (schemasProperty.isExpanded)
             {
                 rect = new Rect(rect.x, headerRect.yMax + spacing * 2, position.width, bindingList.GetHeight());
@@ -119,6 +56,7 @@ namespace ClimbGames.Editor
                     target.ResetSchemas();
                 }
             }
+
 
             if (EditorGUI.EndChangeCheck())
                 UISettings.Instance.SetDirty();

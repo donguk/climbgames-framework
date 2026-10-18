@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="root" style="flex-grow: 1; flex-direction: column; justify-content: center;">
+        <ui:DropdownField name="base_type"/>
+    </ui:VisualElement>
+</ui:UXML>

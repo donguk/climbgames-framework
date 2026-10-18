@@ -1,11 +1,18 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
+using Cysharp.Threading.Tasks;
 using ClimbGames.UI;
 
 namespace #NAMESPACE#
 {
-    public partial class #SCRIPTNAME# : UIBase
+    public partial class #SCRIPTNAME# : #BASETYPE#
     {
-
+        // =====================
+        // implement ui
+        // =====================
+#INITIALIZE#
     }
 }

@@ -94,10 +94,8 @@ namespace ClimbGames.Editor.UI
         {
             if (Directory.Exists(path))
             {
-                rootItemData = BuildRoot(path, searchPatterns);
-
-                treeView.SetRootItems(new List<TreeViewItemData<FileEntry>>() { rootItemData });
-                treeView.ExpandItem(rootItemData.id);
+                var root = BuildRoot(path, searchPatterns);
+                SetRootItem(root);
             }
             else
             {
@@ -105,14 +103,27 @@ namespace ClimbGames.Editor.UI
             }
         }
 
+        public void SetRootItem(TreeViewItemData<FileEntry> root)
+        {
+            rootItemData = root;
+
+            treeView.SetRootItems(new List<TreeViewItemData<FileEntry>>() { rootItemData });
+            treeView.ExpandItem(rootItemData.id);
+        }
+
         public FileEntry GetItemDataForIndex(int index) => treeView.GetItemDataForIndex<FileEntry>(index);
 
         public void GetFileItemDatas(ref List<FileEntry> list)
         {
-            GetFileItemDatas(rootItemData, ref list);
+            RetrieveFileItemDatas(rootItemData, ref list);
         }
 
-        void GetFileItemDatas(TreeViewItemData<FileEntry> item, ref List<FileEntry> list)
+        public static void GetFileItemDatas(TreeViewItemData<FileEntry> root, ref List<FileEntry> list)
+        {
+            RetrieveFileItemDatas(root, ref list);
+        }
+
+        static void RetrieveFileItemDatas(TreeViewItemData<FileEntry> item, ref List<FileEntry> list)
         {
             if (item.data == null)
                 return;
@@ -123,7 +134,7 @@ namespace ClimbGames.Editor.UI
             if (item.hasChildren)
             {
                 foreach (var child in item.children)
-                    GetFileItemDatas(child, ref list);
+                    RetrieveFileItemDatas(child, ref list);
             }
         }
 

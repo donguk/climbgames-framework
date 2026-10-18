@@ -4,23 +4,21 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.Collections.Generic;
 using System.IO;
+using System;
+using ClimbGames.UI;
 
 namespace ClimbGames.Editor.UI
 {
     public class PrefabWindow : EditorWindow
     {
-        public class ConvertData
-        {
-            public FileEntry entry;
-            public GameObject prefab;
-        }
-
         private const string WindowUxmlGUID = "8871c4d2fda088847a0c7fd3ac3c627e";
         private const string StateCellUxmlGUID = "74fa90ff22b5ca34abb41cc8a3468495";
         private const string OutputCellUxmlGUID = "5da4454cd02d87443a922c64360d0ae8";
+        private const string BaseTypeCellUxmlGUID = "67648f2031ce73a46997d10736f7cc65";
+        private const string ConvertCellUxmlGUID = "37de53add6cead84293eb14086d0eb18";
 
         private FileTreeView treeView;
-        private Dictionary<string, ConvertData> convertDatas = new Dictionary<string, ConvertData>();
+        private Dictionary<string, PrefabConvertInfo> convertInfos = new Dictionary<string, PrefabConvertInfo>();
 
         [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
         private static void Open()
@@ -45,8 +43,17 @@ namespace ClimbGames.Editor.UI
             rawPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
-                treeView.SetRootPath(relativePath, "*.prefab");
-                return PrefabConvertSettings.OriginPath = relativePath;
+                PrefabConvertSettings.OriginPath = relativePath;
+
+                var root = FileTreeView.BuildRoot(relativePath, "*.prefab");
+                using (new ListPoolScope<FileEntry>(out var list))
+                {
+                    FileTreeView.GetFileItemDatas(root, ref list);
+                    RefreshConvertDatas(list);
+                }
+                treeView.SetRootItem(root);
+                treeView.RefreshItems();
+                return relativePath;
             };
 
             var outputPathField = rootVisualElement.Q<SelectPathField>("output_path");
@@ -54,9 +61,11 @@ namespace ClimbGames.Editor.UI
             outputPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
+                PrefabConvertSettings.OutputPath = relativePath;
+
                 RefreshConvertDatas();
                 treeView.RefreshItems();
-                return PrefabConvertSettings.OutputPath = relativePath;
+                return relativePath;
             };
 
             var codeGenPathField = rootVisualElement.Q<SelectPathField>("codegen_path");
@@ -73,16 +82,148 @@ namespace ClimbGames.Editor.UI
             var stateCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(stateUxmlPath);
             treeView.Columns.Insert(1, new Column()
             {
-                title = "State",
+                title = "Status",
+                width = 50f,
+                minWidth = 50f,
+                resizable = false,
+
+                makeCell = () => stateCell.Instantiate(),
+                bindCell = (element, index) =>
+                {
+                    var entry = treeView.GetItemDataForIndex(index);
+                    element.style.height = Length.Percent(100);
+
+                    var status = element.Q<VisualElement>("status");
+                    status.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
+
+                    if (entry.isDirectory == false)
+                    {
+                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
+                        switch (info.Status)
+                        {
+                            case PrefabConvertStatus.NotExistPrefab:
+                                {
+                                    status.tooltip = info.Status.ToString();
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
+                                    break;
+                                }
+                            case PrefabConvertStatus.InvalidMetadata:
+                                {
+                                    status.tooltip = info.Status.ToString();
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Failed);
+                                    break;
+                                }
+                            case PrefabConvertStatus.BaseTypeChanged:
+                                {
+                                    status.tooltip = info.Status.ToString();
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Processing);
+                                    break;
+                                }
+                            case PrefabConvertStatus.OriginModified:
+                                {
+                                    status.tooltip = info.Status.ToString();
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Processing);
+                                    break;
+                                }
+                            default:
+                                {
+                                    status.tooltip = info.Status.ToString();
+                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Success);
+                                    break;
+                                }
+                        }
+                    }
+                }
+            });
+
+            string outputUxmlPath = AssetDatabase.GUIDToAssetPath(OutputCellUxmlGUID);
+            var outputCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(outputUxmlPath);
+            treeView.Columns.Insert(2, new Column()
+            {
+                title = "Output",
+                width = 200f,
+                minWidth = 100f,
+
+                makeCell = () => outputCell.Instantiate(),
+                bindCell = (element, index) =>
+                {
+                    var entry = treeView.GetItemDataForIndex(index);
+                    element.style.height = Length.Percent(100);
+
+                    var objectField = element.Q<ObjectField>("output");
+                    objectField.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
+
+                    if (entry.isDirectory == false)
+                    {
+                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
+                        objectField.value = info.prefab;
+                    }
+                    objectField.SetEnabled(false);
+                }
+            });
+
+
+
+            // base type
+            string baseTypeUxmlPath = AssetDatabase.GUIDToAssetPath(BaseTypeCellUxmlGUID);
+            var baseTypeCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(baseTypeUxmlPath);
+            treeView.Columns.Insert(3, new Column()
+            {
+                title = "BaseType",
                 width = 150f,
                 minWidth = 100f,
 
+                makeCell = () => baseTypeCell.Instantiate(),
+                bindCell = (element, index) =>
+                {
+                    var entry = treeView.GetItemDataForIndex(index);
+                    element.style.height = Length.Percent(100);
+
+                    var dropdownField = element.Q<DropdownField>("base_type");
+                    dropdownField.style.visibility = entry.isDirectory == false ? Visibility.Visible : Visibility.Hidden;
+
+                    if (entry.isDirectory == false)
+                    {
+                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
+                        dropdownField.choices = info.BaseTypeNames;
+                        dropdownField.SetValueWithoutNotify(info.SelectedBaseTypeName);
+
+                        dropdownField.formatSelectedValueCallback = (selected) =>
+                        {
+                            if (selected == PrefabConvertInfo.SelectTypesID)
+                            {
+                                SelectTypesWindow.Open(typeof(MonoBehaviour), result =>
+                                {
+                                    info.SelectBaseType(result);
+                                    dropdownField.SetValueWithoutNotify(info.SelectedBaseTypeName);
+                                    treeView.RefreshItem(info.entry.id);
+                                });
+                            }
+                            else
+                            {
+                                dropdownField.index = info.SelectBaseType(selected);
+                                treeView.RefreshItem(info.entry.id);
+                            }
+                            return selected;
+                        };
+                    }
+                }
+            });
+
+            string convertUxmlPath = AssetDatabase.GUIDToAssetPath(ConvertCellUxmlGUID);
+            var convertCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(convertUxmlPath);
+            treeView.Columns.Insert(4, new Column()
+            {
+                title = "Convert",
+                width = 80f,
+                minWidth = 80f,
+
                 makeCell = () =>
                 {
-                    var cell = stateCell.Instantiate();
-                    var stateButton = cell.Q<Button>("state");
+                    var cell = convertCell.Instantiate();
+                    var convertButton = cell.Q<Button>("convert");
 
-                    stateButton.clicked += () =>
+                    convertButton.clicked += () =>
                     {
                         if (cell.userData is FileEntry entry)
                             OnClickConvert(entry.path);
@@ -95,41 +236,10 @@ namespace ClimbGames.Editor.UI
                     var entry = treeView.GetItemDataForIndex(index);
                     element.style.height = Length.Percent(100);
 
-                    var stateButton = element.Q<Button>("state");
-                    stateButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
+                    var convertButton = element.Q<Button>("convert");
+                    convertButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
 
                     element.userData = entry;
-                }
-            });
-
-            string outputUxmlPath = AssetDatabase.GUIDToAssetPath(OutputCellUxmlGUID);
-            var outputCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(outputUxmlPath);
-            treeView.Columns.Insert(2, new Column()
-            {
-                title = "Output",
-                width = 300f,
-                minWidth = 200f,
-
-                makeCell = () => outputCell.Instantiate(),
-                bindCell = (element, index) =>
-                {
-                    var entry = treeView.GetItemDataForIndex(index);
-                    element.style.height = Length.Percent(100);
-
-                    var objectField = element.Q<ObjectField>("output");
-                    if (entry.isDirectory == false)
-                    {
-                        if (convertDatas.TryGetValue(entry.path.ToUnityRelativePath(), out var data))
-                            objectField.value = data.prefab;
-                        else
-                            objectField.value = null;
-                        objectField.style.visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        objectField.style.visibility = Visibility.Hidden;
-                    }
-                    objectField.SetEnabled(false);
                 }
             });
 
@@ -139,41 +249,42 @@ namespace ClimbGames.Editor.UI
 
         void RefreshConvertDatas()
         {
-            convertDatas.Clear();
             using (new ListPoolScope<FileEntry>(out var list))
             {
                 treeView.GetFileItemDatas(ref list);
+                RefreshConvertDatas(list);
+            }
+        }
 
-                foreach (var entry in list)
-                {
-                    string originPath = entry.path.ToUnityRelativePath();
-                    string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
-                    string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
+        void RefreshConvertDatas(List<FileEntry> list)
+        {
+            convertInfos.Clear();
+            foreach (var entry in list)
+            {
+                string originPath = entry.path.ToUnityRelativePath();
+                string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
+                string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
 
-                    convertDatas[originPath] = new ConvertData()
-                    {
-                        entry = entry,
-                        prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath),
-                    };
-                }
+                convertInfos[originPath] = new PrefabConvertInfo(entry, AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
             }
         }
 
         void OnClickConvert(string path)
         {
             string relativePath = path.ToUnityRelativePath();
-            PrefabConverter.StartProcess(relativePath);
+            if (convertInfos.TryGetValue(relativePath, out var info))
+                PrefabConverter.StartProcess(relativePath, info.SelectedBaseType);
         }
 
         public void OnConvertFinished(string originPath)
         {
-            if (convertDatas.TryGetValue(originPath, out var data))
+            if (convertInfos.TryGetValue(originPath, out var info))
             {
                 string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
                 string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
-                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                info.Setup(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
 
-                treeView.RefreshItem(data.entry.id);
+                treeView.RefreshItem(info.entry.id);
             }
         }
     }

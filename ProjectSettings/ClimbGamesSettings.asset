@@ -22,7 +22,7 @@ MonoBehaviour:
       type: {class: UISettings, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
       data:
         prefabConvertSettings:
-          originPath: Assets/Prefabs/UI
+          originPath: Assets/ClimbGames/Sources/Prefabs
           outputPath: Assets/Sources/Prefabs/UI
           scriptPath: Assets/Scripts/UI
           bindingSchemas:

@@ -45,17 +45,20 @@ namespace ClimbGames.Editor.UI
             return builder.ToString();
         }
 
-        public bool AssignElements()
+        public bool TryAssignElements(out Type baseType)
         {
             Type type = Type.GetType($"{Namespace}.{ScriptName}, Assembly-CSharp");
             if (type != null)
             {
                 var component = entry.Target.AddComponent(type);
                 entry.AssignFieldValue(component);
+
+                baseType = type.BaseType;
                 return true;
             }
 
             Debug.LogError($"[PrefabConvert] can not find type({Namespace}.{ScriptName})");
+            baseType = null;
             return false;
         }
     }

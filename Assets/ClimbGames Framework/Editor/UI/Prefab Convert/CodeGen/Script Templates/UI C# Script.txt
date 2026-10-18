@@ -13,7 +13,7 @@ using ClimbGames.UI;
 
 namespace #NAMESPACE#
 {
-    public partial class #SCRIPTNAME# : UIBase
+    public partial class #SCRIPTNAME# : #BASETYPE#
     {
 #FIELDS#
 

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using ClimbGames.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,23 +13,21 @@ namespace ClimbGames.Editor.UI
         {
             if (CodeCompilation<PrefabCodeGenerator>.IsFinished())
             {
-                var prefabPath = CodeCompilation<PrefabCodeGenerator>.GetData();
+                var userData = CodeCompilation<PrefabCodeGenerator>.GetData();
                 EditorApplication.delayCall += () =>
                 {
-                    CreatePrefab(prefabPath);
+                    CreatePrefab(userData);
                 };
             }
             CodeCompilation<PrefabCodeGenerator>.Clear();
         }
 
-        public static void StartProcess(string prefabPath)
+        public static void StartProcess(string prefabPath, Type baseType = default)
         {
-            Binding.Initialize(PrefabConvertSettings.BindingSchemas);
-
-            if (GeneratePrefabCode(prefabPath))
-            // generate code
+            baseType ??= typeof(UIBase);
+            if (GeneratePrefabCode(prefabPath, baseType))
             {
-                CodeCompilation<PrefabCodeGenerator>.SetData(prefabPath);
+                CodeCompilation<PrefabCodeGenerator>.SetData($"{prefabPath}");
                 CodeCompilation<PrefabCodeGenerator>.Start();
             }
             else
@@ -36,14 +36,19 @@ namespace ClimbGames.Editor.UI
             }
         }
 
-        static bool GeneratePrefabCode(string prefabPath)
+        static bool GeneratePrefabCode(string prefabPath, Type baseType)
         {
+            Binding.Initialize(PrefabConvertSettings.BindingSchemas);
+
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             var schema = new PrefabSchema(prefab.name);
             schema.Read(prefab.transform);
 
-            var generator = new PrefabCodeGenerator(schema);
-            if (generator.Write(PrefabConvertSettings.ScriptPath))
+            var generator = new PrefabCodeGenerator(schema, baseType);
+            string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, Path.GetDirectoryName(prefabPath));
+            string newPath = Path.Combine(PrefabConvertSettings.ScriptPath, relativePath);
+
+            if (generator.Write(newPath))
             {
                 AssetDatabase.Refresh();
                 return true;
@@ -62,7 +67,11 @@ namespace ClimbGames.Editor.UI
 
             var schema = new PrefabSchema(instance.name);
             schema.Read(instance.transform);
-            schema.AssignElements();
+            if (schema.TryAssignElements(out var baseType))
+            {
+                var metadata = instance.AddComponent<PrefabMetadata>();
+                metadata.Setup(prefabPath, baseType);
+            }
 
             string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, prefabPath);
             string newPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath);
