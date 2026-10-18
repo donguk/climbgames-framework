@@ -24,7 +24,7 @@ namespace ClimbGames.Editor
             preloadedAssets.RemoveAll(asset => asset == null); // 유실된 널 에셋 정리
 
             // 목록에 없으면 등록
-            if (!preloadedAssets.Contains(settings))
+            if (preloadedAssets.Contains(settings) == false)
             {
                 preloadedAssets.Add(settings);
                 PlayerSettings.SetPreloadedAssets(preloadedAssets.ToArray());

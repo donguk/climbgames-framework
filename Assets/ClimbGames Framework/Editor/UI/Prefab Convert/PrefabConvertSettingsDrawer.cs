@@ -1,12 +1,68 @@
-﻿using System.Linq;
-using ClimbGames.Editor.UI;
-using Codice.Client.Common.WebApi.Responses;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using ClimbGames.Editor.UI;
 
 namespace ClimbGames.Editor
 {
+    public class FoldoutHeaderExampleWindow : EditorWindow
+    {
+        // 폴드아웃(접기/펼치기) 상태를 저장할 변수
+        private bool isSettingsFoldout = true;
+        private bool isAdvancedFoldout = false;
+
+        // 예시 데이터 필드들
+        private string playerName = "Hero";
+        private int playerLevel = 10;
+        private float moveSpeed = 5.5f;
+
+        [MenuItem("Tools/Open Foldout Example")]
+        public static void ShowWindow()
+        {
+            GetWindow<FoldoutHeaderExampleWindow>("Foldout Example");
+        }
+
+        private void OnGUI()
+        {
+            EditorGUILayout.Space(10);
+
+            // 1. 첫 번째 폴드아웃 헤더 시작
+            isSettingsFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(isSettingsFoldout, "Player Basic Settings");
+
+            // 폴드아웃이 열려있을(true) 때만 내부 UI를 그림
+            if (isSettingsFoldout)
+            {
+                // 들여쓰기를 주면 계층 구조가 훨씬 깔끔해집니다.
+                EditorGUI.indentLevel++;
+
+                playerName = EditorGUILayout.TextField("Player Name", playerName);
+                playerLevel = EditorGUILayout.IntField("Level", playerLevel);
+
+                EditorGUI.indentLevel--;
+            }
+
+            // 헤더 그룹 종료
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            EditorGUILayout.Space(5);
+
+            // 2. 두 번째 폴드아웃 헤더 시작
+            isAdvancedFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(isAdvancedFoldout, "Advanced Settings");
+
+            if (isAdvancedFoldout)
+            {
+                EditorGUI.indentLevel++;
+
+                moveSpeed = EditorGUILayout.FloatField("Move Speed", moveSpeed);
+
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUILayout.EndFoldoutHeaderGroup();
+        }
+    }
+
+
     [CustomPropertyDrawer(typeof(PrefabConvertSettings))]
     public class PrefabConvertSettingsDrawer : PropertyDrawer
     {
@@ -36,20 +92,32 @@ namespace ClimbGames.Editor
                 PrefabConvertSettings.ScriptPath = selectedPath;
             rect.y += lineHeight + spacing;
 
-
             if (bindingList == null)
                 InitList(property);
 
-            rect = new Rect(position.x, rect.y + 10f, position.width, bindingList.GetHeight());
-            bindingList.DoList(rect);
+            var schemasProperty = property.FindPropertyRelative("bindingSchemas");
+            Rect headerRect = new Rect(rect.x, rect.yMax, position.width, lineHeight);
+            ReorderableList.defaultBehaviours.DrawHeaderBackground(headerRect);
 
-            rect.y += rect.height + spacing;
-            rect.height = lineHeight;
+            headerRect.xMin += 6f;
+            headerRect.xMax -= 6f;
+            headerRect.height -= 2f;
+            headerRect.y += 1f;
 
-            if (GUI.Button(rect, "Reset Schemas"))
+            schemasProperty.isExpanded = EditorGUI.Foldout(headerRect, schemasProperty.isExpanded, "Binding Schemas", true);
+            if (schemasProperty.isExpanded)
             {
-                var target = (PrefabConvertSettings)property.GetTargetObjectOfProperty();
-                target.ResetSchemas();
+                rect = new Rect(rect.x, headerRect.yMax + spacing * 2, position.width, bindingList.GetHeight());
+                bindingList.DoList(rect);
+
+                rect.y += rect.height + spacing;
+                rect.height = lineHeight;
+
+                if (GUI.Button(rect, "Reset Schemas"))
+                {
+                    var target = (PrefabConvertSettings)property.GetTargetObjectOfProperty();
+                    target.ResetSchemas();
+                }
             }
 
             if (EditorGUI.EndChangeCheck())
@@ -64,14 +132,14 @@ namespace ClimbGames.Editor
                 property.serializedObject,
                 schemasProperty,
                 draggable: true,
-                displayHeader: true,
+                displayHeader: false,
                 displayAddButton: true,
                 displayRemoveButton: true)
             {
-                drawHeaderCallback = rect =>
-                {
-                    EditorGUI.LabelField(rect, "Binding Schemas");
-                },
+                //drawHeaderCallback = rect =>
+                //{
+                //    EditorGUI.LabelField(rect, "Binding Schemas");
+                //},
 
                 drawElementCallback = (rect, index, isActive, isFocused) =>
                 {
@@ -97,10 +165,13 @@ namespace ClimbGames.Editor
 
                     var element = schemasProperty.GetArrayElementAtIndex(index);
 
-                    element.FindPropertyRelative("prefix").stringValue = "";
-                    element.FindPropertyRelative("typeName").stringValue = "";
-                    element.FindPropertyRelative("bindingType").enumValueIndex = (int)BindingType.Component;
-                    element.FindPropertyRelative("isReadOnly").boolValue = false;
+                    element.FindPropertyRelative("prefix").stringValue = "trs_";
+                    element.FindPropertyRelative("typeName").stringValue = typeof(Transform).AssemblyQualifiedName;
+                    element.FindPropertyRelative("options").intValue = (int)Binding.SchemaOption.Fallback;
+
+                    var fallback = element.FindPropertyRelative("fallback");
+                    fallback.arraySize = 1;
+                    fallback.GetArrayElementAtIndex(0).stringValue = typeof(Transform).AssemblyQualifiedName;
 
                     schemasProperty.serializedObject.ApplyModifiedProperties();
                 },
@@ -113,7 +184,8 @@ namespace ClimbGames.Editor
                         return;
 
                     var element = schemasProperty.GetArrayElementAtIndex(index);
-                    if (element.FindPropertyRelative("isReadOnly").boolValue)
+                    var options = (Binding.SchemaOption)element.FindPropertyRelative("options").intValue;
+                    if ((options & Binding.SchemaOption.Readonly) != 0)
                         return;
 
                     schemasProperty.DeleteArrayElementAtIndex(index);
@@ -131,14 +203,21 @@ namespace ClimbGames.Editor
                 lineHeight + spacing + 10f + // 제목
                 lineHeight + spacing + // Origin Path
                 lineHeight + spacing + // Output Path
-                lineHeight + spacing + 10f; // Script Path
+                lineHeight + spacing; // Script Path
 
             if (bindingList == null)
                 InitList(property);
 
-            height += bindingList.GetHeight() + spacing;
-            height += lineHeight;
+            lineHeight += (lineHeight + spacing) * 2;
 
+            var schemasProperty = property.FindPropertyRelative("bindingSchemas");
+            if (schemasProperty.isExpanded)
+            {
+                height += bindingList.GetHeight() + spacing;
+                height += lineHeight;
+            }
+
+            height += spacing;
             return height;
         }
     }

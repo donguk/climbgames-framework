@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-
 namespace ClimbGames.Editor
 {
 	// The TreeModel is a utility class working on a list of serializable TreeElements where the order and the depth of each TreeElement define

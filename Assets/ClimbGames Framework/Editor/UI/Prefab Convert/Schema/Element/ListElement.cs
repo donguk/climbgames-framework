@@ -41,7 +41,7 @@ namespace ClimbGames.Eidot.UI
 
         public override string GetFieldTypeName()
         {
-            string fielTypeName = items?.FirstOrDefault()?.GetFieldTypeName() ?? base.GetFieldTypeName();
+            string fielTypeName = items?.FirstOrDefault()?.GetFieldTypeName() ?? GetTypeName(typeof(Transform));
             return $"List<{fielTypeName}>";
         }
 

@@ -1,12 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
-
-public class TestSchema
-{
-
-}
 
 namespace ClimbGames.Editor.UI
 {
@@ -22,84 +17,70 @@ namespace ClimbGames.Editor.UI
                 float lineHeight = EditorGUIUtility.singleLineHeight;
                 float spacing = EditorGUIUtility.standardVerticalSpacing;
 
-                SerializedProperty readOnlyProperty = property.FindPropertyRelative("isReadOnly");
+                EditorGUI.BeginChangeCheck();
+
+                SerializedProperty serializedProperty = property.FindPropertyRelative("options");
+                SchemaOption options = serializedProperty != null ? (SchemaOption)serializedProperty.intValue : SchemaOption.None;
+
                 bool originEnabled = GUI.enabled;
-                GUI.enabled = readOnlyProperty != null && readOnlyProperty.boolValue == false;
+                GUI.enabled = (options & SchemaOption.Readonly) == 0;
 
                 // prefix
-                Rect prefixRect = new Rect(position.x, position.y, position.width, lineHeight);
-                SerializedProperty serializedProperty = property.FindPropertyRelative($"prefix");
+                Rect rect = new Rect(position.x, position.y, position.width, lineHeight);
+                serializedProperty = property.FindPropertyRelative($"prefix");
                 if (serializedProperty != null)
                 {
                     title.text = $"Prefix{(GUI.enabled == false ? " (readonly)" : string.Empty)}";
-                    EditorGUI.PropertyField(prefixRect, serializedProperty, title, true);
+                    EditorGUI.PropertyField(rect, serializedProperty, title);
                 }
 
-                // bindingType
-                BindingType bindingType = BindingType.None;
-                Rect bindingRect = new Rect(position.x, prefixRect.y + lineHeight + spacing, position.width, lineHeight);
-                serializedProperty = property.FindPropertyRelative("bindingType");
-                if (serializedProperty != null)
-                {
-                    bindingType = (BindingType)serializedProperty.intValue;
-                    BindingType selectedType = (BindingType)EditorGUI.EnumPopup(bindingRect, "Binding", bindingType);
-                    if (selectedType != bindingType)
-                    {
-                        bindingType = selectedType;
-                        OnBindingSelect(property, selectedType);
-                    }
-                }
+                // options
+                //rect = new Rect(position.x, rect.y + lineHeight + spacing, position.width, lineHeight);
+                //SchemaOption selectedOptions = (SchemaOption)EditorGUI.EnumPopup(rect, "Options", options);
+                //if (selectedOptions != options)
+                //{
+                //    options = selectedOptions;
+                //}
 
                 // typeName
+                rect = new Rect(position.x, rect.y + lineHeight + spacing, position.width, lineHeight);
                 serializedProperty = property.FindPropertyRelative("typeName");
                 if (serializedProperty != null)
+                    EditorGUI.PropertyField(rect, serializedProperty);
+
+                if ((options & SchemaOption.Fallback) != 0)
                 {
-                    float buttonWidth = position.width * 0.12f;
-                    Rect typeRect = new Rect(position.x, bindingRect.y + lineHeight + spacing, position.width - buttonWidth, lineHeight);
-
-                    string typeName = serializedProperty.stringValue;
-                    typeName = Schema.IsNoneType(bindingType) || string.IsNullOrEmpty(typeName) ? "None" : Schema.GetDisplayName(typeName);
-                    EditorGUI.LabelField(typeRect, "Type", typeName, EditorStyles.boldLabel);
-
-                    bool originEnabled_2 = GUI.enabled;
-                    GUI.enabled = Schema.IsNoneType(bindingType) == false && GUI.enabled;
-                    Rect buttonRect = new Rect(position.x + (position.width - buttonWidth), typeRect.y, buttonWidth, lineHeight);
-                    if (GUI.Button(buttonRect, "Select Types"))
+                    // fallback
+                    serializedProperty = property.FindPropertyRelative("fallback");
+                    if (serializedProperty != null)
                     {
-                        SelectTypesWindow.Open(typeof(Component), result => OnTypeSelected(property, result));
+                        rect = new Rect(position.x, rect.y + lineHeight + spacing, position.width, lineHeight);
+                        EditorGUI.PropertyField(rect, serializedProperty);
                     }
-                    GUI.enabled = originEnabled_2;
                 }
+
+                if (EditorGUI.EndChangeCheck())
+                    UISettings.Instance.SetDirty();
 
                 GUI.enabled = originEnabled;
             }
 
-            void OnBindingSelect(SerializedProperty property, BindingType selectedType)
-            {
-                var target = (Schema)property.GetTargetObjectOfProperty();
-                if (target != null)
-                {
-                    if (target.bindingType != selectedType)
-                    {
-                        target.bindingType = selectedType;
-                        UISettings.Instance.SetDirty();
-                    }
-                }
-            }
-
-            void OnTypeSelected(SerializedProperty property, Type selectedType)
-            {
-                var target = (Schema)property.GetTargetObjectOfProperty();
-                if (target != null)
-                {
-                    if (target.SetType(selectedType))
-                        UISettings.Instance.SetDirty();
-                }
-            }
-
             public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
             {
-                return EditorGUIUtility.singleLineHeight * 3 + EditorGUIUtility.standardVerticalSpacing * 2;
+                float lineHeight = EditorGUIUtility.singleLineHeight;
+                float spacing = EditorGUIUtility.standardVerticalSpacing;
+                float propertyHeight = (lineHeight + spacing) * 2f;
+
+                SerializedProperty serializedProperty = property.FindPropertyRelative("options");
+                SchemaOption options = serializedProperty != null ? (SchemaOption)serializedProperty.intValue : SchemaOption.None;
+
+                if ((options & SchemaOption.Fallback) != 0)
+                {
+                    serializedProperty = property.FindPropertyRelative("fallback");
+                    propertyHeight += EditorGUI.GetPropertyHeight(serializedProperty, true);
+                }
+
+                return propertyHeight;
             }
         }
     }

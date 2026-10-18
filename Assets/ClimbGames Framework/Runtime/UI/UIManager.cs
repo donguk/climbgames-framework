@@ -20,7 +20,6 @@ namespace ClimbGames.UI
 
     public interface IUIData
     {
-
     }
 
     [DefaultExecutionOrder(9999)]
