@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="root" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="status" style="flex-grow: 0; width: 16px; background-image: url(&quot;project://database/Assets/ClimbGames%20Framework/Editor/UI/Prefab%20Convert/Uxml/status_icons_64px/success.png?fileID=2800000&amp;guid=5916f925efce8804da9116a44dcc6c6c&amp;type=3#success&quot;); -unity-background-scale-mode: scale-to-fit; margin-right: 2px; margin-left: 6px;"/>
+        <uie:ObjectField name="prefab" allow-scene-objects="false" style="flex-grow: 1; -unity-text-align: middle-left; align-items: center;"/>
+    </ui:VisualElement>
+</ui:UXML>

@@ -6,19 +6,18 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using ClimbGames.UI;
+using System.Linq;
 
 namespace ClimbGames.Editor.UI
 {
     public class PrefabWindow : EditorWindow
     {
         private const string WindowUxmlGUID = "8871c4d2fda088847a0c7fd3ac3c627e";
-        private const string StateCellUxmlGUID = "74fa90ff22b5ca34abb41cc8a3468495";
-        private const string OutputCellUxmlGUID = "5da4454cd02d87443a922c64360d0ae8";
+        private const string PrefabCellUxmlGUID = "5da4454cd02d87443a922c64360d0ae8";
         private const string BaseTypeCellUxmlGUID = "67648f2031ce73a46997d10736f7cc65";
-        private const string ConvertCellUxmlGUID = "37de53add6cead84293eb14086d0eb18";
 
         private FileTreeView treeView;
-        private Dictionary<string, PrefabConvertInfo> convertInfos = new Dictionary<string, PrefabConvertInfo>();
+        private Dictionary<string, PrefabConvertData> convertDatas = new Dictionary<string, PrefabConvertData>();
 
         [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
         private static void Open()
@@ -35,24 +34,13 @@ namespace ClimbGames.Editor.UI
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(windowUxmlPath);
             visualTree.CloneTree(rootVisualElement);
 
-            // 프리팹 뷰
-            treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
-
             var rawPathField = rootVisualElement.Q<SelectPathField>("raw_path");
             rawPathField.Path = PrefabConvertSettings.OriginPath;
             rawPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OriginPath = relativePath;
-
-                var root = FileTreeView.BuildRoot(relativePath, "*.prefab");
-                using (new ListPoolScope<FileEntry>(out var list))
-                {
-                    FileTreeView.GetFileItemDatas(root, ref list);
-                    RefreshConvertDatas(list);
-                }
-                treeView.SetRootItem(root);
-                treeView.RefreshItems();
+                SetOriginPath(relativePath);
                 return relativePath;
             };
 
@@ -62,9 +50,7 @@ namespace ClimbGames.Editor.UI
             {
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OutputPath = relativePath;
-
                 RefreshConvertDatas();
-                treeView.RefreshItems();
                 return relativePath;
             };
 
@@ -76,216 +62,281 @@ namespace ClimbGames.Editor.UI
                 return PrefabConvertSettings.ScriptPath = relativePath;
             };
 
+            // 프리팹 뷰
+            treeView = rootVisualElement.Q<FileTreeView>("prefab_view");
 
-            // 프리팹 뷰 column 추가
-            string stateUxmlPath = AssetDatabase.GUIDToAssetPath(StateCellUxmlGUID);
-            var stateCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(stateUxmlPath);
-            treeView.Columns.Insert(1, new Column()
+            treeView.AddFileMenuItem(new FileMenuItem[]
             {
-                title = "Status",
-                width = 50f,
-                minWidth = 50f,
-                resizable = false,
-
-                makeCell = () => stateCell.Instantiate(),
-                bindCell = (element, index) =>
-                {
-                    var entry = treeView.GetItemDataForIndex(index);
-                    element.style.height = Length.Percent(100);
-
-                    var status = element.Q<VisualElement>("status");
-                    status.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
-
-                    if (entry.isDirectory == false)
-                    {
-                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
-                        switch (info.Status)
-                        {
-                            case PrefabConvertStatus.NotExistPrefab:
-                                {
-                                    status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
-                                    break;
-                                }
-                            case PrefabConvertStatus.InvalidMetadata:
-                                {
-                                    status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
-                                    break;
-                                }
-                            case PrefabConvertStatus.BaseTypeChanged:
-                                {
-                                    status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Failed);
-                                    break;
-                                }
-                            case PrefabConvertStatus.OriginModified:
-                                {
-                                    status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Processing);
-                                    break;
-                                }
-                            default:
-                                {
-                                    status.tooltip = info.Status.ToString();
-                                    status.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Success);
-                                    break;
-                                }
-                        }
-                    }
-                }
+                new FileMenuItem("Convert", FileMenuFlag.File),
+                new FileMenuItem("Clear", FileMenuFlag.File)
             });
+            treeView.onContextMenuClicked += OnContextMenuClicked;
 
-            string outputUxmlPath = AssetDatabase.GUIDToAssetPath(OutputCellUxmlGUID);
-            var outputCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(outputUxmlPath);
-            treeView.Columns.Insert(2, new Column()
-            {
-                title = "Output",
-                width = 200f,
-                minWidth = 100f,
-
-                makeCell = () => outputCell.Instantiate(),
-                bindCell = (element, index) =>
-                {
-                    var entry = treeView.GetItemDataForIndex(index);
-                    element.style.height = Length.Percent(100);
-
-                    var objectField = element.Q<ObjectField>("output");
-                    objectField.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
-
-                    if (entry.isDirectory == false)
-                    {
-                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
-                        objectField.value = info.prefab;
-                    }
-                    objectField.SetEnabled(false);
-                }
-            });
-
-
+            // column 추가
+            treeView.Columns.Insert(1, CreateConvertPrefabsColumn());
 
             // base type
-            string baseTypeUxmlPath = AssetDatabase.GUIDToAssetPath(BaseTypeCellUxmlGUID);
-            var baseTypeCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(baseTypeUxmlPath);
-            treeView.Columns.Insert(3, new Column()
+            treeView.Columns.Insert(2, CreateSelectBaseTypeColumn());
+
+            //string convertUxmlPath = AssetDatabase.GUIDToAssetPath(ConvertCellUxmlGUID);
+            //var convertCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(convertUxmlPath);
+            //treeView.Columns.Insert(4, new Column()
+            //{
+            //    title = "Convert",
+            //    width = 80f,
+            //    minWidth = 80f,
+            //
+            //    makeCell = () =>
+            //    {
+            //        var cell = convertCell.Instantiate();
+            //        var convertButton = cell.Q<Button>("convert");
+            //
+            //        convertButton.clicked += () =>
+            //        {
+            //            if (cell.userData is FileEntry entry)
+            //                OnClickConvert(entry.path);
+            //        };
+            //
+            //
+            //        cell.AddManipulator(new ContextualMenuManipulator(evt =>
+            //        {
+            //            if (cell.userData is not FileEntry data)
+            //                return;
+            //
+            //            evt.menu.AppendAction("Rename", _ =>
+            //            {
+            //                Debug.Log($"Rename: {data.name}");
+            //            });
+            //
+            //            evt.menu.AppendAction("Delete", _ =>
+            //            {
+            //                Debug.Log($"Delete: {data.name}");
+            //            });
+            //        }));
+            //
+            //        return cell;
+            //    },
+            //    bindCell = (element, index) =>
+            //    {
+            //        var entry = treeView.GetItemDataForIndex(index);
+            //        element.style.height = Length.Percent(100);
+            //
+            //        var convertButton = element.Q<Button>("convert");
+            //        convertButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
+            //
+            //        element.userData = entry;
+            //    }
+            //});
+
+            SetOriginPath(PrefabConvertSettings.OriginPath);
+        }
+
+        Column CreateConvertPrefabsColumn()
+        {
+            var column = new Column()
+            {
+                title = "Convert Prefab",
+                width = 300f,
+                minWidth = 200f,
+
+                makeCell = () =>
+                {
+                    var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(PrefabCellUxmlGUID));
+                    var cell = template.Instantiate();
+
+                    cell.AddManipulator(new ContextualMenuManipulator(treeView.OnContextMenu));
+                    return cell;
+                },
+
+                bindCell = (element, index) =>
+                {
+                    element.style.height = Length.Percent(100);
+
+                    var data = treeView.GetItemDataForIndex<PrefabConvertData>(index);
+                    Visibility visibility = data.isDirectory ? Visibility.Hidden : Visibility.Visible;
+
+                    var statusField = element.Q<VisualElement>("status");
+                    statusField.style.visibility = visibility;
+
+                    var objectField = element.Q<ObjectField>("prefab");
+                    objectField.style.visibility = visibility;
+                    objectField.SetEnabled(false);
+
+                    if (data.isDirectory == false)
+                    {
+                        RefreshStatus(statusField, data);
+                        objectField.value = data.prefab;
+                    }
+                }
+            };
+            return column;
+        }
+
+        Column CreateSelectBaseTypeColumn()
+        {
+            var column = new Column()
             {
                 title = "BaseType",
                 width = 150f,
                 minWidth = 100f,
 
-                makeCell = () => baseTypeCell.Instantiate(),
+                makeCell = () =>
+                {
+                    var baseTypeCell = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(BaseTypeCellUxmlGUID));
+                    return baseTypeCell.Instantiate();
+                },
+
                 bindCell = (element, index) =>
                 {
-                    var entry = treeView.GetItemDataForIndex(index);
+                    var data = treeView.GetItemDataForIndex<PrefabConvertData>(index);
                     element.style.height = Length.Percent(100);
 
                     var dropdownField = element.Q<DropdownField>("base_type");
-                    dropdownField.style.visibility = entry.isDirectory == false ? Visibility.Visible : Visibility.Hidden;
+                    dropdownField.style.visibility = data.isDirectory == false ? Visibility.Visible : Visibility.Hidden;
 
-                    if (entry.isDirectory == false)
+                    if (data.isDirectory == false)
                     {
-                        convertInfos.TryGetValue(entry.path.ToUnityRelativePath(), out var info);
-                        dropdownField.choices = info.BaseTypeNames;
-                        dropdownField.SetValueWithoutNotify(info.SelectedBaseTypeName);
+                        dropdownField.choices = data.BaseTypeNames;
+                        dropdownField.SetValueWithoutNotify(data.SelectedBaseTypeName);
+                        dropdownField.SetEnabled(data.metadata == null || string.IsNullOrEmpty(data.metadata.baseType));
 
                         dropdownField.formatSelectedValueCallback = (selected) =>
                         {
-                            if (selected == PrefabConvertInfo.SelectTypesID)
+                            if (selected == PrefabConvertData.SelectTypesID)
                             {
                                 SelectTypesWindow.Open(typeof(MonoBehaviour), result =>
                                 {
-                                    info.SelectBaseType(result);
-                                    dropdownField.SetValueWithoutNotify(info.SelectedBaseTypeName);
-                                    treeView.RefreshItem(info.entry.id);
+                                    data.SelectBaseType(result);
+                                    dropdownField.SetValueWithoutNotify(data.SelectedBaseTypeName);
+                                    treeView.RefreshItem(data.id);
                                 });
                             }
                             else
                             {
-                                dropdownField.index = info.SelectBaseType(selected);
-                                treeView.RefreshItem(info.entry.id);
+                                dropdownField.index = data.SelectBaseType(selected);
+                                treeView.RefreshItem(data.id);
                             }
                             return selected;
                         };
                     }
                 }
-            });
+            };
+            return column;
+        }
 
-            string convertUxmlPath = AssetDatabase.GUIDToAssetPath(ConvertCellUxmlGUID);
-            var convertCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(convertUxmlPath);
-            treeView.Columns.Insert(4, new Column()
+        void SetOriginPath(string originPath)
+        {
+            convertDatas.Clear();
+
+            treeView.SetRootPath(originPath, new string[] { "*.prefab" }, (id, path) =>
             {
-                title = "Convert",
-                width = 80f,
-                minWidth = 80f,
+                var data = new PrefabConvertData(id, path);
+                if (data.isDirectory == false)
+                    convertDatas[data.originPath] = data;
 
-                makeCell = () =>
-                {
-                    var cell = convertCell.Instantiate();
-                    var convertButton = cell.Q<Button>("convert");
-
-                    convertButton.clicked += () =>
-                    {
-                        if (cell.userData is FileEntry entry)
-                            OnClickConvert(entry.path);
-                    };
-
-                    return cell;
-                },
-                bindCell = (element, index) =>
-                {
-                    var entry = treeView.GetItemDataForIndex(index);
-                    element.style.height = Length.Percent(100);
-
-                    var convertButton = element.Q<Button>("convert");
-                    convertButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
-
-                    element.userData = entry;
-                }
-            });
-
-            treeView.SetRootPath(PrefabConvertSettings.OriginPath, "*.prefab");
-            RefreshConvertDatas();
+                return data;
+            }, true);
         }
 
         void RefreshConvertDatas()
         {
-            using (new ListPoolScope<FileEntry>(out var list))
+            foreach (var pair in convertDatas)
+                pair.Value.RefreshPrefab();
+
+            treeView.RefreshItems();
+        }
+
+        void RefreshStatus(VisualElement element, PrefabConvertData data)
+        {
+            switch (data.Status)
             {
-                treeView.GetFileItemDatas(ref list);
-                RefreshConvertDatas(list);
+                case PrefabConvertStatus.NotExistPrefab:
+                    {
+                        element.tooltip = data.Status.ToString();
+                        element.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
+                        break;
+                    }
+                case PrefabConvertStatus.InvalidMetadata:
+                    {
+                        element.tooltip = data.Status.ToString();
+                        element.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Idle);
+                        break;
+                    }
+                case PrefabConvertStatus.BaseTypeChanged:
+                    {
+                        element.tooltip = data.Status.ToString();
+                        element.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Failed);
+                        break;
+                    }
+                case PrefabConvertStatus.OriginModified:
+                    {
+                        element.tooltip = data.Status.ToString();
+                        element.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Processing);
+                        break;
+                    }
+                default:
+                    {
+                        element.tooltip = data.Status.ToString();
+                        element.style.backgroundImage = new StyleBackground(PrefabStatusIcons.Success);
+                        break;
+                    }
             }
         }
 
-        void RefreshConvertDatas(List<FileEntry> list)
+        void OnContextMenuClicked(string actionName)
         {
-            convertInfos.Clear();
-            foreach (var entry in list)
+            switch (actionName)
             {
-                string originPath = entry.path.ToUnityRelativePath();
-                string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
-                string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
+                case "Refresh":
+                    {
+                        RefreshConvertDatas();
+                        break;
+                    }
 
-                convertInfos[originPath] = new PrefabConvertInfo(entry, AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
+                case "Convert":
+                    {
+                        var id = treeView.SelectedIds.FirstOrDefault();
+                        var data = treeView.GetItemDataForId<PrefabConvertData>(id);
+                        ConvertPrefab(data);
+                        break;
+                    }
+
+                case "Clear":
+                    {
+                        var id = treeView.SelectedIds.FirstOrDefault();
+                        var data = treeView.GetItemDataForId<PrefabConvertData>(id);
+                        ClearPrefabFiles(data);
+                        break;
+                    }
             }
         }
 
-        void OnClickConvert(string path)
+        void ConvertPrefab(PrefabConvertData data)
         {
-            string relativePath = path.ToUnityRelativePath();
-            if (convertInfos.TryGetValue(relativePath, out var info))
-                PrefabConverter.StartProcess(relativePath, info.SelectedBaseType);
+            PrefabConverter.StartProcess(data.originPath, data.SelectedBaseType);
         }
 
         public void OnConvertFinished(string originPath)
         {
-            if (convertInfos.TryGetValue(originPath, out var info))
+            if (convertDatas.TryGetValue(originPath, out var data))
             {
-                string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, originPath);
-                string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath).Replace("\\", "/");
-                info.Setup(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
-
-                treeView.RefreshItem(info.entry.id);
+                data.RefreshPrefab();
+                treeView.RefreshItem(data.id);
             }
+        }
+
+        void ClearPrefabFiles(PrefabConvertData data)
+        {
+            string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, Path.GetDirectoryName(data.originPath));
+            string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath, data.name);
+
+            AssetDatabase.DeleteAsset(prefabPath);
+            AssetDatabase.DeleteAsset(Path.Combine(PrefabConvertSettings.ScriptPath, relativePath, $"{data.origin.name}.cs"));
+            AssetDatabase.DeleteAsset(Path.Combine(PrefabConvertSettings.ScriptPath, relativePath, $"{data.origin.name}.Impl.cs"));
+            AssetDatabase.Refresh();
+
+            data.RefreshPrefab();
+            treeView.RefreshItem(data.id);
         }
     }
 }

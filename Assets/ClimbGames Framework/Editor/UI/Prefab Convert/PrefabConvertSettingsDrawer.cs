@@ -22,15 +22,15 @@ namespace ClimbGames.Editor
             EditorGUI.LabelField(rect, "Prefab Convert Settings", EditorStyles.boldLabel);
             rect.y += rect.height + spacing;
 
-            if (EditorGUIs.SelectPathField(rect, "Origin Path", PrefabConvertSettings.OriginPath, out var selectedPath))
+            if (EditorGUIs.SelectPathField(rect, "Origin Prefab Path", PrefabConvertSettings.OriginPath, out var selectedPath))
                 PrefabConvertSettings.OriginPath = selectedPath;
             rect.y += lineHeight + spacing;
 
-            if (EditorGUIs.SelectPathField(rect, "Output Path", PrefabConvertSettings.OutputPath, out selectedPath))
+            if (EditorGUIs.SelectPathField(rect, "Convert Prefab Path", PrefabConvertSettings.OutputPath, out selectedPath))
                 PrefabConvertSettings.OutputPath = selectedPath;
             rect.y += lineHeight + spacing;
 
-            if (EditorGUIs.SelectPathField(rect, "Script Path", PrefabConvertSettings.ScriptPath, out selectedPath))
+            if (EditorGUIs.SelectPathField(rect, "CodeGen Script Path", PrefabConvertSettings.ScriptPath, out selectedPath))
                 PrefabConvertSettings.ScriptPath = selectedPath;
             rect.y += lineHeight + spacing;
 

@@ -15,7 +15,8 @@ namespace ClimbGames
         private Vector2 scrollPosition;
         private Action<Type> onComplete;
         private Type selectedType;
-        IEnumerable<Type> filteredTypes;
+        private IEnumerable<Type> filteredTypes;
+        private GUIContent itemContent;
 
         public static void Open(Type baseType, Action<Type> onComplete)
         {
@@ -36,6 +37,11 @@ namespace ClimbGames
         private void OnLostFocus()
         {
             Close();
+            onComplete?.Invoke(null);
+        }
+
+        void OnDisable()
+        {
             onComplete?.Invoke(null);
         }
 
@@ -68,9 +74,14 @@ namespace ClimbGames
             if (selectedType == type)
                 GUI.Box(rect, GUIContent.none, EditorStyles.selectionRect);
 
+            if (itemContent == null)
+                itemContent = new GUIContent();
+
+            itemContent.text = type.FullName;
+            itemContent.image = GUIContents.Search_Icon.image;
+
             // 검색 아이콘 + 타입 이름
-            GUIContent content = new GUIContent(type.FullName, GUIContents.Search_Icon.image);
-            GUI.Label(rect, content, EditorStyles.label);
+            GUI.Label(rect, itemContent, EditorStyles.label);
 
             // 더블 클릭 처리
             Event e = Event.current;
