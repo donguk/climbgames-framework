@@ -81,7 +81,7 @@ namespace ClimbGames.Editor.UI
             if (element.IsValid)
                 definition.AddElement(element);
 
-            var children = element.Children;
+            var children = element.GetChildren();
             if (children != null)
             {
                 foreach (var child in children)
@@ -146,7 +146,7 @@ namespace ClimbGames.Editor.UI
                 }
             }
 
-            var children = element.Children;
+            var children = element.GetChildren();
             if (children != null)
             {
                 foreach (var child in children)

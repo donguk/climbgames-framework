@@ -93,7 +93,7 @@ namespace ClimbGames.Editor
                 {
                     var element = schemasProperty.GetArrayElementAtIndex(index);
 
-                    return EditorGUI.GetPropertyHeight(element, true) + 4f;
+                    return EditorGUI.GetPropertyHeight(element, true);
                 },
 
                 onAddCallback = list =>
@@ -102,15 +102,7 @@ namespace ClimbGames.Editor
                     schemasProperty.InsertArrayElementAtIndex(index);
 
                     var element = schemasProperty.GetArrayElementAtIndex(index);
-
-                    element.FindPropertyRelative("prefix").stringValue = "trs_";
-                    element.FindPropertyRelative("typeName").stringValue = typeof(Transform).AssemblyQualifiedName;
-                    element.FindPropertyRelative("options").intValue = (int)Binding.SchemaOption.Fallback;
-
-                    var fallback = element.FindPropertyRelative("fallback");
-                    fallback.arraySize = 1;
-                    fallback.GetArrayElementAtIndex(0).stringValue = typeof(Transform).AssemblyQualifiedName;
-
+                    element.managedReferenceValue = new Binding.ComponentSchema("trs_", typeof(Transform), Binding.SchemaOption.Fallback | Binding.SchemaOption.IncludeChildren);
                     schemasProperty.serializedObject.ApplyModifiedProperties();
                 },
 
@@ -122,8 +114,7 @@ namespace ClimbGames.Editor
                         return;
 
                     var element = schemasProperty.GetArrayElementAtIndex(index);
-                    var options = (Binding.SchemaOption)element.FindPropertyRelative("options").intValue;
-                    if ((options & Binding.SchemaOption.Readonly) != 0)
+                    if (element.FindPropertyRelative("isReadonly").boolValue)
                         return;
 
                     schemasProperty.DeleteArrayElementAtIndex(index);

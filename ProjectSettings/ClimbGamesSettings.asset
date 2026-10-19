@@ -13,112 +13,181 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ClimbGames.Framework.Editor::ClimbGames.Editor.ClimbGamesSettings
   settings:
-  - rid: 8146080848672980992
-  - rid: 8146080848672980993
+  - rid: 8146080883398672384
+  - rid: 8146080883398672385
   references:
     version: 2
     RefIds:
-    - rid: 8146080848672980992
+    - rid: 8146080883398672384
       type: {class: UISettings, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
       data:
         prefabConvertSettings:
           originPath: Assets/ClimbGames/Sources/Prefabs
-          outputPath: Assets/Sources/Prefabs/UI
-          scriptPath: Assets/Scripts/UI
+          outputPath: Assets/ClimbGames/Addressable
+          scriptPath: Assets/ClimbGames/Scripts
           bindingSchemas:
-          - options: 9
-            prefix: list_
-            typeName: System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0,
-              Culture=neutral, PublicKeyToken=b77a5c561934e089
-            fallback: []
-          - options: 21
-            prefix: grp_
-            typeName: Auto Generated Type
-            fallback: []
-          - options: 33
-            prefix: ui_
-            typeName: ClimbGames.UI.UIBase, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback: []
-          - options: 2
-            prefix: trs_
-            typeName: UnityEngine.RectTransform, UnityEngine.CoreModule, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: txt_;text_
-            typeName: ClimbGames.UI.UIText, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - TMPro.TMP_Text, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: img_;image_
-            typeName: ClimbGames.UI.UIImage, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.Image, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: raw_;rawimg_
-            typeName: ClimbGames.UI.UIRawImage, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.RawImage, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: tgl_
-            typeName: ClimbGames.UI.UIToggle, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.Toggle, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: sld_
-            typeName: ClimbGames.UI.UISlider, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.Slider, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: scb_
-            typeName: ClimbGames.UI.UIScrollbar, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.Scrollbar, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: scr_
-            typeName: ClimbGames.UI.UIScrollRect, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.ScrollRect, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: btn_
-            typeName: ClimbGames.UI.UIButton, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - UnityEngine.UI.Button, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: drd_
-            typeName: ClimbGames.UI.UIDropdown, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - TMPro.TMP_Dropdown, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-          - options: 2
-            prefix: inf_
-            typeName: ClimbGames.UIInputField, ClimbGames.Framework, Version=0.0.0.0,
-              Culture=neutral, PublicKeyToken=null
-            fallback:
-            - TMPro.TMP_InputField, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
-              PublicKeyToken=null
-    - rid: 8146080848672980993
+          - rid: 8146080883398672386
+          - rid: 8146080883398672387
+          - rid: 8146080883398672388
+          - rid: 8146080883398672389
+          - rid: 8146080883398672390
+          - rid: 8146080883398672391
+          - rid: 8146080883398672392
+          - rid: 8146080883398672393
+          - rid: 8146080883398672394
+          - rid: 8146080883398672395
+          - rid: 8146080883398672396
+          - rid: 8146080883398672397
+          - rid: 8146080883398672398
+          - rid: 8146080883398672399
+    - rid: 8146080883398672385
       type: {class: FrameworkEditorSettings, ns: ClimbGames.Editor, asm: ClimbGames.Framework.Editor}
       data:
         showSceneName: 1
         projectNamesapce: ClimbGames
+    - rid: 8146080883398672386
+      type: {class: Binding/ListSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: list_
+        typeName: System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+        fallback: []
+        options: 1
+        isReadonly: 1
+    - rid: 8146080883398672387
+      type: {class: Binding/GroupSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: grp_
+        typeName: 
+        fallback: []
+        options: 1
+        isReadonly: 1
+    - rid: 8146080883398672388
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: ui_
+        typeName: ClimbGames.UI.UIBase, ClimbGames.Framework, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        fallback: []
+        options: 0
+        isReadonly: 1
+    - rid: 8146080883398672389
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: trs_
+        typeName: UnityEngine.RectTransform, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672390
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: txt_;text_
+        typeName: ClimbGames.UI.UIText, ClimbGames.Framework, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        fallback:
+        - TMPro.TMP_Text, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672391
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: img_;image_
+        typeName: ClimbGames.UI.UIImage, ClimbGames.Framework, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.Image, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672392
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: raw_;rawimg_
+        typeName: ClimbGames.UI.UIRawImage, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.RawImage, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672393
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: tgl_
+        typeName: ClimbGames.UI.UIToggle, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.Toggle, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672394
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: sld_
+        typeName: ClimbGames.UI.UISlider, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.Slider, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672395
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: scb_
+        typeName: ClimbGames.UI.UIScrollbar, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.Scrollbar, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672396
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: scr_
+        typeName: ClimbGames.UI.UIScrollRect, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.ScrollRect, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672397
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: btn_
+        typeName: ClimbGames.UI.UIButton, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - UnityEngine.UI.Button, UnityEngine.UI, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672398
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: drd_
+        typeName: ClimbGames.UI.UIDropdown, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - TMPro.TMP_Dropdown, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0
+    - rid: 8146080883398672399
+      type: {class: Binding/ComponentSchema, ns: ClimbGames.Editor.UI, asm: ClimbGames.Framework.Editor}
+      data:
+        prefix: inf_
+        typeName: ClimbGames.UIInputField, ClimbGames.Framework, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        fallback:
+        - TMPro.TMP_InputField, Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        options: 3
+        isReadonly: 0

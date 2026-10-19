@@ -1,20 +1,23 @@
-using ClimbGames.UI;
+﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.UI;
-using R3;
 using TMPro;
 using Cysharp.Threading.Tasks;
+using ClimbGames.UI;
+using R3;
 
 namespace ClimbGames
 {
-    public class UIPanelTitle : UIBase
+    public partial class UIPanelTitle : UIBase<UIPanelTitleData>
     {
-        [SerializeField] private Transform root;
-        [SerializeField] private TMP_InputField tif_version;
-        [SerializeField] private TMP_InputField tif_patch;
-        [SerializeField] private Button btn_check_catalog;
-        [SerializeField] private Button btn_load_view;
-        [SerializeField] private TMP_Text txt_catalog_result;
+
+        protected override UniTask OnInitialize(UIPanelTitleData data)
+        {
+            // implement ui
+
+            return base.OnInitialize(data);
+        }
 
         private GameObject uiVIew;
 
@@ -28,12 +31,12 @@ namespace ClimbGames
 
         async void OnCheckCatalogUpdates()
         {
-            if (int.TryParse(tif_patch.text, out var number))
+            if (int.TryParse(inf_patch.text, out var number))
             {
-                string catalogPath = $"http://192.168.0.10/climbgames-root/framework/Android/{tif_version.text}/catalog_{tif_version.text}_{number}.json";
+                string catalogPath = $"http://192.168.0.10/climbgames-root/framework/Android/{inf_version.text}/catalog_{inf_version.text}_{number}.json";
 
                 var patchInfo = await AssetManager.CheckForCatalogUpdates(catalogPath);
-                txt_catalog_result.text = patchInfo.ToString();
+                text_check_result.text = patchInfo.ToString();
             }
         }
 
@@ -44,7 +47,7 @@ namespace ClimbGames
 
             await UniTask.NextFrame();
 
-            uiVIew = AssetManager.Instantiate("UIPatchView", root);
+            uiVIew = AssetManager.Instantiate("UIPatchView", trs_root);
             ValidateTextShader(uiVIew);
         }
 

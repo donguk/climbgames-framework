@@ -1,5 +1,4 @@
 ﻿using System;
-using ClimbGames.Eidot.UI;
 using UnityEngine;
 
 namespace ClimbGames.Editor.UI
@@ -32,15 +31,6 @@ namespace ClimbGames.Editor.UI
         }
 
         public override BindingElement CreateElement(GameObject target) => new GroupElement(target, binding);
-    }
-
-    public class UIBaseElementProvider : ElementProvider
-    {
-        public UIBaseElementProvider(Binding binding) : base(binding)
-        {
-        }
-
-        public override BindingElement CreateElement(GameObject target) => new UIBaseElement(target, binding);
     }
 
     public class ComponentElementProvider : ElementProvider

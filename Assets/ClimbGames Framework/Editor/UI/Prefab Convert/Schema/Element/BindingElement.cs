@@ -8,9 +8,9 @@ namespace ClimbGames.Editor.UI
 {
     public class BindingElement : IUniquableName
     {
-        private Binding binding;
-        private BindingElement parent;
-        private List<BindingElement> children;
+        protected Binding binding;
+        protected BindingElement parent;
+        protected List<BindingElement> children;
 
         protected PrefabSchema Schema { get; private set; }
         public GameObject Target { get; private set; }
@@ -18,12 +18,11 @@ namespace ClimbGames.Editor.UI
         public string FieldName { get; private set; }
 
         public bool IsValid => binding != null;
-        public BindingElement Parent => parent;
-        public IReadOnlyList<BindingElement> Children => children;
         public virtual Type FieldType => binding?.FieldType ?? typeof(Transform);
         public int Depth { get; private set; }
+        public bool IsIncludeChildren => binding == null || (binding.Options & Binding.SchemaOption.IncludeChildren) != 0;
 
-        IUniquableName IUniquableName.Parent => Parent;
+        IUniquableName IUniquableName.Parent => parent;
         public string UniqueName => parent != null ? FieldName : string.Empty;
 
         public BindingElement(GameObject target, Binding binding)
@@ -78,6 +77,11 @@ namespace ClimbGames.Editor.UI
             this.parent = parent;
         }
 
+        public List<BindingElement> GetChildren()
+        {
+            return children;
+        }
+
 
         public void SearchElements()
         {
@@ -85,6 +89,12 @@ namespace ClimbGames.Editor.UI
         }
 
         protected virtual void SearchElements(Transform transform, int depth)
+        {
+            if (IsIncludeChildren)
+                SearchElementsInternal(transform, depth);
+        }
+
+        internal void SearchElementsInternal(Transform transform, int depth)
         {
             int count = transform.childCount;
             for (int i = 0; i < count; ++i)

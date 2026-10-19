@@ -223,12 +223,18 @@ namespace ClimbGames.Editor.UI
 
                                     var tempItem = BuildRootItem(parentData.path, searchPatterns, ref treeItemId, entryProvider);
 
-                                    int childIndex = 0;
+                                    int childIndex = 0, newChildId = -1;
                                     var enumerator = tempItem.children.GetEnumerator();
                                     while (enumerator.MoveNext())
+                                    {
+                                        if (enumerator.Current.data.path == data.path)
+                                            newChildId = enumerator.Current.id;
+
                                         treeView.AddItem(enumerator.Current, parentId, childIndex++, false);
+                                    }
 
                                     treeView.Rebuild();
+                                    treeView.ExpandItem(newChildId);
                                 }
                                 else
                                 {

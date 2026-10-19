@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClimbGames.Editor.UI;
 using UnityEngine;
 
-namespace ClimbGames.Eidot.UI
+namespace ClimbGames.Editor.UI
 {
     public class ListElement : BindingElement
     {
-        private BindingElement virtualRoot;
         private List<BindingElement> items;
 
         public ListElement(GameObject target, Binding binding) : base(target, binding)
         {
         }
 
-        protected override void OnInitialize(BindingElement parent, PrefabSchema schema, int depth = 0)
-        {
-            base.OnInitialize(parent, schema, depth);
 
-            virtualRoot = new BindingElement(Target, schema);
+        protected override void SearchElements(Transform transform, int depth)
+        {
+            // 
+            SearchElementsInternal(transform, depth);
         }
 
         protected override BindingElement AddChild(BindingElement element)
@@ -32,8 +30,13 @@ namespace ClimbGames.Eidot.UI
             {
                 items.Add(element);
 
+                // 
+                List<BindingElement> children = null;
+                if (IsIncludeChildren)
+                    children = element.GetChildren();
+
                 // create none binding element
-                element = new BindingElement(element);
+                element = new BindingElement(element, children);
             }
 
             return base.AddChild(element);
@@ -47,7 +50,7 @@ namespace ClimbGames.Eidot.UI
 
         public override object GetFieldValue()
         {
-            var itemType = items?.FirstOrDefault()?.FieldType ?? FieldType;
+            var itemType = items?.FirstOrDefault()?.FieldType ?? typeof(Transform);
             var type = typeof(List<>).MakeGenericType(itemType);
             var list = (System.Collections.IList)Activator.CreateInstance(type);
 
