@@ -71,6 +71,7 @@ namespace ClimbGames.Editor.UI
                 new FileMenuItem("Convert Prefab", FileMenuFlag.File),
             });
             treeView.onContextMenuClicked += OnContextMenuClicked;
+            treeView.onFileMouseDownEvent += OnFileMouseDownEvent;
 
             prefabCellMenuItems = new FileMenuItem[]
             {
@@ -303,6 +304,36 @@ namespace ClimbGames.Editor.UI
                         break;
                     }
             }
+        }
+
+        void OnFileMouseDownEvent(MouseDownEvent evt, int id)
+        {
+            var data = treeView.GetItemDataForId<PrefabConvertData>(id);
+
+            if (evt.button != 0)
+                return;
+
+            if (data.isDirectory)
+            {
+                var folder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(data.path);
+
+                Selection.activeObject = folder;
+                EditorGUIUtility.PingObject(folder);
+            }
+            else
+            {
+                if (data.origin == null)
+                    return;
+
+                Selection.activeObject = data.origin;
+                EditorGUIUtility.PingObject(data.origin);
+
+                // 더블클릭 시 프리팹 열기
+                if (evt.clickCount == 2)
+                    AssetDatabase.OpenAsset(data.origin);
+            }
+            // 
+            //evt.StopPropagation();
         }
 
         void ConvertPrefab(PrefabConvertData data)

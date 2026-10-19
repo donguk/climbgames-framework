@@ -7,7 +7,9 @@ namespace ClimbGames
 {
     public class PrefabMetadata : MonoBehaviour
     {
+        [ReadOnly]
         public string baseType;
+        [ReadOnly]
         public int hashCode;
 
         public void Setup(string originPath, Type baseType)

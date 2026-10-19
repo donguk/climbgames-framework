@@ -42,6 +42,7 @@ namespace ClimbGames.Editor.UI
         private bool excludeRootItem;
         private FileMenuItem[] menuItems;
         public event Action<string> onContextMenuClicked;
+        public event Action<MouseDownEvent, int> onFileMouseDownEvent;
 
         [UxmlAttribute]
         public string Title
@@ -75,6 +76,11 @@ namespace ClimbGames.Editor.UI
                 var root = cell.Q<VisualElement>("root");
 
                 root.AddManipulator(new ContextualMenuManipulator((evt) => OnContextMenu(evt)));
+                cell.RegisterCallback<MouseDownEvent>(evt =>
+                {
+                    if (cell.userData is FileEntry entry)
+                        onFileMouseDownEvent?.Invoke(evt, entry.id);
+                });
                 return cell;
             };
             fileCell.bindCell = (element, index) =>
