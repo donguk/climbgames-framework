@@ -241,7 +241,7 @@ namespace ClimbGames.Editor.UI
         void RefreshConvertDatas()
         {
             foreach (var pair in convertDatas)
-                pair.Value.RefreshPrefab();
+                pair.Value.Refresh();
 
             treeView.RefreshItems();
         }
@@ -320,7 +320,7 @@ namespace ClimbGames.Editor.UI
         {
             if (convertDatas.TryGetValue(originPath, out var data))
             {
-                data.RefreshPrefab();
+                data.Refresh();
                 treeView.RefreshItem(data.id);
             }
         }
@@ -335,7 +335,7 @@ namespace ClimbGames.Editor.UI
             AssetDatabase.DeleteAsset(Path.Combine(PrefabConvertSettings.ScriptPath, relativePath, $"{data.origin.name}.Impl.cs"));
             AssetDatabase.Refresh();
 
-            data.RefreshPrefab();
+            data.Refresh();
             treeView.RefreshItem(data.id);
         }
     }

@@ -17,9 +17,8 @@ namespace #NAMESPACE#
     {
 #FIELDS#
 
-        // =====================
+
         // Group Defines
-        // =====================
 #GROUPS#
     }
 }

@@ -8,17 +8,18 @@ namespace ClimbGames
     public class PrefabMetadata : MonoBehaviour
     {
         public string baseType;
-        public int originHash;
-        public int originLength;
+        public int hashCode;
 
         public void Setup(string originPath, Type baseType)
         {
             if (File.Exists(originPath))
             {
                 string originYaml = File.ReadAllText(originPath);
-                originLength = originYaml.Length;
-                originHash = originYaml.GetHashCode();
+                hashCode = originYaml.GetHashCode();
             }
+
+            if (typeof(UIBase).IsAssignableFrom(baseType))
+                baseType = typeof(UIBase);
 
             this.baseType = baseType.AssemblyQualifiedName;
         }

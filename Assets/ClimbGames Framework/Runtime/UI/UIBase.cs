@@ -37,7 +37,9 @@ namespace ClimbGames.UI
             if (_data is T data)
                 return OnInitialize(data);
 
-            Debug.LogError($"[{GetType().Name}] Type Dismatched: Expected {typeof(T).Name}, but data is {_data?.GetType().Name ?? "null"}");
+            if (_data != null)
+                Debug.LogError($"[{GetType().Name}] Type Dismatched: Expected {typeof(T).Name}, but data is {_data?.GetType().Name ?? "null"}");
+
             return OnInitialize(default);
         }
 

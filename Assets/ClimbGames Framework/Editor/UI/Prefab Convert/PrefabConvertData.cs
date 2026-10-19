@@ -23,7 +23,6 @@ namespace ClimbGames.Editor.UI
         public GameObject origin;
         public string originPath;
         private int originHash;
-        private int originLength;
 
         public GameObject prefab;
         public PrefabMetadata metadata;
@@ -58,7 +57,7 @@ namespace ClimbGames.Editor.UI
                 if (metadata.baseType != SelectedBaseType.AssemblyQualifiedName)
                     return PrefabConvertStatus.BaseTypeChanged;
 
-                if (metadata.originHash != originHash)
+                if (metadata.hashCode != originHash)
                     return PrefabConvertStatus.OriginModified;
 
                 return PrefabConvertStatus.Success;
@@ -74,16 +73,15 @@ namespace ClimbGames.Editor.UI
 
                 string originYaml = File.ReadAllText(originPath);
                 originHash = originYaml.GetHashCode();
-                originLength = originYaml.Length;
 
                 baseTypes = new List<Type>() { typeof(UIBase), typeof(MonoBehaviour) };
                 baseTypeNames = new List<string>() { "UIBase", "MonoBehaviour", SelectTypesID };
 
-                RefreshPrefab();
+                Refresh();
             }
         }
 
-        public void RefreshPrefab()
+        public void Refresh()
         {
             if (isDirectory == false)
             {

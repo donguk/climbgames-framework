@@ -9,9 +9,14 @@ namespace ClimbGames.Editor.UI
 {
     public class PrefabCodeGenerator : CodeGenerator
     {
+        public static readonly string GroupTemplateGUID = "0baf94dfa46171f48978e504334e4692";
+
         public static readonly string TemplateGUID = "3f97c32d3d31ede44b44bb53e15dfb6d";
         public static readonly string ImplementTemplateGUID = "6308713ee9fe38a4789b4a9d023614f7";
-        public static readonly string GroupTemplateGUID = "0baf94dfa46171f48978e504334e4692";
+
+        public static readonly string UIBaseGUID = "bfdd1bfabbffcfb4ca65b4c4d6e61f88";
+        public static readonly string UIBaseImplementGUID = "d6060220f05a5894d87b743ca68febd9";
+
 
         private PrefabSchema schema;
         private Type baseType;
@@ -33,59 +38,62 @@ namespace ClimbGames.Editor.UI
         {
             bool isChanged = false;
 
-            string scriptName = schema.ScriptName;
-            string scriptText = CreateScript(TemplateGUID, schema.Namespace, scriptName);
-            Type baseType = this.baseType ?? typeof(UIBase);
-            string fullName = GetTypeName(baseType);
-
-            scriptText = scriptText.Replace("#BASETYPE#", fullName);
-            scriptText = scriptText.Replace("#FIELDS#", schema.GetFieldText());
-            scriptText = scriptText.Replace("#GROUPS#", CreateGroupText(schema.GroupSchema));
-
-            isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
-            isChanged |= WriteImpl(path);
+            if (baseType == typeof(UIBase))
+                isChanged |= WriteUIBase(path);
+            else
+                isChanged |= WriteMonoBehaviour(path);
 
             return isChanged;
         }
 
-        bool WriteImpl(string path)
+        bool WriteUIBase(string path)
         {
             bool isChanged = false;
 
             string scriptName = schema.ScriptName;
-            string filePath = Path.Combine(path, $"{scriptName}.Impl.cs");
-            if (File.Exists(filePath) == false)
+            string scriptText = CreateScript(UIBaseGUID, schema.Namespace, scriptName);
+
+            scriptText = scriptText.Replace("#DATATYPE#", $"{scriptName}Data");
+            scriptText = scriptText.Replace("#FIELDS#", schema.GetFieldText());
+            scriptText = scriptText.Replace("#GROUPS#", CreateGroupText(schema.GroupSchema));
+
+            isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+
+            // impl
+            string implPath = Path.Combine(path, $"{scriptName}.Impl.cs");
+            if (File.Exists(implPath) == false)
             {
-                string scriptText = CreateScript(ImplementTemplateGUID, schema.Namespace, scriptName);
+                scriptText = CreateScript(UIBaseImplementGUID, schema.Namespace, scriptName);
+                scriptText = scriptText.Replace("#DATATYPE#", $"{scriptName}Data");
 
-                Type baseType = this.baseType ?? typeof(UIBase);
-                string fullName = GetTypeName(baseType);
+                isChanged |= Write(scriptText, implPath);
+            }
 
-                StringBuilder builder = new StringBuilder();
-                if (baseType == typeof(UIBase))
-                {
-                    builder.AppendLine("        protected override async UniTask OnInitialize()");
-                    builder.AppendLine("        {");
-                    builder.AppendLine();
-                    builder.AppendLine();
-                    builder.AppendLine("            await base.OnInitialize();");
-                    builder.AppendLine("        }");
+            return isChanged;
+        }
 
-                }
-                else
-                {
-                    builder.AppendLine("        void OnEnable()");
-                    builder.AppendLine("        {");
-                    builder.AppendLine();
-                    builder.AppendLine("        }");
-                }
+        bool WriteMonoBehaviour(string path)
+        {
+            bool isChanged = false;
 
-                if (builder.Length > 0) builder.Length -= Environment.NewLine.Length;
+            string scriptName = schema.ScriptName;
+            string baseName = GetTypeName(baseType);
+            string scriptText = CreateScript(TemplateGUID, schema.Namespace, scriptName);
 
-                scriptText = scriptText.Replace("#BASETYPE#", fullName);
-                scriptText = scriptText.Replace("#INITIALIZE#", builder.ToString());
+            scriptText = scriptText.Replace("#BASETYPE#", baseName);
+            scriptText = scriptText.Replace("#FIELDS#", schema.GetFieldText());
+            scriptText = scriptText.Replace("#GROUPS#", CreateGroupText(schema.GroupSchema));
 
-                isChanged |= Write(scriptText, filePath);
+            isChanged |= Write(scriptText, Path.Combine(path, $"{scriptName}.cs"));
+
+            // impl
+            string implPath = Path.Combine(path, $"{scriptName}.Impl.cs");
+            if (File.Exists(implPath) == false)
+            {
+                scriptText = CreateScript(ImplementTemplateGUID, schema.Namespace, scriptName);
+                scriptText = scriptText.Replace("#BASETYPE#", baseName);
+
+                isChanged |= Write(scriptText, implPath);
             }
 
             return isChanged;

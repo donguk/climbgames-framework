@@ -10,9 +10,11 @@ namespace #NAMESPACE#
 {
     public partial class #SCRIPTNAME# : #BASETYPE#
     {
-        // =====================
-        // implement ui
-        // =====================
-#INITIALIZE#
+
+        void OnEnable()
+        {
+            // implement ui
+            
+        }
     }
 }
