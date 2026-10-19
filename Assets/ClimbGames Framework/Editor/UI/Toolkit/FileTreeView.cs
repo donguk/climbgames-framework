@@ -172,6 +172,11 @@ namespace ClimbGames.Editor.UI
             treeView.RefreshItem(index);
         }
 
+        public void SetSelectionById(int id)
+        {
+            treeView.SetSelectionById(id);
+        }
+
         public void AddFileMenuItem(FileMenuItem[] items)
         {
             menuItems = menuItems.Concat(items).ToArray();
@@ -230,7 +235,7 @@ namespace ClimbGames.Editor.UI
                                     SetRootPath(rootPath, searchPatterns, entryProvider, excludeRootItem);
                                 }
 
-                                Debug.Log($"refresh: parentId({parentId})");
+                                //Debug.Log($"refresh: parentId({parentId})");
                             }
                         }
                         break;

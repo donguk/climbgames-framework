@@ -18,6 +18,7 @@ namespace ClimbGames.Editor.UI
 
         private FileTreeView treeView;
         private Dictionary<string, PrefabConvertData> convertDatas = new Dictionary<string, PrefabConvertData>();
+        private FileMenuItem[] prefabCellMenuItems;
 
         [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
         private static void Open()
@@ -67,66 +68,21 @@ namespace ClimbGames.Editor.UI
 
             treeView.AddFileMenuItem(new FileMenuItem[]
             {
-                new FileMenuItem("Convert", FileMenuFlag.File),
-                new FileMenuItem("Clear", FileMenuFlag.File)
+                new FileMenuItem("Convert Prefab", FileMenuFlag.File),
             });
             treeView.onContextMenuClicked += OnContextMenuClicked;
+
+            prefabCellMenuItems = new FileMenuItem[]
+            {
+                new FileMenuItem("Refresh", FileMenuFlag.File),
+                new FileMenuItem("Delete Prefab And Scripts", FileMenuFlag.File)
+            };
 
             // column 추가
             treeView.Columns.Insert(1, CreateConvertPrefabsColumn());
 
             // base type
             treeView.Columns.Insert(2, CreateSelectBaseTypeColumn());
-
-            //string convertUxmlPath = AssetDatabase.GUIDToAssetPath(ConvertCellUxmlGUID);
-            //var convertCell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(convertUxmlPath);
-            //treeView.Columns.Insert(4, new Column()
-            //{
-            //    title = "Convert",
-            //    width = 80f,
-            //    minWidth = 80f,
-            //
-            //    makeCell = () =>
-            //    {
-            //        var cell = convertCell.Instantiate();
-            //        var convertButton = cell.Q<Button>("convert");
-            //
-            //        convertButton.clicked += () =>
-            //        {
-            //            if (cell.userData is FileEntry entry)
-            //                OnClickConvert(entry.path);
-            //        };
-            //
-            //
-            //        cell.AddManipulator(new ContextualMenuManipulator(evt =>
-            //        {
-            //            if (cell.userData is not FileEntry data)
-            //                return;
-            //
-            //            evt.menu.AppendAction("Rename", _ =>
-            //            {
-            //                Debug.Log($"Rename: {data.name}");
-            //            });
-            //
-            //            evt.menu.AppendAction("Delete", _ =>
-            //            {
-            //                Debug.Log($"Delete: {data.name}");
-            //            });
-            //        }));
-            //
-            //        return cell;
-            //    },
-            //    bindCell = (element, index) =>
-            //    {
-            //        var entry = treeView.GetItemDataForIndex(index);
-            //        element.style.height = Length.Percent(100);
-            //
-            //        var convertButton = element.Q<Button>("convert");
-            //        convertButton.style.visibility = entry.isDirectory ? Visibility.Hidden : Visibility.Visible;
-            //
-            //        element.userData = entry;
-            //    }
-            //});
 
             SetOriginPath(PrefabConvertSettings.OriginPath);
         }
@@ -144,7 +100,15 @@ namespace ClimbGames.Editor.UI
                     var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(PrefabCellUxmlGUID));
                     var cell = template.Instantiate();
 
-                    cell.AddManipulator(new ContextualMenuManipulator(treeView.OnContextMenu));
+                    cell.AddManipulator(new ContextualMenuManipulator(OnPrefabCellContextMenu));
+
+                    var objectField = cell.Q<ObjectField>("prefab");
+                    cell.RegisterCallback<MouseDownEvent>(evt =>
+                    {
+                        if (cell.userData is PrefabConvertData data)
+                            treeView.SetSelectionById(data.id);
+                    }, TrickleDown.TrickleDown);
+
                     return cell;
                 },
 
@@ -166,6 +130,8 @@ namespace ClimbGames.Editor.UI
                     {
                         RefreshStatus(statusField, data);
                         objectField.value = data.prefab;
+
+                        element.userData = data;
                     }
                 }
             };
@@ -182,8 +148,29 @@ namespace ClimbGames.Editor.UI
 
                 makeCell = () =>
                 {
-                    var baseTypeCell = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(BaseTypeCellUxmlGUID));
-                    return baseTypeCell.Instantiate();
+                    var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(BaseTypeCellUxmlGUID));
+                    var cell = template.Instantiate();
+
+                    var dropdownField = cell.Q<DropdownField>("base_type");
+                    dropdownField.RegisterValueChangedCallback(evt =>
+                    {
+                        if (cell.userData is PrefabConvertData data)
+                        {
+                            if (evt.newValue == PrefabConvertData.SelectTypesID)
+                            {
+                                SelectTypesWindow.Open(typeof(MonoBehaviour), result =>
+                                {
+                                    data.SelectBaseType(result);
+                                    dropdownField.SetValueWithoutNotify(data.SelectedBaseTypeName);
+                                });
+                            }
+                            else
+                            {
+                                data.SelectBaseType(evt.newValue);
+                            }
+                        }
+                    });
+                    return cell;
                 },
 
                 bindCell = (element, index) =>
@@ -200,24 +187,7 @@ namespace ClimbGames.Editor.UI
                         dropdownField.SetValueWithoutNotify(data.SelectedBaseTypeName);
                         dropdownField.SetEnabled(data.metadata == null || string.IsNullOrEmpty(data.metadata.baseType));
 
-                        dropdownField.formatSelectedValueCallback = (selected) =>
-                        {
-                            if (selected == PrefabConvertData.SelectTypesID)
-                            {
-                                SelectTypesWindow.Open(typeof(MonoBehaviour), result =>
-                                {
-                                    data.SelectBaseType(result);
-                                    dropdownField.SetValueWithoutNotify(data.SelectedBaseTypeName);
-                                    treeView.RefreshItem(data.id);
-                                });
-                            }
-                            else
-                            {
-                                dropdownField.index = data.SelectBaseType(selected);
-                                treeView.RefreshItem(data.id);
-                            }
-                            return selected;
-                        };
+                        element.userData = data;
                     }
                 }
             };
@@ -283,6 +253,25 @@ namespace ClimbGames.Editor.UI
             }
         }
 
+        void OnPrefabCellContextMenu(ContextualMenuPopulateEvent evt)
+        {
+            FileMenuFlag flag = 0;
+            foreach (var id in treeView.SelectedIds)
+            {
+                var entry = treeView.GetItemDataForId<FileEntry>(id);
+                flag |= entry.isDirectory ? FileMenuFlag.Folder : FileMenuFlag.File;
+            }
+
+            foreach (var item in prefabCellMenuItems)
+            {
+                if ((item.flag & flag) != 0)
+                {
+                    var actionName = item.name;
+                    evt.menu.AppendAction(actionName, _ => OnContextMenuClicked(actionName));
+                }
+            }
+        }
+
         void OnContextMenuClicked(string actionName)
         {
             switch (actionName)
@@ -292,20 +281,25 @@ namespace ClimbGames.Editor.UI
                         RefreshConvertDatas();
                         break;
                     }
-
-                case "Convert":
+                case "Convert Prefab":
                     {
                         var id = treeView.SelectedIds.FirstOrDefault();
                         var data = treeView.GetItemDataForId<PrefabConvertData>(id);
                         ConvertPrefab(data);
                         break;
                     }
-
-                case "Clear":
+                case "Delete Prefab And Scripts":
                     {
                         var id = treeView.SelectedIds.FirstOrDefault();
                         var data = treeView.GetItemDataForId<PrefabConvertData>(id);
-                        ClearPrefabFiles(data);
+
+                        if (data.prefab != null)
+                        {
+                            if (EditorUtility.DisplayDialog("Warning", "Are you sure you want to delete this?\n(Deleting the script may cause compilation errors.)", "Yes", "No") == false)
+                                return;
+                        }
+
+                        DeletePrefabAndScripts(data);
                         break;
                     }
             }
@@ -325,7 +319,7 @@ namespace ClimbGames.Editor.UI
             }
         }
 
-        void ClearPrefabFiles(PrefabConvertData data)
+        void DeletePrefabAndScripts(PrefabConvertData data)
         {
             string relativePath = Path.GetRelativePath(PrefabConvertSettings.OriginPath, Path.GetDirectoryName(data.originPath));
             string prefabPath = Path.Combine(PrefabConvertSettings.OutputPath, relativePath, data.name);
