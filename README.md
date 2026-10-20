@@ -398,6 +398,8 @@ UI Prefab Convert
           Runtime Load
 ```
 
+---
+
 ### Prefab Structure & Base Type
 
 - **Origin Prefab** — UI 작업자가 제작하고 수정하는 원본 프리팹입니다. UI 레이아웃과 컨트롤 구성을 관리합니다.
@@ -405,6 +407,8 @@ UI Prefab Convert
 - **Base Type** — 프리팹 변환 시 생성되는 바인딩 스크립트의 Base Type을 지정합니다. UI 종류에 따라 적절한 기반 클래스를 상속하도록 설정하여 프로젝트의 공통 UI 기능과 구조를 적용할 수 있습니다.
 
 원본 프리팹을 수정한 경우 변환 작업을 다시 수행하여 변경된 구조와 바인딩 정보를 반영합니다.
+
+---
 
 ### Automatic Binding Code Generation
 
@@ -446,6 +450,8 @@ UI Prefab Convert
 제네릭 타입 `T`는 **첫 번째 자식 컨트롤의 바인딩 타입**을 기준으로 결정됩니다. 따라서 첫 번째 자식 컨트롤이 리스트의 타입을 결정하는 기준이 됩니다.
 
 동일한 구조의 컨트롤을 개별 필드로 선언하지 않고 리스트 형태로 관리할 수 있습니다.
+
+---
 
 ### Prefab Convert Settings
 

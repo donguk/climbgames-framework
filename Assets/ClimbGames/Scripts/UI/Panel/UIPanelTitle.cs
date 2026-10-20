@@ -32,6 +32,7 @@ namespace ClimbGames
             public Transform transform;
             public TextMeshProUGUI txt_version;
             public TextMeshProUGUI txt_code;
+            public TextMeshProUGUI txt_buildNumber;
         }
     }
 
