@@ -16,18 +16,23 @@ namespace ClimbGames
     public partial class UIPanelTitle : UIBase<UIPanelTitleData>
     {
         [SerializeField] private RectTransform trs_root;
-        [SerializeField] private TextMeshProUGUI text_version;
-        [SerializeField] private TextMeshProUGUI text_code;
-        [SerializeField] private TextMeshProUGUI text_buildNumber;
-        [SerializeField] private TMP_InputField inf_version;
-        [SerializeField] private TMP_InputField inf_patch;
+        [SerializeField] private current_info grp_current_info;
+        [SerializeField] private TMP_InputField inf_target_version;
+        [SerializeField] private TMP_InputField inf_target_patch;
         [SerializeField] private Button btn_check_catalog;
         [SerializeField] private Button btn_load_view;
-        [SerializeField] private TextMeshProUGUI text_check_result;
+        [SerializeField] private TextMeshProUGUI txt_check_result;
+        [SerializeField] private UIPatchView ui_PatchView;
 
 
         // Group Defines
-
+        [Serializable]
+        public partial class current_info
+        {
+            public Transform transform;
+            public TextMeshProUGUI txt_version;
+            public TextMeshProUGUI txt_code;
+        }
     }
 
     public partial struct UIPanelTitleData : IUIData

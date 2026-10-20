@@ -9,7 +9,6 @@ ClimbGames Framework는 Unity 프로젝트에서 반복적으로 사용되는 **
   * Scene Transition
   * Singleton
   * FSM
-  * UI Manager
 
 * [**Build**](#2-build) — Unity Editor 및 Jenkins 기반 빌드/배포 시스템
 
@@ -26,6 +25,15 @@ ClimbGames Framework는 Unity 프로젝트에서 반복적으로 사용되는 **
   * Table 통합 접근
   * Binary 데이터 저장
   * Table Preview
+
+* [**4. UI**](#4-ui) — UI 관리 및 프리팹 기반 컨트롤 자동 바인딩 시스템
+
+  * UI Manager
+  * UI Prefab Convert
+  * Automatic Binding Code Generation
+  * Custom Binding Schema
+  * Nested Group & List Binding
+  * Base Type Configuration
 
 ---
 
@@ -104,63 +112,6 @@ fsm.ChangeState(
     PlayerState.Casting,
     new CastingParam { Force = 10f }
 );
-```
-
----
-
-## UI Manager
-
-게임 내 UI의 생성, 표시, 숨김 및 레이어 관리를 담당하는 UI 관리 시스템입니다.
-
-### 주요 기능
-
-* **Camera Stacking 자동 구성**
-
-  * `MainCamera`
-  * `WorldUICamera`
-  * `UICamera`
-    를 기반으로 UI Camera Stack을 자동 구성
-  * 씬 전환 시 Camera Stack을 동적으로 재구성
-
-* **UILayer 기반 UI 관리**
-
-  UI를 다음과 같은 계층으로 관리합니다.
-
-  ```text
-  Layer
-   └─ World
-   └─ UI
-      └─ HUD
-      └─ View
-      └─ Popup
-      └─ Top
-      └─ System
-      └─ Transition
-  ```
-
-* **비동기 UI 생성**
-
-  * `AssetManager`와 연동하여 UI Prefab을 비동기로 로드
-  * `ShowUI<T>`를 통한 UI 생성 및 표시
-
-* **EventSystem 자동 구성**
-
-  * 씬에 EventSystem이 없는 경우 필요한 EventSystem을 자동 생성
-  * `InputSystemUIInputModule`을 사용하여 Unity Input System 기반 UI 입력 지원
-
-### 사용 예시
-
-```csharp
-var viewData = new InventoryUIData();
-
-var inventoryView =
-    await UIManager.Instance.ShowUI<InventoryView>(
-        "UI/InventoryView",
-        UILayer.View,
-        viewData
-    );
-
-UIManager.Instance.Hide(inventoryView);
 ```
 
 ---
@@ -354,3 +305,180 @@ Table Converter
 ```
 
 Excel 데이터를 수정한 후 Table Converter를 실행하면 **불필요 파일삭제 → 필요한 C# 코드 생성 → Table Asset 생성** 과정이 자동으로 수행됩니다.
+
+---
+
+# 4. UI
+
+UI 관리 및 프리팹 기반 컨트롤 자동 바인딩 시스템을 제공합니다.
+
+## UI Manager
+
+게임 내 UI의 생성, 표시, 숨김 및 레이어 관리를 담당하는 UI 관리 시스템입니다.
+
+### 주요 기능
+
+* **Camera Stacking 자동 구성**
+
+  * `MainCamera`
+  * `WorldUICamera`
+  * `UICamera`
+    를 기반으로 UI Camera Stack을 자동 구성
+  * 씬 전환 시 Camera Stack을 동적으로 재구성
+
+* **UILayer 기반 UI 관리**
+
+  UI를 다음과 같은 계층으로 관리합니다.
+
+  ```text
+  Layer
+   └─ World
+   └─ UI
+      └─ HUD
+      └─ View
+      └─ Popup
+      └─ Top
+      └─ System
+      └─ Transition
+  ```
+
+* **비동기 UI 생성**
+
+  * `AssetManager`와 연동하여 UI Prefab을 비동기로 로드
+  * `ShowUI<T>`를 통한 UI 생성 및 표시
+
+* **EventSystem 자동 구성**
+
+  * 씬에 EventSystem이 없는 경우 필요한 EventSystem을 자동 생성
+  * `InputSystemUIInputModule`을 사용하여 Unity Input System 기반 UI 입력 지원
+
+### 사용 예시
+
+```csharp
+var viewData = new InventoryUIData();
+
+var inventoryView =
+    await UIManager.Instance.ShowUI<InventoryView>(
+        "UI/InventoryView",
+        UILayer.View,
+        viewData
+    );
+
+UIManager.Instance.Hide(inventoryView);
+```
+
+## UI Prefab Convert
+
+UI 작업자가 제작한 원본 프리팹을 분석하여 컨트롤 바인딩용 C# 스크립트를 자동 생성하고, 생성된 스크립트를 연결한 런타임용 프리팹을 생성합니다.
+
+원본 프리팹과 변환된 프리팹의 역할을 분리하여, UI 작업자는 원본 프리팹을 자유롭게 수정하고 게임에서는 변환된 프리팹을 로딩하여 사용할 수 있습니다.
+
+![프리팹 컨버터](./Images/image_prefab_convert.png)
+
+### Workflow
+
+```text
+Origin Prefab
+  │
+  ▼
+UI Prefab Convert
+  │
+  ├─ Analyze Prefab
+  │
+  ├─ C# Code Generation
+  │    └─ UI Binding Script
+  │
+  └─ Convert Prefab
+        │
+        ├─ Copy Origin Prefab
+        ├─ Attach Generated Script
+        └─ Bind UI Controls
+              │
+              ▼
+        Converted Prefab
+              │
+              ▼
+          Runtime Load
+```
+
+### Prefab Structure
+
+- **Origin Prefab** — UI 작업자가 제작하고 수정하는 원본 프리팹입니다. UI 레이아웃과 컨트롤 구성을 관리합니다.
+- **Converted Prefab** — 원본 프리팹을 기반으로 생성된 런타임용 프리팹입니다. 자동 생성된 바인딩 스크립트가 연결되어 있으며, 실제 앱에서는 이 프리팹을 로딩하여 사용합니다.
+
+원본 프리팹을 수정한 경우 변환 작업을 다시 수행하여 변경된 구조와 바인딩 정보를 반영합니다.
+
+### Base Type
+
+프리팹 변환 시 생성되는 바인딩 스크립트의 Base Type을 지정할 수 있습니다.
+
+UI 종류에 따라 적절한 기반 클래스를 상속하도록 설정하여 프로젝트의 공통 UI 기능과 구조를 적용할 수 있습니다.
+
+### Automatic Binding Code Generation
+
+| ![프리팹 컨버터 1](./Images/image_prefab_result_1.png) | ![프리팹 컨버터 2](./Images/image_prefab_result_2.png) |
+|:---:|:---:|
+
+컨트롤 이름에 등록된 prefix를 기반으로 바인딩 필드와 연결 코드를 자동 생성합니다.
+
+예를 들어 다음과 같은 이름의 컨트롤이 있는 경우
+
+- `trs_root`
+- `txt_title`
+- `img_icon`
+- `sld_volume`
+
+등록된 바인딩 규칙에 따라 해당 컨트롤을 적절한 타입의 필드로 생성하고, 변환된 프리팹에서 실제 오브젝트와 연결합니다.
+
+#### Default Prefix
+
+| Prefix | Purpose |
+| --- | --- |
+| `trs_` | Transform 및 RectTransform 참조 |
+| `txt_` | 텍스트 컨트롤 |
+| `img_` | 이미지 컨트롤 |
+| `sld_` | 슬라이더 컨트롤 |
+| `grp_` | 하위 컨트롤을 중첩 클래스 구조로 바인딩 |
+| `list_` | 하위 컨트롤을 리스트 형태로 바인딩 |
+
+#### Nested Group Binding
+
+`grp_` prefix는 하위 컨트롤을 중첩된 클래스(Nested Class) 구조로 생성합니다.
+
+그룹 내부의 컨트롤을 별도의 클래스로 구성하여 논리적인 단위로 묶고, 생성된 바인딩 구조를 통해 각 컨트롤에 접근할 수 있습니다.
+
+#### List Binding
+
+`list_` prefix는 하위 컨트롤을 `List<T>` 형태로 바인딩합니다.
+
+제네릭 타입 `T`는 **첫 번째 자식 컨트롤의 바인딩 타입**을 기준으로 결정됩니다. 따라서 첫 번째 자식 컨트롤이 리스트의 타입을 결정하는 기준이 됩니다.
+
+동일한 구조의 컨트롤을 개별 필드로 선언하지 않고 리스트 형태로 관리할 수 있습니다.
+
+### Project Settings
+
+`Project Settings > ClimbGames > UI`에서 프리팹 변환 경로와 바인딩 규칙을 설정할 수 있습니다.
+
+#### Prefab Convert Settings
+
+![프리팹 컨버터](./Images/image_prefab_settings.png)
+
+| Setting | Description |
+| --- | --- |
+| Origin Prefab Path | 원본 프리팹을 탐색할 경로 |
+| Convert Prefab Path | 변환된 프리팹의 생성 경로 |
+| CodeGen Script Path | 바인딩 스크립트의 생성 경로 |
+
+#### Binding Schemas
+
+사용자는 기본 규칙 외에도 프로젝트에서 사용하는 prefix와 컴포넌트 타입을 추가로 등록할 수 있습니다.
+
+각 Schema에서 다음 항목을 설정합니다.
+
+- **Prefix** — 바인딩 대상 컨트롤을 식별하는 이름 규칙
+- **Options: Include Children** — 하위 오브젝트를 바인딩 대상으로 포함할지 설정합니다.
+- **Options: Fallback** — 기본 타입을 찾을 수 없을 때 대체 타입을 사용할지 설정합니다.
+- **Type** — 해당 prefix에 연결할 컴포넌트 타입
+- **Fallback Types** — Fallback을 활성화했을 때 사용할 대체 타입 목록
+
+타입 선택 기능을 통해 원하는 컴포넌트를 지정할 수 있으며, 필요한 경우 여러 Fallback 타입을 등록할 수 있습니다.

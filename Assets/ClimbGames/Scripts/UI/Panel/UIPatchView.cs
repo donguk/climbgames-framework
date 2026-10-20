@@ -17,9 +17,7 @@ namespace ClimbGames
     {
         [SerializeField] private TextMeshProUGUI txt_catalog_path;
         [SerializeField] private List<Image> list_images;
-        [SerializeField] private TextMeshProUGUI txt_catalog_path__1_;
-        [SerializeField] private item grp_item;
-        [SerializeField] private List<New> list_groups;
+        [SerializeField] private List<item> list_items;
 
 
         // Group Defines
@@ -27,17 +25,8 @@ namespace ClimbGames
         public partial class item
         {
             public Transform transform;
-            public TextMeshProUGUI txt_catalog_path__1_;
-            public Image img_c__1_;
-        }
-
-        [Serializable]
-        public partial class New
-        {
-            public Transform transform;
-            public Image img_c;
-            public Image img_c_1;
-            public TextMeshProUGUI txt_catalog_path__1_;
+            public UIText txt_name;
+            public UIImage img_icon;
         }
     }
 

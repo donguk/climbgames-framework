@@ -11,6 +11,7 @@ namespace ClimbGames
 {
     public partial class UIPanelTitle : UIBase<UIPanelTitleData>
     {
+        private GameObject uiVIew;
 
         protected override UniTask OnInitialize(UIPanelTitleData data)
         {
@@ -18,8 +19,6 @@ namespace ClimbGames
 
             return base.OnInitialize(data);
         }
-
-        private GameObject uiVIew;
 
         void Start()
         {
@@ -31,12 +30,12 @@ namespace ClimbGames
 
         async void OnCheckCatalogUpdates()
         {
-            if (int.TryParse(inf_patch.text, out var number))
+            if (int.TryParse(inf_target_patch.text, out var number))
             {
-                string catalogPath = $"http://192.168.0.10/climbgames-root/framework/Android/{inf_version.text}/catalog_{inf_version.text}_{number}.json";
+                string catalogPath = $"http://192.168.0.10/climbgames-root/framework/Android/{inf_target_version.text}/catalog_{inf_target_version.text}_{number}.json";
 
                 var patchInfo = await AssetManager.CheckForCatalogUpdates(catalogPath);
-                text_check_result.text = patchInfo.ToString();
+                txt_check_result.text = patchInfo.ToString();
             }
         }
 
