@@ -4,8 +4,6 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.Collections.Generic;
 using System.IO;
-using System;
-using ClimbGames.UI;
 using System.Linq;
 
 namespace ClimbGames.Editor.UI
@@ -28,6 +26,11 @@ namespace ClimbGames.Editor.UI
             window.minSize = new Vector2(400, 300);
         }
 
+        void OnDisable()
+        {
+            treeView?.ExpansionState.Save("PrefabWindow");
+        }
+
         void CreateGUI()
         {
             string windowUxmlPath = AssetDatabase.GUIDToAssetPath(WindowUxmlGUID);
@@ -42,6 +45,8 @@ namespace ClimbGames.Editor.UI
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OriginPath = relativePath;
                 SetOriginPath(relativePath);
+
+                treeView.ExpansionState.Clear("PrefabWindow");
                 return relativePath;
             };
 
@@ -86,6 +91,7 @@ namespace ClimbGames.Editor.UI
             treeView.Columns.Insert(2, CreateSelectBaseTypeColumn());
 
             SetOriginPath(PrefabConvertSettings.OriginPath);
+            treeView.ExpansionState.ExpandAll("PrefabWindow");
         }
 
         Column CreateConvertPrefabsColumn()
@@ -204,7 +210,6 @@ namespace ClimbGames.Editor.UI
                 var data = new PrefabConvertData(id, path);
                 if (data.isDirectory == false)
                     convertDatas[data.originPath] = data;
-
                 return data;
             }, true);
         }
@@ -336,8 +341,10 @@ namespace ClimbGames.Editor.UI
             //evt.StopPropagation();
         }
 
+
         void ConvertPrefab(PrefabConvertData data)
         {
+            treeView.ExpansionState.Save("PrefabWindow");
             PrefabConverter.StartProcess(data.originPath, data.SelectedBaseType);
         }
 
@@ -347,6 +354,7 @@ namespace ClimbGames.Editor.UI
             {
                 data.Refresh();
                 treeView.RefreshItem(data.id);
+                treeView.ExpansionState.ExpandAll("PrefabWindow");
             }
         }
 

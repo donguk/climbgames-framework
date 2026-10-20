@@ -41,8 +41,12 @@ namespace ClimbGames.Editor.UI
         private Func<int, string, FileEntry> entryProvider;
         private bool excludeRootItem;
         private FileMenuItem[] menuItems;
+        private Dictionary<string, FileEntry> directoryEnties;
+        private FileExpansionState expansionState;
+
         public event Action<string> onContextMenuClicked;
         public event Action<MouseDownEvent, int> onFileMouseDownEvent;
+        public event Action<TreeViewExpansionChangedArgs> onItemExpandedChanged;
 
         [UxmlAttribute]
         public string Title
@@ -53,9 +57,13 @@ namespace ClimbGames.Editor.UI
 
         public Columns Columns => treeView.columns;
         public IEnumerable<int> SelectedIds => treeView.selectedIds;
+        public FileExpansionState ExpansionState => expansionState;
 
         public FileTreeView()
         {
+            directoryEnties = new Dictionary<string, FileEntry>();
+            expansionState = new FileExpansionState(this);
+
             string uxmlPath = AssetDatabase.GUIDToAssetPath(UxmlGUID);
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
             visualTree.CloneTree(this);
@@ -63,6 +71,42 @@ namespace ClimbGames.Editor.UI
             title = this.Q<Label>("title");
             treeView = this.Q<MultiColumnTreeView>("tree_view");
             treeView.showAlternatingRowBackgrounds = AlternatingRowBackground.All;
+            treeView.itemExpandedChanged += OnItemExpandedChanged;
+
+            VisualElement clickedElement = null;
+            bool IsTreeViewItem(VisualElement element)
+            {
+                while (element != null && element != treeView)
+                {
+                    if (element.ClassListContains("unity-collection-view__item"))
+                        return true; // 아이템 클릭
+                    element = element.parent;
+                }
+                return false;
+            }
+            treeView.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                clickedElement = evt.target as VisualElement;
+                if (evt.button != 0)
+                    return;
+
+                if (IsTreeViewItem(clickedElement))
+                    return;
+
+                // 아이템 외부의 빈 영역 클릭
+                treeView.selectedIndex = -1;
+            }, TrickleDown.TrickleDown);
+            treeView.AddManipulator(new ContextualMenuManipulator(evt =>
+            {
+                if (IsTreeViewItem(clickedElement))
+                    return;
+
+                evt.menu.AppendAction("Refresh", _ =>
+                {
+                    SetRootPath(rootPath, searchPatterns, entryProvider, excludeRootItem);
+                    expansionState.ExpandAll();
+                });
+            }));
 
             menuItems = new FileMenuItem[]
             {
@@ -122,6 +166,21 @@ namespace ClimbGames.Editor.UI
             };
         }
 
+        FileEntry CreateFileEntry(int id, string path)
+        {
+            FileEntry entry = null;
+            if (entryProvider != null)
+                entry = entryProvider?.Invoke(id, path);
+
+            if (entry == null)
+                entry = new FileEntry(id, path);
+
+            if (entry.isDirectory)
+                directoryEnties[path] = entry;
+
+            return entry;
+        }
+
         public void SetRootPath(string path, string[] searchPatterns, Func<int, string, FileEntry> entryProvider, bool excludeRootItem = false)
         {
             rootPath = path;
@@ -131,7 +190,7 @@ namespace ClimbGames.Editor.UI
 
             if (Directory.Exists(path))
             {
-                var rootItem = BuildRootItem(path, searchPatterns, ref treeItemId, entryProvider);
+                var rootItem = BuildRootItem(path, searchPatterns, ref treeItemId, CreateFileEntry);
 
                 if (excludeRootItem)
                     SetRootItems(rootItem.children.ToList());
@@ -183,6 +242,44 @@ namespace ClimbGames.Editor.UI
             treeView.SetSelectionById(id);
         }
 
+        public void ExpandAll(FileExpansionState state)
+        {
+            var expandedPath = state.ExpandedPath;
+            foreach (var path in expandedPath)
+            {
+                if (directoryEnties.TryGetValue(path, out var entry))
+                    treeView.ExpandItem(entry.id);
+            }
+        }
+
+        void RefreshDirectory(FileEntry entry)
+        {
+            if (entry != null && entry.isDirectory)
+            {
+                int parentId = treeView.viewController.GetParentId(entry.id);
+                if (parentId > -1)
+                {
+                    var parentData = treeView.GetItemDataForId<FileEntry>(parentId);
+                    IEnumerable<int> childrenIds = treeView.viewController.GetChildrenIds(parentData.id).ToArray();
+
+                    foreach (var childId in childrenIds)
+                        treeView.viewController.TryRemoveItem(childId, false);
+
+                    var tempRoot = BuildRootItem(parentData.path, searchPatterns, ref treeItemId, CreateFileEntry);
+
+                    int childIndex = 0;
+                    foreach (var newChild in tempRoot.children)
+                        treeView.AddItem(newChild, parentId, childIndex++, false);
+
+                    treeView.Rebuild();
+                }
+                else
+                {
+                    SetRootPath(rootPath, searchPatterns, entryProvider, excludeRootItem);
+                }
+            }
+        }
+
         public void AddFileMenuItem(FileMenuItem[] items)
         {
             menuItems = menuItems.Concat(items).ToArray();
@@ -218,43 +315,21 @@ namespace ClimbGames.Editor.UI
                             var data = treeView.GetItemDataForId<FileEntry>(selectedId);
                             if (data.isDirectory)
                             {
-                                int parentId = treeView.viewController.GetParentId(data.id);
-                                if (parentId > -1)
-                                {
-                                    var parentData = treeView.GetItemDataForId<FileEntry>(parentId);
-                                    IEnumerable<int> childrenIds = treeView.viewController.GetChildrenIds(parentData.id).ToArray();
-
-                                    foreach (var childId in childrenIds)
-                                        treeView.viewController.TryRemoveItem(childId, false);
-
-                                    var tempItem = BuildRootItem(parentData.path, searchPatterns, ref treeItemId, entryProvider);
-
-                                    int childIndex = 0, newChildId = -1;
-                                    var enumerator = tempItem.children.GetEnumerator();
-                                    while (enumerator.MoveNext())
-                                    {
-                                        if (enumerator.Current.data.path == data.path)
-                                            newChildId = enumerator.Current.id;
-
-                                        treeView.AddItem(enumerator.Current, parentId, childIndex++, false);
-                                    }
-
-                                    treeView.Rebuild();
-                                    treeView.ExpandItem(newChildId);
-                                }
-                                else
-                                {
-                                    SetRootPath(rootPath, searchPatterns, entryProvider, excludeRootItem);
-                                }
-
-                                //Debug.Log($"refresh: parentId({parentId})");
+                                expansionState.SetState(data.path, true);
+                                RefreshDirectory(data);
                             }
                         }
+                        expansionState.ExpandAll();
                         break;
                     }
             }
 
             onContextMenuClicked?.Invoke(actionName);
+        }
+
+        void OnItemExpandedChanged(TreeViewExpansionChangedArgs args)
+        {
+            onItemExpandedChanged?.Invoke(args);
         }
 
         public static TreeViewItemData<FileEntry> BuildRootItem<T>(string path, string[] searchPatterns, ref int id, Func<int, string, T> entryProvider) where T : FileEntry
