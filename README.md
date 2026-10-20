@@ -24,7 +24,6 @@ ClimbGames Framework는 Unity 프로젝트에서 반복적으로 사용되는 **
   * Enum 자동 생성
   * Table 통합 접근
   * Binary 데이터 저장
-  * Table Preview
 
 * [**4. UI**](#4-ui) — UI 관리 및 프리팹 기반 컨트롤 자동 바인딩 시스템
 
@@ -32,8 +31,6 @@ ClimbGames Framework는 Unity 프로젝트에서 반복적으로 사용되는 **
   * UI Prefab Convert
   * Automatic Binding Code Generation
   * Custom Binding Schema
-  * Nested Group & List Binding
-  * Base Type Configuration
 
 ---
 
