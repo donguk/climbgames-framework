@@ -401,23 +401,18 @@ UI Prefab Convert
           Runtime Load
 ```
 
-### Prefab Structure
+### Prefab Structure & Base Type
 
 - **Origin Prefab** — UI 작업자가 제작하고 수정하는 원본 프리팹입니다. UI 레이아웃과 컨트롤 구성을 관리합니다.
 - **Converted Prefab** — 원본 프리팹을 기반으로 생성된 런타임용 프리팹입니다. 자동 생성된 바인딩 스크립트가 연결되어 있으며, 실제 앱에서는 이 프리팹을 로딩하여 사용합니다.
+- **Base Type** — 프리팹 변환 시 생성되는 바인딩 스크립트의 Base Type을 지정합니다. UI 종류에 따라 적절한 기반 클래스를 상속하도록 설정하여 프로젝트의 공통 UI 기능과 구조를 적용할 수 있습니다.
 
 원본 프리팹을 수정한 경우 변환 작업을 다시 수행하여 변경된 구조와 바인딩 정보를 반영합니다.
 
-### Base Type
-
-프리팹 변환 시 생성되는 바인딩 스크립트의 Base Type을 지정할 수 있습니다.
-
-UI 종류에 따라 적절한 기반 클래스를 상속하도록 설정하여 프로젝트의 공통 UI 기능과 구조를 적용할 수 있습니다.
-
 ### Automatic Binding Code Generation
 
-| ![프리팹 컨버터 1](./Images/image_prefab_result_1.png) | ![프리팹 컨버터 2](./Images/image_prefab_result_2.png) |
-|:---:|:---:|
+![프리팹 컨버터 1](./Images/image_prefab_result_1.png)
+![프리팹 컨버터 2](./Images/image_prefab_result_2.png)
 
 컨트롤 이름에 등록된 prefix를 기반으로 바인딩 필드와 연결 코드를 자동 생성합니다.
 
@@ -455,21 +450,11 @@ UI 종류에 따라 적절한 기반 클래스를 상속하도록 설정하여 �
 
 동일한 구조의 컨트롤을 개별 필드로 선언하지 않고 리스트 형태로 관리할 수 있습니다.
 
-### Project Settings
+### Prefab Convert Settings
 
 `Project Settings > ClimbGames > UI`에서 프리팹 변환 경로와 바인딩 규칙을 설정할 수 있습니다.
 
-#### Prefab Convert Settings
-
 ![프리팹 컨버터](./Images/image_prefab_settings.png)
-
-| Setting | Description |
-| --- | --- |
-| Origin Prefab Path | 원본 프리팹을 탐색할 경로 |
-| Convert Prefab Path | 변환된 프리팹의 생성 경로 |
-| CodeGen Script Path | 바인딩 스크립트의 생성 경로 |
-
-#### Binding Schemas
 
 사용자는 기본 규칙 외에도 프로젝트에서 사용하는 prefix와 컴포넌트 타입을 추가로 등록할 수 있습니다.
 
