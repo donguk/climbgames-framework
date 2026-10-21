@@ -81,6 +81,9 @@ namespace ClimbGames.Editor
                     rect.height = EditorGUI.GetPropertyHeight(element, true);
 
                     EditorGUI.PropertyField(rect, element, GUIContent.none, true);
+
+                    if (schemasProperty.serializedObject.ApplyModifiedProperties())
+                        UISettings.Instance.Save();
                 },
 
                 elementHeightCallback = index =>
@@ -97,6 +100,7 @@ namespace ClimbGames.Editor
 
                     var element = schemasProperty.GetArrayElementAtIndex(index);
                     element.managedReferenceValue = new Binding.ComponentSchema("trs_", typeof(Transform), Binding.SchemaOption.Fallback | Binding.SchemaOption.IncludeChildren);
+
                     schemasProperty.serializedObject.ApplyModifiedProperties();
                 },
 
