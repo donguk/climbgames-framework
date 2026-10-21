@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
@@ -19,6 +22,9 @@ namespace ClimbGames.Editor
 
         public override void OnGUI(string searchContext)
         {
+            if (m_SettingsSerializedObject == null || m_SettingsSerializedObject.targetObject == null)
+                m_SettingsSerializedObject = new SerializedObject(ClimbGamesSettings.instance);
+
             m_SettingsSerializedObject.Update();
 
             var serializedProperty = GetSerializedProperty(m_SettingsSerializedObject);
@@ -46,7 +52,7 @@ namespace ClimbGames.Editor
 
         public static SerializedProperty GetSerializedProperty(SerializedObject serializedObject)
         {
-            ClimbGamesSettings<T>.CreateIfNotExist();
+            ClimbGamesSettings<T>.GetOrCreateIfNotExist();
             SerializedProperty listProp = serializedObject.FindProperty("settings");
 
             if (listProp == null || listProp.isArray == false)

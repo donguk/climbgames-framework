@@ -15,23 +15,21 @@ namespace ClimbGames.Editor
             float lineHeight = EditorGUIUtility.singleLineHeight;
             float spacing = EditorGUIUtility.standardVerticalSpacing;
 
-            EditorGUI.BeginChangeCheck();
-
             // 제목
             Rect rect = new Rect(position.x, position.y + 10f, position.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(rect, "Prefab Convert Settings", EditorStyles.boldLabel);
             rect.y += rect.height + spacing;
 
             if (EditorGUIs.SelectPathField(rect, "Origin Prefab Path", PrefabConvertSettings.OriginPath, out var selectedPath))
-                PrefabConvertSettings.OriginPath = selectedPath;
+                PrefabConvertSettings.OriginPath = selectedPath.ToUnityRelativePath();
             rect.y += lineHeight + spacing;
 
             if (EditorGUIs.SelectPathField(rect, "Convert Prefab Path", PrefabConvertSettings.OutputPath, out selectedPath))
-                PrefabConvertSettings.OutputPath = selectedPath;
+                PrefabConvertSettings.OutputPath = selectedPath.ToUnityRelativePath();
             rect.y += lineHeight + spacing;
 
             if (EditorGUIs.SelectPathField(rect, "CodeGen Script Path", PrefabConvertSettings.ScriptPath, out selectedPath))
-                PrefabConvertSettings.ScriptPath = selectedPath;
+                PrefabConvertSettings.ScriptPath = selectedPath.ToUnityRelativePath();
             rect.y += lineHeight + spacing;
 
             if (bindingList == null)
@@ -56,10 +54,6 @@ namespace ClimbGames.Editor
                     target.ResetSchemas();
                 }
             }
-
-
-            if (EditorGUI.EndChangeCheck())
-                UISettings.Instance.SetDirty();
         }
 
         private void InitList(SerializedProperty property)

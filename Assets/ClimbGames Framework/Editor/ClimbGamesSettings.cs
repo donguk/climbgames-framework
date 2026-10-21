@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using System.IO;
 
 namespace ClimbGames.Editor
 {
@@ -15,34 +16,29 @@ namespace ClimbGames.Editor
 
     public abstract class ClimbGamesSettings<T> : IClimbGamesSettings where T : class, IClimbGamesSettings, new()
     {
-        private static T _instance;
         public static T Instance
         {
             get
             {
-                CreateIfNotExist();
-                return _instance;
+                return GetOrCreateIfNotExist();
             }
         }
 
-        internal static T CreateIfNotExist()
+        internal static T GetOrCreateIfNotExist()
         {
+            var _instance = ClimbGamesSettings.instance.GetSettings<T>();
             if (_instance == null)
             {
-                _instance = ClimbGamesSettings.instance.GetSettings<T>();
-                if (_instance == null)
-                {
-                    ClimbGamesSettings.instance.AddSettings(_instance = new T());
-                    _instance.Reset();
-                }
+                Debug.Log($"GetOrCreateIfNotExist: {typeof(T).Name}");
+                ClimbGamesSettings.instance.AddSettings(_instance = new T());
+                _instance.Reset();
             }
 
             return _instance;
         }
 
-        public void SetDirty()
+        public void Save()
         {
-            EditorUtility.SetDirty(ClimbGamesSettings.instance);
             ClimbGamesSettings.instance.Save();
         }
 
@@ -60,6 +56,7 @@ namespace ClimbGames.Editor
     [FilePath("ProjectSettings/ClimbGamesSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     public class ClimbGamesSettings : UnityEditor.ScriptableSingleton<ClimbGamesSettings>
     {
+        [NonSerialized] internal static DateTime lastWriteTime;
         [SerializeReference] private List<IClimbGamesSettings> settings = new List<IClimbGamesSettings>();
 
         //
@@ -77,15 +74,20 @@ namespace ClimbGames.Editor
                 Type genericBaseType = typeof(ClimbGamesSettings<>).MakeGenericType(type);
 
                 // 2. 이제 해당 제네릭 부모 타입에서 CreateIfNotExist 메서드를 정확히 찾을 수 있습니다.
-                var method = genericBaseType.GetMethod("CreateIfNotExist", BindingFlags.NonPublic | BindingFlags.Static);
+                var method = genericBaseType.GetMethod("GetOrCreateIfNotExist", BindingFlags.NonPublic | BindingFlags.Static);
                 if (method != null)
                     method.Invoke(null, null);
             }
+
+            lastWriteTime = GetLastWriteTime();
+            EditorApplication.focusChanged += OnFocusChanged;
         }
 
         public void Save()
         {
             Save(true);
+
+            lastWriteTime = GetLastWriteTime();
         }
 
         public T GetSettings<T>() where T : class, IClimbGamesSettings, new()
@@ -98,6 +100,48 @@ namespace ClimbGames.Editor
             T _instance = GetSettings<T>();
             if (_instance == null)
                 this.settings.Add(settings);
+        }
+
+        private static DateTime GetLastWriteTime()
+        {
+            string filePath = Path.GetFullPath("ProjectSettings/ClimbGamesSettings.asset");
+            return File.Exists(filePath) ? File.GetLastWriteTimeUtc(filePath) : DateTime.MinValue;
+        }
+
+        private static void OnFocusChanged(bool hasFocus)
+        {
+            if (hasFocus == false)
+                return;
+
+            var currentWriteTime = GetLastWriteTime();
+            if (currentWriteTime == lastWriteTime)
+                return;
+
+            lastWriteTime = currentWriteTime;
+            Reload();
+        }
+
+        public static void Reload()
+        {
+            //
+            //Debug.Log("ClimbGamesSettings Reload...");
+
+            var singletonType = typeof(UnityEditor.ScriptableSingleton<ClimbGamesSettings>);
+            var instanceField = singletonType.GetField("s_Instance", BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (instanceField == null)
+                return;
+
+            var oldInstance = instance;
+
+            // 기존 싱글턴 인스턴스 초기화
+            instanceField.SetValue(null, null);
+
+            if (oldInstance != null)
+                UnityEngine.Object.DestroyImmediate(oldInstance);
+
+            // 디스크 파일에서 다시 로드 //
+            _ = instance;
         }
 
         [SettingsProviderGroup]

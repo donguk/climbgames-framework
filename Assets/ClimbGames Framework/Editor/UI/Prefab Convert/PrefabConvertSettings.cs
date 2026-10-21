@@ -21,8 +21,11 @@ namespace ClimbGames.Editor.UI
             get => UISettings.Instance.PrefabConvertSettings.originPath;
             set
             {
-                UISettings.Instance.PrefabConvertSettings.originPath = value;
-                UISettings.Instance.SetDirty();
+                if (UISettings.Instance.PrefabConvertSettings.originPath != value)
+                {
+                    UISettings.Instance.PrefabConvertSettings.originPath = value;
+                    UISettings.Instance.Save();
+                }
             }
         }
         public static string OutputPath
@@ -30,8 +33,12 @@ namespace ClimbGames.Editor.UI
             get => UISettings.Instance.PrefabConvertSettings.outputPath;
             set
             {
-                UISettings.Instance.PrefabConvertSettings.outputPath = value;
-                UISettings.Instance.SetDirty();
+                if (UISettings.Instance.PrefabConvertSettings.outputPath != value)
+                {
+                    UISettings.Instance.PrefabConvertSettings.outputPath = value;
+                    UISettings.Instance.Save();
+                }
+
             }
         }
         public static string ScriptPath
@@ -39,8 +46,11 @@ namespace ClimbGames.Editor.UI
             get => UISettings.Instance.PrefabConvertSettings.scriptPath;
             set
             {
-                UISettings.Instance.PrefabConvertSettings.scriptPath = value;
-                UISettings.Instance.SetDirty();
+                if (UISettings.Instance.PrefabConvertSettings.scriptPath != value)
+                {
+                    UISettings.Instance.PrefabConvertSettings.scriptPath = value;
+                    UISettings.Instance.Save();
+                }
             }
         }
         public static Binding.Schema[] BindingSchemas => UISettings.Instance.PrefabConvertSettings.bindingSchemas;

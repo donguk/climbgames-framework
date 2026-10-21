@@ -44,8 +44,8 @@ namespace ClimbGames.Editor.UI
             {
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OriginPath = relativePath;
-                SetOriginPath(relativePath);
 
+                SetOriginPath(relativePath);
                 treeView.ExpansionState.Clear("PrefabWindow");
                 return relativePath;
             };

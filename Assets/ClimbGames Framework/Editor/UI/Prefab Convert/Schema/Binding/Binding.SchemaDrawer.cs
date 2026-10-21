@@ -17,8 +17,6 @@ namespace ClimbGames.Editor.UI
                 float lineHeight = EditorGUIUtility.singleLineHeight;
                 float spacing = EditorGUIUtility.standardVerticalSpacing;
 
-                EditorGUI.BeginChangeCheck();
-
                 bool isReadonly = property.FindPropertyRelative("isReadonly").boolValue;
                 bool originEnabled = GUI.enabled;
                 GUI.enabled = isReadonly == false;
@@ -64,9 +62,6 @@ namespace ClimbGames.Editor.UI
                         EditorGUI.PropertyField(rect, serializedProperty);
                     }
                 }
-
-                if (EditorGUI.EndChangeCheck())
-                    UISettings.Instance.SetDirty();
 
                 GUI.enabled = originEnabled;
             }
