@@ -19,70 +19,70 @@ namespace ClimbGames.Editor.UI
 
 
 
-        [MenuItem("GameObject/ClimbGames/Image", false, 1)]
+        [MenuItem("GameObject/ClimbGames/Image", false, 10)]
         public static void CreateImage(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, ImagePrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Text (TMP)", false, 2)]
+        [MenuItem("GameObject/ClimbGames/Text (TMP)", false, 10)]
         public static void CreateText(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, TextPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/RawImage", false, 3)]
+        [MenuItem("GameObject/ClimbGames/RawImage", false, 10)]
         public static void CreateRawImage(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, RawImagePrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Toggle (TMP)", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Toggle (TMP)")]
         public static void CreateToggle(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, TogglePrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Slider", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Slider")]
         public static void CreateSlider(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, SliderPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Scrollbar", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Scrollbar")]
         public static void CreateScrollbar(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, ScrollbarPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Scroll View", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Scroll View")]
         public static void CreateScrollView(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, ScrollViewPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Button (TMP)", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Button (TMP)")]
         public static void CreateButton(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, ButtonPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/Dropdown (TMP)", false, 20)]
+        [MenuItem("GameObject/ClimbGames/Dropdown (TMP)")]
         public static void CreateDropdown(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
             CreatePrefabInstance(targetObject, DropdownPrefabGUID);
         }
 
-        [MenuItem("GameObject/ClimbGames/InputField (TMP)", false, 20)]
+        [MenuItem("GameObject/ClimbGames/InputField (TMP)")]
         public static void CreateInputField(MenuCommand menuCommand)
         {
             GameObject targetObject = menuCommand.context as GameObject;
