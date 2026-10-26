@@ -1,13 +1,18 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:VisualElement name="root" style="flex-grow: 1;">
         <ui:Label text="Files" name="title" style="margin-left: 2px; -unity-font-style: bold; margin-bottom: 4px;"/>
-        <ui:MultiColumnTreeView columns="" sort-column-descriptions="" name="tree_view">
-            <ui:Columns>
-                <ui:Column name="file" title="File" width="400px" min-width="200px" stretchable="true"/>
-                <ui:Column name="modified" title="Modified" width="120px"/>
-                <ui:Column name="size" title="Size" width="80px"/>
-            </ui:Columns>
-            <ui:SortColumnDescriptions/>
-        </ui:MultiColumnTreeView>
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:MultiColumnTreeView columns="" sort-column-descriptions="" name="tree_view">
+                <ui:Columns>
+                    <ui:Column name="file" title="File" width="400px" min-width="200px" stretchable="true"/>
+                    <ui:Column name="modified" title="Modified" width="120px"/>
+                    <ui:Column name="size" title="Size" width="80px"/>
+                </ui:Columns>
+                <ui:SortColumnDescriptions/>
+            </ui:MultiColumnTreeView>
+            <ui:VisualElement name="empty" style="flex-grow: 1; position: absolute; top: 0; right: 0; left: 0; bottom: 0;">
+                <ui:Label text="No items to display" style="flex-grow: 1; -unity-text-align: middle-center;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -37,6 +37,7 @@ namespace ClimbGames.Editor.UI
 
         private Label title;
         private MultiColumnTreeView treeView;
+        private VisualElement empty;
 
         private int treeItemId = 0;
         private string rootPath;
@@ -75,6 +76,7 @@ namespace ClimbGames.Editor.UI
             treeView = this.Q<MultiColumnTreeView>("tree_view");
             treeView.showAlternatingRowBackgrounds = AlternatingRowBackground.All;
             treeView.itemExpandedChanged += OnItemExpandedChanged;
+            empty = this.Q<VisualElement>("empty");
 
             VisualElement clickedElement = null;
             bool IsTreeViewItem(VisualElement element)
@@ -224,6 +226,9 @@ namespace ClimbGames.Editor.UI
 
         void SetRootItems<T>(List<TreeViewItemData<T>> rootItems) where T : FileEntry
         {
+            if (empty != null)
+                empty.style.display = rootItems.Count > 0 ? DisplayStyle.None : DisplayStyle.Flex;
+
             treeView.SetRootItems(rootItems);
             treeView.Rebuild();
             treeView.ExpandRootItems();
