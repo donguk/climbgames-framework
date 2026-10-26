@@ -38,9 +38,9 @@ namespace ClimbGames.Editor.UI
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(windowUxmlPath);
             visualTree.CloneTree(rootVisualElement);
 
-            var rawPathField = rootVisualElement.Q<SelectPathField>("raw_path");
-            rawPathField.Path = PrefabConvertSettings.OriginPath;
-            rawPathField.OnPathChanged += (path) =>
+            var originPathField = rootVisualElement.Q<SelectPathField>("origin_path");
+            originPathField.Path = PrefabConvertSettings.OriginPath;
+            originPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OriginPath = relativePath;
@@ -50,9 +50,9 @@ namespace ClimbGames.Editor.UI
                 return relativePath;
             };
 
-            var outputPathField = rootVisualElement.Q<SelectPathField>("output_path");
-            outputPathField.Path = PrefabConvertSettings.OutputPath;
-            outputPathField.OnPathChanged += (path) =>
+            var convertPathField = rootVisualElement.Q<SelectPathField>("convert_path");
+            convertPathField.Path = PrefabConvertSettings.OutputPath;
+            convertPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
                 PrefabConvertSettings.OutputPath = relativePath;
@@ -60,9 +60,9 @@ namespace ClimbGames.Editor.UI
                 return relativePath;
             };
 
-            var codeGenPathField = rootVisualElement.Q<SelectPathField>("codegen_path");
-            codeGenPathField.Path = PrefabConvertSettings.ScriptPath;
-            codeGenPathField.OnPathChanged += (path) =>
+            var scriptPathField = rootVisualElement.Q<SelectPathField>("script_path");
+            scriptPathField.Path = PrefabConvertSettings.ScriptPath;
+            scriptPathField.OnPathChanged += (path) =>
             {
                 string relativePath = path.ToUnityRelativePath();
                 return PrefabConvertSettings.ScriptPath = relativePath;

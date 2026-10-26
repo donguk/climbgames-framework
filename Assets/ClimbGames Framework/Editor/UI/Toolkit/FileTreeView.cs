@@ -31,6 +31,9 @@ namespace ClimbGames.Editor.UI
     public partial class FileTreeView : VisualElement
     {
         private const string UxmlGUID = "ec1e011fbf3561248b5588d92c341ec1";
+        private const string FileCellGUID = "2664e5480ad83a946a3821d056d272e5";
+        private const string ModifiedCellGUID = "0d59160c1123d394e897525224932da1";
+        private const string SizeCellGUID = "12ec519605605d442979642645a5e27e";
 
         private Label title;
         private MultiColumnTreeView treeView;
@@ -116,7 +119,8 @@ namespace ClimbGames.Editor.UI
             var fileCell = treeView.columns["file"];
             fileCell.makeCell = () =>
             {
-                var cell = fileCell.cellTemplate.CloneTree();
+                var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(FileCellGUID));
+                var cell = template.Instantiate();
                 var root = cell.Q<VisualElement>("root");
 
                 root.AddManipulator(new ContextualMenuManipulator((evt) => OnContextMenu(evt)));
@@ -146,6 +150,13 @@ namespace ClimbGames.Editor.UI
             };
 
             var modifiedCell = treeView.columns["modified"];
+            modifiedCell.makeCell = () =>
+            {
+                var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(ModifiedCellGUID));
+                var cell = template.Instantiate();
+
+                return cell;
+            };
             modifiedCell.bindCell = (element, index) =>
             {
                 var entry = treeView.GetItemDataForIndex<FileEntry>(index);
@@ -156,6 +167,13 @@ namespace ClimbGames.Editor.UI
             };
 
             var sizeCell = treeView.columns["size"];
+            sizeCell.makeCell = () =>
+            {
+                var template = AssetDatabase.LoadAssetByGUID<VisualTreeAsset>(new GUID(SizeCellGUID));
+                var cell = template.Instantiate();
+
+                return cell;
+            };
             sizeCell.bindCell = (element, index) =>
             {
                 var entry = treeView.GetItemDataForIndex<FileEntry>(index);
