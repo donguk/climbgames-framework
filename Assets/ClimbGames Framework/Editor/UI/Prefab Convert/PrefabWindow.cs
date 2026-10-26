@@ -18,7 +18,7 @@ namespace ClimbGames.Editor.UI
         private Dictionary<string, PrefabConvertData> convertDatas = new Dictionary<string, PrefabConvertData>();
         private FileMenuItem[] prefabCellMenuItems;
 
-        [MenuItem("Tools/ClimbGames/UI Prefab Convert")]
+        [MenuItem("Tools/ClimbGames/UI Prefab Convert", false, 1)]
         private static void Open()
         {
             var window = GetWindow<PrefabWindow>();

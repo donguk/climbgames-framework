@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ClimbGames.Editor.UI;
 using ClimbGames.UI;
 using UnityEditor;
 using UnityEngine;
@@ -24,6 +23,7 @@ namespace ClimbGames.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
 
+            PackageInitializer.RegisterRegistry();
             CreateSettingsIfNotExist();
             UpdateEmptySceneBuildSettings(FrameworkSettings.Instance.UseEmptyScene);
             RegisterUIEnvironmentScene();
