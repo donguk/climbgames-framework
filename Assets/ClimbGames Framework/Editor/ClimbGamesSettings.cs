@@ -20,11 +20,11 @@ namespace ClimbGames.Editor
         {
             get
             {
-                return GetOrCreateIfNotExist();
+                return GetOrCreateInstance();
             }
         }
 
-        internal static T GetOrCreateIfNotExist()
+        internal static T GetOrCreateInstance()
         {
             var _instance = ClimbGamesSettings.instance.GetSettings<T>();
             if (_instance == null)
@@ -59,10 +59,10 @@ namespace ClimbGames.Editor
         [NonSerialized] internal static DateTime lastWriteTime;
         [SerializeReference] private List<IClimbGamesSettings> settings = new List<IClimbGamesSettings>();
 
-        //
         [InitializeOnLoadMethod]
         static void Initialize()
         {
+            int count = instance.settings.Count;
             instance.settings.RemoveAll(x => x == null);
 
             var settingTypes = TypeCache.GetTypesDerivedFrom<IClimbGamesSettings>().Where(t => !t.IsAbstract && !t.IsInterface);
@@ -74,10 +74,13 @@ namespace ClimbGames.Editor
                 Type genericBaseType = typeof(ClimbGamesSettings<>).MakeGenericType(type);
 
                 // 2. 이제 해당 제네릭 부모 타입에서 CreateIfNotExist 메서드를 정확히 찾을 수 있습니다.
-                var method = genericBaseType.GetMethod("GetOrCreateIfNotExist", BindingFlags.NonPublic | BindingFlags.Static);
+                var method = genericBaseType.GetMethod("GetOrCreateInstance", BindingFlags.NonPublic | BindingFlags.Static);
                 if (method != null)
                     method.Invoke(null, null);
             }
+
+            if (instance.settings.Count != count)
+                instance.Save(true);
 
             lastWriteTime = GetLastWriteTime();
             EditorApplication.focusChanged += OnFocusChanged;

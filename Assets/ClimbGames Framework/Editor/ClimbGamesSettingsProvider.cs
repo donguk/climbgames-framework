@@ -52,7 +52,7 @@ namespace ClimbGames.Editor
 
         public static SerializedProperty GetSerializedProperty(SerializedObject serializedObject)
         {
-            ClimbGamesSettings<T>.GetOrCreateIfNotExist();
+            ClimbGamesSettings<T>.GetOrCreateInstance();
             SerializedProperty listProp = serializedObject.FindProperty("settings");
 
             if (listProp == null || listProp.isArray == false)
