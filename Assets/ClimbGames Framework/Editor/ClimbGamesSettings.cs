@@ -29,7 +29,7 @@ namespace ClimbGames.Editor
             var _instance = ClimbGamesSettings.instance.GetSettings<T>();
             if (_instance == null)
             {
-                Debug.Log($"GetOrCreateIfNotExist: {typeof(T).Name}");
+                //Debug.Log($"GetOrCreateIfNotExist: {typeof(T).Name}");
                 ClimbGamesSettings.instance.AddSettings(_instance = new T());
                 _instance.Reset();
             }
